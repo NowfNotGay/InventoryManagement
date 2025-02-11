@@ -40,5 +40,10 @@ namespace Servicer.Example
         {
             throw new NotImplementedException();
         }
+
+        Task<string> ICRUD_Service<MessageContent, int>.Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
