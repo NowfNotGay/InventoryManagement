@@ -52,11 +52,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Casc\\Microservice\\Servicer\\Servicer.csproj",
+      "projectUniqueName": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Servicer\\Servicer.csproj",
       "projectName": "Servicer",
-      "projectPath": "D:\\Casc\\Microservice\\Servicer\\Servicer.csproj",
+      "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Servicer\\Servicer.csproj",
       "packagesPath": "C:\\Users\\TrungNghia\\.nuget\\packages\\",
-      "outputPath": "D:\\Casc\\Microservice\\Servicer\\obj\\",
+      "outputPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Servicer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\DevExpress 24.1\\Components\\Offline Packages",
@@ -81,8 +81,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\Casc\\Microservice\\Base\\Base.csproj": {
-              "projectPath": "D:\\Casc\\Microservice\\Base\\Base.csproj"
+            "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Base\\Base.csproj": {
+              "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Base\\Base.csproj"
             }
           }
         }

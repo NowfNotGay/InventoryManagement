@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Casc\\Microservice\\Helper\\Helper.csproj": {}
+    "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Helper\\Helper.csproj": {}
   },
   "projects": {
-    "D:\\Casc\\Microservice\\Helper\\Helper.csproj": {
+    "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Helper\\Helper.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Casc\\Microservice\\Helper\\Helper.csproj",
+        "projectUniqueName": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Helper\\Helper.csproj",
         "projectName": "Helper",
-        "projectPath": "D:\\Casc\\Microservice\\Helper\\Helper.csproj",
+        "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Helper\\Helper.csproj",
         "packagesPath": "C:\\Users\\TrungNghia\\.nuget\\packages\\",
-        "outputPath": "D:\\Casc\\Microservice\\Helper\\obj\\",
+        "outputPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Helper\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\DevExpress 24.1\\Components\\Offline Packages",

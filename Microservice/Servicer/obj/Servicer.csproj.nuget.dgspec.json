@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Casc\\Microservice\\Servicer\\Servicer.csproj": {}
+    "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Servicer\\Servicer.csproj": {}
   },
   "projects": {
-    "D:\\Casc\\Microservice\\Base\\Base.csproj": {
+    "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Base\\Base.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Casc\\Microservice\\Base\\Base.csproj",
+        "projectUniqueName": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Base\\Base.csproj",
         "projectName": "Base",
-        "projectPath": "D:\\Casc\\Microservice\\Base\\Base.csproj",
+        "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Base\\Base.csproj",
         "packagesPath": "C:\\Users\\TrungNghia\\.nuget\\packages\\",
-        "outputPath": "D:\\Casc\\Microservice\\Base\\obj\\",
+        "outputPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Base\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\DevExpress 24.1\\Components\\Offline Packages",
@@ -36,8 +36,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Casc\\Microservice\\Core\\Core.csproj": {
-                "projectPath": "D:\\Casc\\Microservice\\Core\\Core.csproj"
+              "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Core\\Core.csproj": {
+                "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Core\\Core.csproj"
               }
             }
           }
@@ -77,14 +77,14 @@
         }
       }
     },
-    "D:\\Casc\\Microservice\\Core\\Core.csproj": {
+    "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Core\\Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Casc\\Microservice\\Core\\Core.csproj",
+        "projectUniqueName": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Core\\Core.csproj",
         "projectName": "Core",
-        "projectPath": "D:\\Casc\\Microservice\\Core\\Core.csproj",
+        "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Core\\Core.csproj",
         "packagesPath": "C:\\Users\\TrungNghia\\.nuget\\packages\\",
-        "outputPath": "D:\\Casc\\Microservice\\Core\\obj\\",
+        "outputPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\DevExpress 24.1\\Components\\Offline Packages",
@@ -146,14 +146,14 @@
         }
       }
     },
-    "D:\\Casc\\Microservice\\Servicer\\Servicer.csproj": {
+    "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Servicer\\Servicer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Casc\\Microservice\\Servicer\\Servicer.csproj",
+        "projectUniqueName": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Servicer\\Servicer.csproj",
         "projectName": "Servicer",
-        "projectPath": "D:\\Casc\\Microservice\\Servicer\\Servicer.csproj",
+        "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Servicer\\Servicer.csproj",
         "packagesPath": "C:\\Users\\TrungNghia\\.nuget\\packages\\",
-        "outputPath": "D:\\Casc\\Microservice\\Servicer\\obj\\",
+        "outputPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Servicer\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\DevExpress 24.1\\Components\\Offline Packages",
@@ -178,8 +178,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Casc\\Microservice\\Base\\Base.csproj": {
-                "projectPath": "D:\\Casc\\Microservice\\Base\\Base.csproj"
+              "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Base\\Base.csproj": {
+                "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Base\\Base.csproj"
               }
             }
           }

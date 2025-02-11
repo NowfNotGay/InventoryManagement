@@ -8870,11 +8870,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Casc\\Web_Service\\API_Application\\API_Application.csproj",
+      "projectUniqueName": "C:\\Users\\TrungNghia\\Desktop\\work\\Web_Service\\API_Application\\API_Application.csproj",
       "projectName": "API_Application",
-      "projectPath": "D:\\Casc\\Web_Service\\API_Application\\API_Application.csproj",
+      "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Web_Service\\API_Application\\API_Application.csproj",
       "packagesPath": "C:\\Users\\TrungNghia\\.nuget\\packages\\",
-      "outputPath": "D:\\Casc\\Web_Service\\API_Application\\obj\\",
+      "outputPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Web_Service\\API_Application\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\DevExpress 24.1\\Components\\Offline Packages",
@@ -8899,20 +8899,20 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\Casc\\Microservice\\Base\\Base.csproj": {
-              "projectPath": "D:\\Casc\\Microservice\\Base\\Base.csproj"
+            "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Base\\Base.csproj": {
+              "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Base\\Base.csproj"
             },
-            "D:\\Casc\\Microservice\\Context\\Context.csproj": {
-              "projectPath": "D:\\Casc\\Microservice\\Context\\Context.csproj"
+            "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Context\\Context.csproj": {
+              "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Context\\Context.csproj"
             },
-            "D:\\Casc\\Microservice\\Core\\Core.csproj": {
-              "projectPath": "D:\\Casc\\Microservice\\Core\\Core.csproj"
+            "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Core\\Core.csproj": {
+              "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Core\\Core.csproj"
             },
-            "D:\\Casc\\Microservice\\Helper\\Helper.csproj": {
-              "projectPath": "D:\\Casc\\Microservice\\Helper\\Helper.csproj"
+            "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Helper\\Helper.csproj": {
+              "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Helper\\Helper.csproj"
             },
-            "D:\\Casc\\Microservice\\Servicer\\Servicer.csproj": {
-              "projectPath": "D:\\Casc\\Microservice\\Servicer\\Servicer.csproj"
+            "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Servicer\\Servicer.csproj": {
+              "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Servicer\\Servicer.csproj"
             }
           }
         }

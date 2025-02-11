@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Example\" />
+    <Folder Include="Example\" />
   </ItemGroup>
 
 </Project>

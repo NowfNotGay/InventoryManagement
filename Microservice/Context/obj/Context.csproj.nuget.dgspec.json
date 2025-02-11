@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Casc\\Microservice\\Context\\Context.csproj": {}
+    "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Context\\Context.csproj": {}
   },
   "projects": {
-    "D:\\Casc\\Microservice\\Context\\Context.csproj": {
+    "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Context\\Context.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Casc\\Microservice\\Context\\Context.csproj",
+        "projectUniqueName": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Context\\Context.csproj",
         "projectName": "Context",
-        "projectPath": "D:\\Casc\\Microservice\\Context\\Context.csproj",
+        "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Context\\Context.csproj",
         "packagesPath": "C:\\Users\\TrungNghia\\.nuget\\packages\\",
-        "outputPath": "D:\\Casc\\Microservice\\Context\\obj\\",
+        "outputPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Context\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\DevExpress 24.1\\Components\\Offline Packages",
