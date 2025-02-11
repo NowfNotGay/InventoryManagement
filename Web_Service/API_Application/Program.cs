@@ -21,11 +21,6 @@ builder.Services.AddDbContext<DB_Testing_Context>(options =>
 builder.Services.AddTransient<DB_Testing_Context>();
 #endregion
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 #region Add Dependency Injection
 #region Example
 builder.Services.AddTransient<IMessageContentProvider, MessageContentProvider>();
@@ -34,6 +29,13 @@ builder.Services.AddTransient<ICRUD_Service<MessageContent, int>, MessageContent
 
 
 #endregion
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+
 
 
 var app = builder.Build();

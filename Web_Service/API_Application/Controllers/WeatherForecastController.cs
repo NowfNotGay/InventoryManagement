@@ -1,30 +1,54 @@
+
+using Base.BaseService;
+using Base.Example;
 using Context.Example;
+using Core.ExampleClass;
 using Microsoft.AspNetCore.Mvc;
+using Servicer.Example;
 
 namespace API_Application.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-        private DB_Testing_Context _Testing_Context;
+        private readonly IMessageContentProvider _messageContentProvider;
+        private readonly ICRUD_Service<MessageContent, int> _messageContentService;
 
-        public WeatherForecastController(DB_Testing_Context testing_Context)
+        public WeatherForecastController(IMessageContentProvider messageContentProvider, ICRUD_Service<MessageContent, int> messageContentService)
         {
-            _Testing_Context = testing_Context;
+            _messageContentProvider = messageContentProvider;
+            _messageContentService = messageContentService;
         }
 
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IActionResult Get()
+        [HttpPost]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public async Task<IActionResult> Save([FromBody] MessageContent data)
         {
-            var abc = _Testing_Context.MessageContents.ToList();
-            int i = 0;
-            return Ok(abc);
-        } 
+            var result = await _messageContentService.Create(data);
+            return result == null ? BadRequest() : Ok(result);
+        }
+
+
+        [HttpGet]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _messageContentService.GetAll();
+            return result == null ? BadRequest() : Ok(result);
+        }
+
+
+        [HttpGet("{id}")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public async Task<IActionResult> GetByID(int id)
+        {
+            var result = await _messageContentService.Get(id);
+            return result == null ? BadRequest() : Ok(result);
+        }
     }
 }

@@ -23,6 +23,7 @@ namespace Context.Example
             modelBuilder.Entity<MessageContent>()
                 .Property(mc => mc.RowPointer)
                 .HasDefaultValueSql("NEWID()");
+
             modelBuilder.Entity<MessageContent>()
                       .Property(mc => mc.ID)
                       .ValueGeneratedOnAdd();
