@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<InvariantGlobalization>false</InvariantGlobalization>
+    <UserSecretsId>f471cf8a-a233-486a-a102-91be62f18b98</UserSecretsId>
+    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+	<PackageReference Include="Dapper" Version="2.1.35" />
+	<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.3" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.3" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.3">
+		<PrivateAssets>all</PrivateAssets>
+		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.3" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.3" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.3">
+		<PrivateAssets>all</PrivateAssets>
+		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+	<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
+	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Microservice\Base\Base.csproj" />
+    <ProjectReference Include="..\..\Microservice\Context\Context.csproj" />
+    <ProjectReference Include="..\..\Microservice\Core\Core.csproj" />
+    <ProjectReference Include="..\..\Microservice\Helper\Helper.csproj" />
+    <ProjectReference Include="..\..\Microservice\Servicer\Servicer.csproj" />
+  </ItemGroup>
+
+</Project>

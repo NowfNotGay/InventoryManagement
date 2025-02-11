@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "vChkPiBcVzrEHchyJl3G0DpOfcVIXOG+ndeYApj0yiY=",
+  "Source": "API_Application",
+  "BasePath": "_content/API_Application",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
