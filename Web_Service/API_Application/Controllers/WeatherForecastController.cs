@@ -23,6 +23,7 @@ namespace API_Application.Controllers
         public IActionResult Get()
         {
             var abc = _Testing_Context.MessageContents.ToList();
+            int i = 0;
             return Ok(abc);
         } 
     }
