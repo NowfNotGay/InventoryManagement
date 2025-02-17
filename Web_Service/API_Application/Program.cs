@@ -3,6 +3,7 @@ using Base.Example;
 using Base.MasterData;
 using Context.Example;
 using Context.MasterData;
+using Context.ProductProperties;
 using Core.ExampleClass;
 using Core.MasterData;
 using Helper.Method;
@@ -26,11 +27,17 @@ builder.Services.AddDbContext<DB_MasterData_Context>(options =>
                      General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!),
                       sqlServerOptions => sqlServerOptions.CommandTimeout(360))
         );
+builder.Services.AddDbContext<DB_ProductProperties_Context>(options =>
+          options.UseLazyLoadingProxies().UseSqlServer(
+                     General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!),
+                      sqlServerOptions => sqlServerOptions.CommandTimeout(360))
+        );
 
 
 #region Transient Context
 builder.Services.AddTransient<DB_Testing_Context>();
 builder.Services.AddTransient<DB_MasterData_Context>();
+builder.Services.AddTransient<DB_ProductProperties_Context>();
 #endregion
 
 #region Add Dependency Injection

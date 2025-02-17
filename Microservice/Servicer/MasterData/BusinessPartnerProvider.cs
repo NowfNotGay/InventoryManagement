@@ -5,6 +5,8 @@ using Core.MasterData;
 using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Dapper.SqlMapper;
 
 namespace Servicer.MasterData;
 public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBusinessPartnerProvider
@@ -33,7 +36,7 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
             {
                 await _dB.BusinessPartners.AddAsync(entity);
                 await _dB.SaveChangesAsync();
-                transaction.Commit();
+                await transaction.CommitAsync();
                 return entity;
             }
             catch (Exception ex)
@@ -45,14 +48,46 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
         }
     }
 
-    public Task<string> Delete(int id)
+    public async Task<string> Delete(int id)
     {
-        throw new NotImplementedException();
+        using (var transaction = _dB.Database.BeginTransaction())
+        {
+            try
+            {   
+                BusinessPartner obj = await Get(id);
+                if (obj == null)
+                {
+                    return null;
+                }
+                _dB.BusinessPartners.Remove(obj);
+                await _dB.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return "true";
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+
+                return null;
+            }
+        }
     }
 
-    public Task<BusinessPartner> Get(int id)
+    public async Task<BusinessPartner> Get(int id)
     {
-        throw new NotImplementedException();
+        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
+        {
+            await sqlconnect.OpenAsync();
+            var rs = await sqlconnect.QuerySingleOrDefaultAsync<BusinessPartner>("BusinessPartner_GetByID",
+                new
+                {
+                    ID = id
+                },
+                 commandType: CommandType.StoredProcedure,
+                 commandTimeout: 240);
+
+            return rs;
+        }
     }
 
     public async Task<IEnumerable<BusinessPartner>> GetAll()
@@ -72,8 +107,32 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
         }
     }
 
-    public Task<BusinessPartner> Update(BusinessPartner entity)
+    public async Task<BusinessPartner> Update(BusinessPartner entity)
     {
-        throw new NotImplementedException();
+        using (var transaction = _dB.Database.BeginTransaction())
+        {
+            try
+            {
+                var obj = await _dB.BusinessPartners.FindAsync(entity.RowPointer);
+                if (obj == null) return null;
+
+                obj.PartnerCode = entity.PartnerCode;
+                obj.PartnerName = entity.PartnerName;
+                obj.IsSupplier = entity.IsSupplier;
+                obj.IsCustomer = entity.IsCustomer;
+                obj.ContactInfo = entity.ContactInfo;
+                obj.StatusID = entity.StatusID;
+                obj.UpdatedDate = DateTime.Now;
+                await _dB.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+
+                return null;
+            }
+        }
     }
 }
