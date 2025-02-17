@@ -40,12 +40,23 @@ builder.Services.AddTransient<IMessageContentProvider, MessageContentProvider>()
 builder.Services.AddTransient<ICRUD_Service<MessageContent, int>, MessageContentProvider>();
 #endregion
 
+
+
 #region Master_Data
 
 //Business Partner
 
 builder.Services.AddTransient<IBusinessPartnerProvider, BusinessPartnerProvider>();
 builder.Services.AddTransient<ICRUD_Service<BusinessPartner, int>, BusinessPartnerProvider>();
+builder.Services.AddTransient<IStatusMasterProvider, StatusMasterProvider>();
+builder.Services.AddTransient<ICRUD_Service<StatusMaster, int>, StatusMasterProvider>();
+builder.Services.AddTransient<IWarehouseProvider,WarehouseProvider>();
+builder.Services.AddTransient<ICRUD_Service<Warehouse,int>, WarehouseProvider>();
+#endregion
+
+#region Warehouse_Management
+//
+//
 #endregion
 
 #endregion
