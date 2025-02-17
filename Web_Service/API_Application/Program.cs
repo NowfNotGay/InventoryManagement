@@ -1,15 +1,18 @@
 ﻿using Base.BaseService;
 using Base.Example;
 using Base.MasterData;
+using Base.ProductProperties;
 using Context.Example;
 using Context.MasterData;
 using Context.ProductProperties;
 using Core.ExampleClass;
 using Core.MasterData;
+using Core.ProductProperties;
 using Helper.Method;
 using Microsoft.EntityFrameworkCore;
 using Servicer.Example;
 using Servicer.MasterData;
+using Servicer.ProductProperties;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +56,11 @@ builder.Services.AddTransient<ICRUD_Service<MessageContent, int>, MessageContent
 
 builder.Services.AddTransient<IBusinessPartnerProvider, BusinessPartnerProvider>();
 builder.Services.AddTransient<ICRUD_Service<BusinessPartner, int>, BusinessPartnerProvider>();
+#endregion
+
+#region Product_Properties
+builder.Services.AddTransient<IColorProvider, ColorProvider>();
+builder.Services.AddTransient<ICRUD_Service<Color, int>, ColorProvider>();
 #endregion
 
 #endregion
