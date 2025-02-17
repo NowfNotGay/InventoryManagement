@@ -3,3 +3,8 @@
 ################################################################################
 
 /.vs
+/Microservice/Base/bin/Debug/net8.0
+/Microservice/Core/bin/Debug/net8.0
+/Microservice/Context/bin/Debug/net8.0
+/Microservice/Helper/bin/Debug/net8.0
+/Microservice/Servicer/bin/Debug/net8.0
