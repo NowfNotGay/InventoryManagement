@@ -14,6 +14,10 @@ public class DB_MasterData_Context : DbContext
     {
     }
     public DbSet<BusinessPartner> BusinessPartners { get; set; }
+    public DbSet<StatusMaster> StatusMasters { get; set; }
+    public DbSet<Warehouse> Warehouses{ get; set; }
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BusinessPartner>()
