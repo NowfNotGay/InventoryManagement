@@ -1,17 +1,21 @@
 ﻿using Base.BaseService;
 using Base.Example;
 using Base.MasterData;
+using Base.ProductClassification;
 using Base.ProductProperties;
 using Context.Example;
 using Context.MasterData;
+using Context.ProductClassification;
 using Context.ProductProperties;
 using Core.ExampleClass;
 using Core.MasterData;
+using Core.ProductClassification;
 using Core.ProductProperties;
 using Helper.Method;
 using Microsoft.EntityFrameworkCore;
 using Servicer.Example;
 using Servicer.MasterData;
+using Servicer.ProductClassification;
 using Servicer.ProductProperties;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,11 +40,18 @@ builder.Services.AddDbContext<DB_ProductProperties_Context>(options =>
                       sqlServerOptions => sqlServerOptions.CommandTimeout(360))
         );
 
+builder.Services.AddDbContext<DB_ProductClassification_Context>(options =>
+          options.UseLazyLoadingProxies().UseSqlServer(
+                     General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!),
+                      sqlServerOptions => sqlServerOptions.CommandTimeout(360))
+        );
+
 
 #region Transient Context
 builder.Services.AddTransient<DB_Testing_Context>();
 builder.Services.AddTransient<DB_MasterData_Context>();
 builder.Services.AddTransient<DB_ProductProperties_Context>();
+builder.Services.AddTransient<DB_ProductClassification_Context>();
 #endregion
 
 #region Add Dependency Injection
@@ -59,8 +70,21 @@ builder.Services.AddTransient<ICRUD_Service<BusinessPartner, int>, BusinessPartn
 #endregion
 
 #region Product_Properties
+
+//Color
 builder.Services.AddTransient<IColorProvider, ColorProvider>();
 builder.Services.AddTransient<ICRUD_Service<Color, int>, ColorProvider>();
+#endregion
+
+#region Product_Classification
+//Product Type
+builder.Services.AddTransient<IProductTypeProvider, ProductTypeProvider>();
+builder.Services.AddTransient<ICRUD_Service<ProductType, int>, ProductTypeProvider>();
+//Product Category
+builder.Services.AddTransient<IProductCategoryProvider, ProductCategoryProvider>();
+builder.Services.AddTransient<ICRUD_Service<ProductCategory, int>, ProductCategoryProvider>();
+
+
 #endregion
 
 #endregion
