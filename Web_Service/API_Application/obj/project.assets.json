@@ -3044,6 +3044,15 @@
       "Context/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "Core": "1.0.0",
+          "Dapper": "2.1.35",
+          "Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter": "8.0.3",
+          "Microsoft.EntityFrameworkCore": "8.0.3",
+          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.3",
+          "Microsoft.EntityFrameworkCore.Proxies": "8.0.3",
+          "Microsoft.EntityFrameworkCore.SqlServer": "8.0.3"
+        },
         "compile": {
           "bin/placeholder/Context.dll": {}
         },
@@ -3075,7 +3084,9 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
-          "Base": "1.0.0"
+          "Base": "1.0.0",
+          "Context": "1.0.0",
+          "Helper": "1.0.0"
         },
         "compile": {
           "bin/placeholder/Servicer.dll": {}

@@ -1,0 +1,16 @@
+C:\Users\TrungNghia\Desktop\work\Microservice\Base\bin\Debug\net8.0\Base.deps.json
+C:\Users\TrungNghia\Desktop\work\Microservice\Base\bin\Debug\net8.0\Base.dll
+C:\Users\TrungNghia\Desktop\work\Microservice\Base\bin\Debug\net8.0\Base.pdb
+C:\Users\TrungNghia\Desktop\work\Microservice\Base\bin\Debug\net8.0\Core.dll
+C:\Users\TrungNghia\Desktop\work\Microservice\Base\bin\Debug\net8.0\Core.pdb
+C:\Users\TrungNghia\Desktop\work\Microservice\Base\obj\Debug\net8.0\Base.csproj.AssemblyReference.cache
+C:\Users\TrungNghia\Desktop\work\Microservice\Base\obj\Debug\net8.0\Base.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\TrungNghia\Desktop\work\Microservice\Base\obj\Debug\net8.0\Base.AssemblyInfoInputs.cache
+C:\Users\TrungNghia\Desktop\work\Microservice\Base\obj\Debug\net8.0\Base.AssemblyInfo.cs
+C:\Users\TrungNghia\Desktop\work\Microservice\Base\obj\Debug\net8.0\Base.csproj.CoreCompileInputs.cache
+C:\Users\TrungNghia\Desktop\work\Microservice\Base\obj\Debug\net8.0\Base.sourcelink.json
+C:\Users\TrungNghia\Desktop\work\Microservice\Base\obj\Debug\net8.0\Base.csproj.Up2Date
+C:\Users\TrungNghia\Desktop\work\Microservice\Base\obj\Debug\net8.0\Base.dll
+C:\Users\TrungNghia\Desktop\work\Microservice\Base\obj\Debug\net8.0\refint\Base.dll
+C:\Users\TrungNghia\Desktop\work\Microservice\Base\obj\Debug\net8.0\Base.pdb
+C:\Users\TrungNghia\Desktop\work\Microservice\Base\obj\Debug\net8.0\ref\Base.dll

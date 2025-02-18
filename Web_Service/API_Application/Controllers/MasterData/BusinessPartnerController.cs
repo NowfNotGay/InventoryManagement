@@ -5,12 +5,14 @@ using Context.Example;
 using Context.MasterData;
 using Core.ExampleClass;
 using Core.MasterData;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Servicer.Example;
 
 namespace API_Application.Controllers.MasterData
 {
     [ApiController]
+    [AllowAnonymous]
     [Route("api/[controller]")]
     public class BusinessPartnerController : ControllerBase
     {

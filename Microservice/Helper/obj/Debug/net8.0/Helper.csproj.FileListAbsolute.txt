@@ -1,0 +1,12 @@
+C:\Users\TrungNghia\Desktop\work\Microservice\Helper\bin\Debug\net8.0\Helper.deps.json
+C:\Users\TrungNghia\Desktop\work\Microservice\Helper\bin\Debug\net8.0\Helper.dll
+C:\Users\TrungNghia\Desktop\work\Microservice\Helper\bin\Debug\net8.0\Helper.pdb
+C:\Users\TrungNghia\Desktop\work\Microservice\Helper\obj\Debug\net8.0\Helper.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\TrungNghia\Desktop\work\Microservice\Helper\obj\Debug\net8.0\Helper.AssemblyInfoInputs.cache
+C:\Users\TrungNghia\Desktop\work\Microservice\Helper\obj\Debug\net8.0\Helper.AssemblyInfo.cs
+C:\Users\TrungNghia\Desktop\work\Microservice\Helper\obj\Debug\net8.0\Helper.csproj.CoreCompileInputs.cache
+C:\Users\TrungNghia\Desktop\work\Microservice\Helper\obj\Debug\net8.0\Helper.sourcelink.json
+C:\Users\TrungNghia\Desktop\work\Microservice\Helper\obj\Debug\net8.0\Helper.dll
+C:\Users\TrungNghia\Desktop\work\Microservice\Helper\obj\Debug\net8.0\refint\Helper.dll
+C:\Users\TrungNghia\Desktop\work\Microservice\Helper\obj\Debug\net8.0\Helper.pdb
+C:\Users\TrungNghia\Desktop\work\Microservice\Helper\obj\Debug\net8.0\ref\Helper.dll

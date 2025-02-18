@@ -108,7 +108,11 @@
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Core\\Core.csproj": {
+                "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Core\\Core.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -126,6 +130,44 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.1.35, )"
+            },
+            "Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter": {
+              "target": "Package",
+              "version": "[8.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore.Abstractions": {
+              "target": "Package",
+              "version": "[8.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore.Proxies": {
+              "target": "Package",
+              "version": "[8.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.3, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -318,6 +360,12 @@
             "projectReferences": {
               "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Base\\Base.csproj": {
                 "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Base\\Base.csproj"
+              },
+              "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Context\\Context.csproj": {
+                "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Context\\Context.csproj"
+              },
+              "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Helper\\Helper.csproj": {
+                "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Helper\\Helper.csproj"
               }
             }
           }

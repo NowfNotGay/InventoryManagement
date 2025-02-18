@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "kL/ZLBiyo0EWEXvkwg8qs5gZbAy5KBCchBGUaf6WO2s=",
+  "Source": "API_GateWay",
+  "BasePath": "_content/API_GateWay",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
