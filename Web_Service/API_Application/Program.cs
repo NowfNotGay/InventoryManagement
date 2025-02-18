@@ -67,6 +67,8 @@ builder.Services.AddTransient<ICRUD_Service<MessageContent, int>, MessageContent
 
 builder.Services.AddTransient<IBusinessPartnerProvider, BusinessPartnerProvider>();
 builder.Services.AddTransient<ICRUD_Service<BusinessPartner, int>, BusinessPartnerProvider>();
+builder.Services.AddTransient<ITransactionTypeProvider, TransactionTypeProvider>();
+builder.Services.AddTransient<ICRUD_Service<TransactionType, int>, TransactionTypeProvider>();
 #endregion
 
 #region Product_Properties

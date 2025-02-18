@@ -14,6 +14,7 @@ public class DB_MasterData_Context : DbContext
     {
     }
     public DbSet<BusinessPartner> BusinessPartners { get; set; }
+    public DbSet<TransactionType> TransactionTypes { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BusinessPartner>()
@@ -37,6 +38,21 @@ public class DB_MasterData_Context : DbContext
         modelBuilder.Entity<BusinessPartner>()
                 .Property(bp => bp.ContactInfo)
                     .HasMaxLength(500);
+
+        #region TransactionType
+        modelBuilder.Entity<TransactionType>()
+            .ToTable("TransactionType")
+            .HasKey(tt=>tt.RowPointer);
+
+        modelBuilder.Entity<TransactionType>()
+            .Property(tt => tt.RowPointer)
+            .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+        modelBuilder.Entity<TransactionType>()
+                      .Property(mc => mc.ID)
+                      .ValueGeneratedOnAdd();
+
+        #endregion
 
         base.OnModelCreating(modelBuilder);
     }
