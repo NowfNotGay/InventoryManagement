@@ -13,7 +13,7 @@ namespace Core.BaseClass
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int ID { get; set; } = 0;
-        public Guid RowPointer { get; set; } = Guid.NewGuid();
+        public Guid RowPointer { get; set; }
         public string CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public string UpdatedBy { get; set; }
