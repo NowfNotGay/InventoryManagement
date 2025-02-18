@@ -6,7 +6,6 @@ using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -17,24 +16,23 @@ using System.Threading.Tasks;
 using static Dapper.SqlMapper;
 
 namespace Servicer.MasterData;
-public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBusinessPartnerProvider
+public class WarehouseProvider : ICRUD_Service<Warehouse, int>,
+    IWarehouseProvider
 {
     private readonly DB_MasterData_Context _dB;
     private readonly IConfiguration _configuration;
-
-    public BusinessPartnerProvider(DB_MasterData_Context dB, IConfiguration configuration)
+    public WarehouseProvider(DB_MasterData_Context dB, IConfiguration configuration)
     {
         _dB = dB;
         _configuration = configuration;
     }
-
-    public async Task<BusinessPartner> Create(BusinessPartner entity)
+    public async Task<Warehouse> Create(Warehouse entity)
     {
-       using(var transaction = _dB.Database.BeginTransaction())
+        using(var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
-                await _dB.BusinessPartners.AddAsync(entity);
+                await _dB.Warehouses.AddAsync(entity);
                 await _dB.SaveChangesAsync();
                 await transaction.CommitAsync();
                 return entity;
@@ -42,60 +40,58 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
             catch (Exception ex)
             {
                 transaction.Rollback();
-             
                 return null;
             }
         }
     }
-
     public async Task<string> Delete(int id)
     {
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
-            {   
-                BusinessPartner obj = await Get(id);
+            {
+                Warehouse obj = await Get(id);
                 if (obj == null)
                 {
                     return null;
                 }
-                _dB.BusinessPartners.Remove(obj);
+                _dB.Warehouses.Remove(obj);
                 await _dB.SaveChangesAsync();
                 await transaction.CommitAsync();
-                return "true";
+                return "Deleted Successfully";
             }
             catch (Exception ex)
             {
                 transaction.Rollback();
-
                 return null;
             }
         }
     }
-
-    public async Task<BusinessPartner> Get(int id)
+    public async Task<Warehouse> Get(int id)
     {
-        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
+        using(var sqlconnect = new SqlConnection(General.DecryptString
+                (_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
             await sqlconnect.OpenAsync();
-            var rs = await sqlconnect.QuerySingleOrDefaultAsync<BusinessPartner>("BusinessPartner_GetByID",
-                new
-                {
+            var rs = await sqlconnect.QuerySingleOrDefaultAsync<Warehouse>( 
+                "Warehouse_GetByID",
+                new 
+                { 
                     ID = id
-                },
-                 commandType: CommandType.StoredProcedure,
-                 commandTimeout: 240);
-
+                }, 
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: 240);
             return rs;
+
+
         }
     }
-
-    public async Task<IEnumerable<BusinessPartner>> GetAll()
+    public async Task<IEnumerable<Warehouse>> GetAll()
     {
         using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
             await sqlconnect.OpenAsync();
-            var rs = await sqlconnect.QueryAsync<BusinessPartner>("BusinessPartner_GetAll",
+            var rs = await sqlconnect.QueryAsync<Warehouse>("Warehouse_GetAll",
                 new
                 {
 
@@ -107,33 +103,41 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
         }
     }
 
-    public async Task<BusinessPartner> Update(BusinessPartner entity)
+    public async Task<Warehouse> Update(Warehouse entity)
     {
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
-                var obj = await _dB.BusinessPartners.FindAsync(entity.RowPointer);
-                if (obj == null) return null;
+                // Find the warehouse by ID
+                var obj = new Warehouse();
+                if (entity.RowPointer != null)
+                {
+                 obj = await _dB.Warehouses.FindAsync(entity.RowPointer);
 
-                obj.PartnerCode = entity.PartnerCode;
-                obj.PartnerName = entity.PartnerName;
-                obj.IsSupplier = entity.IsSupplier;
-                obj.IsCustomer = entity.IsCustomer;
-                obj.ContactInfo = entity.ContactInfo;
-                obj.StatusID = entity.StatusID;
-                obj.UpdatedDate = DateTime.Now;
+                if (obj == null) return null; 
+                }
+
+                obj.WarehouseCode = entity.WarehouseCode;
+                obj.WarehouseName = entity.WarehouseName;
+                obj.AllowNegativeStock = entity.AllowNegativeStock;
+                obj.Address = entity.Address;
+                obj.BinLocationCount = entity.BinLocationCount;
+                obj.UpdatedDate = DateTime.Now;  
+                obj.UpdatedBy = entity.UpdatedBy; 
 
                 await _dB.SaveChangesAsync();
-                await transaction.CommitAsync();
-                return entity;
+                await transaction.CommitAsync(); 
+                return entity;  
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
+                transaction.Rollback(); 
 
-                return null;
+                return null;  
             }
         }
     }
+
 }
+

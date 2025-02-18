@@ -39,6 +39,28 @@ namespace API_Application.Controllers.MasterData
             return rs == null ? BadRequest() : Ok(rs);
 
         }
+        [HttpPut]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+
+        public async Task<IActionResult> Update([FromBody] BusinessPartner businessPartner)
+        {
+            var rs = await _businessPartnerService.Update(businessPartner);
+            return rs == null ? BadRequest() : Ok(rs);
+
+        }
+
+        [HttpDelete]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var rs = await _businessPartnerService.Delete(id);
+            return rs == null ? BadRequest() : Ok(rs);
+
+        }
+
 
         [HttpGet]
         [Consumes("application/json")]

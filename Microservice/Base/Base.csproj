@@ -10,4 +10,10 @@
     <ProjectReference Include="..\Core\Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ProductClassification\" />
+    <Folder Include="ProductManagement\" />
+    <Folder Include="ProductProperties\" />
+  </ItemGroup>
+
 </Project>

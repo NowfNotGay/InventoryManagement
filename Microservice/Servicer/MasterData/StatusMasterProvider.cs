@@ -6,7 +6,6 @@ using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -14,27 +13,26 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Dapper.SqlMapper;
 
 namespace Servicer.MasterData;
-public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBusinessPartnerProvider
+public class StatusMasterProvider : ICRUD_Service<StatusMaster, int>, IStatusMasterProvider
 {
     private readonly DB_MasterData_Context _dB;
     private readonly IConfiguration _configuration;
 
-    public BusinessPartnerProvider(DB_MasterData_Context dB, IConfiguration configuration)
+    public StatusMasterProvider(DB_MasterData_Context dB, IConfiguration configuration)
     {
         _dB = dB;
         _configuration = configuration;
     }
 
-    public async Task<BusinessPartner> Create(BusinessPartner entity)
+    public async Task<StatusMaster> Create(StatusMaster entity)
     {
-       using(var transaction = _dB.Database.BeginTransaction())
+        using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
-                await _dB.BusinessPartners.AddAsync(entity);
+                await _dB.StatusMasters.AddAsync(entity);
                 await _dB.SaveChangesAsync();
                 await transaction.CommitAsync();
                 return entity;
@@ -42,8 +40,7 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
             catch (Exception ex)
             {
                 transaction.Rollback();
-             
-                return null;
+                return null; // Optionally log the exception or handle it further
             }
         }
     }
@@ -53,76 +50,74 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
-            {   
-                BusinessPartner obj = await Get(id);
+            {
+                StatusMaster obj = await Get(id);
                 if (obj == null)
                 {
                     return null;
                 }
-                _dB.BusinessPartners.Remove(obj);
+                _dB.StatusMasters.Remove(obj);
                 await _dB.SaveChangesAsync();
                 await transaction.CommitAsync();
-                return "true";
+                return "Deleted successfully";
             }
             catch (Exception ex)
             {
                 transaction.Rollback();
-
-                return null;
+                return null; // Optionally log the exception or handle it further
             }
         }
     }
 
-    public async Task<BusinessPartner> Get(int id)
+    public async Task<StatusMaster> Get(int id)
     {
-        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
+        using (var sqlconnect = new SqlConnection(General.DecryptString
+            (_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
             await sqlconnect.OpenAsync();
-            var rs = await sqlconnect.QuerySingleOrDefaultAsync<BusinessPartner>("BusinessPartner_GetByID",
+            var rs = await sqlconnect.QuerySingleOrDefaultAsync<StatusMaster>(
+                "StatusMaster_GetByID",
                 new
                 {
                     ID = id
                 },
-                 commandType: CommandType.StoredProcedure,
-                 commandTimeout: 240);
-
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: 240
+                );
             return rs;
         }
+
     }
 
-    public async Task<IEnumerable<BusinessPartner>> GetAll()
+    public async Task<IEnumerable<StatusMaster>> GetAll()
     {
-        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
+        using (var sqlconnect = new SqlConnection(General.DecryptString
+            (_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
             await sqlconnect.OpenAsync();
-            var rs = await sqlconnect.QueryAsync<BusinessPartner>("BusinessPartner_GetAll",
-                new
-                {
-
-                },
-                 commandType: CommandType.StoredProcedure,
-                 commandTimeout: 240);
-
+            var rs = await sqlconnect.QueryAsync<StatusMaster>(
+                "StatusMaster_GetAll",
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: 240
+                );
             return rs;
         }
     }
 
-    public async Task<BusinessPartner> Update(BusinessPartner entity)
+    public async Task<StatusMaster> Update(StatusMaster entity)
     {
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
-                var obj = await _dB.BusinessPartners.FindAsync(entity.RowPointer);
+                var obj = await _dB.StatusMasters.FindAsync(entity.RowPointer);
                 if (obj == null) return null;
 
-                obj.PartnerCode = entity.PartnerCode;
-                obj.PartnerName = entity.PartnerName;
-                obj.IsSupplier = entity.IsSupplier;
-                obj.IsCustomer = entity.IsCustomer;
-                obj.ContactInfo = entity.ContactInfo;
-                obj.StatusID = entity.StatusID;
+                obj.StatusCode = entity.StatusCode;
+                obj.StatusName = entity.StatusName;
+                obj.Description = entity.Description;
                 obj.UpdatedDate = DateTime.Now;
+         
 
                 await _dB.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -131,8 +126,7 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
             catch (Exception ex)
             {
                 transaction.Rollback();
-
-                return null;
+                return null; // Optionally log the exception or handle it further
             }
         }
     }

@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Base.MasterData;
-public interface IBusinessPartnerProvider
+public interface IWarehouseProvider 
 {
-
 }

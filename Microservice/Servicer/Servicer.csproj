@@ -18,4 +18,10 @@
     <ProjectReference Include="..\Helper\Helper.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ProductClassification\" />
+    <Folder Include="ProductManagement\" />
+    <Folder Include="ProductProperties\" />
+  </ItemGroup>
+
 </Project>
