@@ -1,12 +1,10 @@
 ﻿using Base.BaseService;
-using Base.MasterData;
-using Context.MasterData;
-using Core.MasterData;
+using Base.ProductClassification;
+using Context.ProductClassification;
+using Core.ProductClassification;
 using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -14,35 +12,33 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Dapper.SqlMapper;
 
-namespace Servicer.MasterData;
-public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBusinessPartnerProvider
+namespace Servicer.ProductClassification;
+public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductTypeProvider
 {
-    private readonly DB_MasterData_Context _dB;
+    private readonly DB_ProductClassification_Context _dB;
     private readonly IConfiguration _configuration;
 
-    public BusinessPartnerProvider(DB_MasterData_Context dB, IConfiguration configuration)
+    public ProductTypeProvider(DB_ProductClassification_Context dB, IConfiguration configuration)
     {
         _dB = dB;
         _configuration = configuration;
     }
 
-    public async Task<BusinessPartner> Create(BusinessPartner entity)
+    public async Task<ProductType> Create(ProductType entity)
     {
-       using(var transaction = _dB.Database.BeginTransaction())
+        using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
-                await _dB.BusinessPartners.AddAsync(entity);
+                await _dB.ProductTypes.AddAsync(entity);
                 await _dB.SaveChangesAsync();
                 await transaction.CommitAsync();
                 return entity;
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
-             
+                await transaction.RollbackAsync();
                 return null;
             }
         }
@@ -53,13 +49,13 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
-            {   
-                BusinessPartner obj = await Get(id);
+            {
+                ProductType obj = await Get(id);
                 if (obj == null)
                 {
                     return null;
                 }
-                _dB.BusinessPartners.Remove(obj);
+                _dB.ProductTypes.Remove(obj);
                 await _dB.SaveChangesAsync();
                 await transaction.CommitAsync();
                 return "true";
@@ -73,12 +69,12 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
         }
     }
 
-    public async Task<BusinessPartner> Get(int id)
+    public async Task<ProductType> Get(int id)
     {
         using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
             await sqlconnect.OpenAsync();
-            var rs = await sqlconnect.QuerySingleOrDefaultAsync<BusinessPartner>("BusinessPartner_GetByID",
+            var rs = await sqlconnect.QuerySingleOrDefaultAsync<ProductType>("ProductType_GetByID",
                 new
                 {
                     ID = id
@@ -90,12 +86,12 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
         }
     }
 
-    public async Task<IEnumerable<BusinessPartner>> GetAll()
+    public async Task<IEnumerable<ProductType>> GetAll()
     {
         using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
             await sqlconnect.OpenAsync();
-            var rs = await sqlconnect.QueryAsync<BusinessPartner>("BusinessPartner_GetAll",
+            var rs = await sqlconnect.QueryAsync<ProductType>("ProductType_GetAll",
                 new
                 {
 
@@ -107,23 +103,20 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
         }
     }
 
-    public async Task<BusinessPartner> Update(BusinessPartner entity)
+    public async Task<ProductType> Update(ProductType entity)
     {
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
-                var obj = await _dB.BusinessPartners.FindAsync(entity.RowPointer);
+                var obj = await _dB.ProductTypes.FindAsync(entity.RowPointer);
                 if (obj == null) return null;
 
-                obj.PartnerCode = entity.PartnerCode;
-                obj.PartnerName = entity.PartnerName;
-                obj.IsSupplier = entity.IsSupplier;
-                obj.IsCustomer = entity.IsCustomer;
-                obj.ContactInfo = entity.ContactInfo;
-                obj.StatusID = entity.StatusID;
+                obj.ProductTypeCode = entity.ProductTypeCode;
+                obj.ProductTypeName = entity.ProductTypeName;
                 obj.UpdatedBy = entity.UpdatedBy;
                 obj.UpdatedDate = DateTime.Now;
+
 
                 await _dB.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -131,8 +124,7 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
-
+                await transaction.RollbackAsync();
                 return null;
             }
         }
