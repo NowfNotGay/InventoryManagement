@@ -17,6 +17,7 @@ using Servicer.Example;
 using Servicer.MasterData;
 using Servicer.ProductClassification;
 using Servicer.ProductProperties;
+using System.Drawing.Drawing2D;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,11 +67,17 @@ builder.Services.AddTransient<ICRUD_Service<MessageContent, int>, MessageContent
 #region Master_Data
 
 //Business Partner
-
 builder.Services.AddTransient<IBusinessPartnerProvider, BusinessPartnerProvider>();
 builder.Services.AddTransient<ICRUD_Service<BusinessPartner, int>, BusinessPartnerProvider>();
+//Transaction Type
 builder.Services.AddTransient<ITransactionTypeProvider, TransactionTypeProvider>();
 builder.Services.AddTransient<ICRUD_Service<TransactionType, int>, TransactionTypeProvider>();
+//Status Master - Hai
+builder.Services.AddTransient<IStatusMasterProvider, StatusMasterProvider>();
+builder.Services.AddTransient<ICRUD_Service<StatusMaster, int>, StatusMasterProvider>();
+//Warehouse - Hai
+builder.Services.AddTransient<IWarehouseProvider, WarehouseProvider>();
+builder.Services.AddTransient<ICRUD_Service<Warehouse, int>, WarehouseProvider>();
 #endregion
 
 #region Product_Properties
@@ -81,18 +88,18 @@ builder.Services.AddTransient<ICRUD_Service<Color, int>, ColorProvider>();
 #endregion
 
 #region Product_Classification
-//Product Type
+//Product Type - Bao
 builder.Services.AddTransient<IProductTypeProvider, ProductTypeProvider>();
 builder.Services.AddTransient<ICRUD_Service<ProductType, int>, ProductTypeProvider>();
 //Product Category
 builder.Services.AddTransient<IProductCategoryProvider, ProductCategoryProvider>();
 builder.Services.AddTransient<ICRUD_Service<ProductCategory, int>, ProductCategoryProvider>();
-
-
-builder.Services.AddTransient<IStatusMasterProvider, StatusMasterProvider>();
-builder.Services.AddTransient<ICRUD_Service<StatusMaster, int>, StatusMasterProvider>();
-builder.Services.AddTransient<IWarehouseProvider,WarehouseProvider>();
-builder.Services.AddTransient<ICRUD_Service<Warehouse,int>, WarehouseProvider>();
+//Brand - Hai
+builder.Services.AddTransient<IBrandProvider, BrandProvider>();
+builder.Services.AddTransient<ICRUD_Service<Brand, int>, BrandProvider>();
+//Vehicle Model - Hai
+builder.Services.AddTransient<IVehicleModelProvider, VehicleModelProvider>();
+builder.Services.AddTransient<ICRUD_Service<VehicleModel, int>, VehicleModelProvider>();
 #endregion
 
 #region Warehouse_Management

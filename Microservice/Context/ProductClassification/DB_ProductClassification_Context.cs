@@ -14,8 +14,10 @@ public class DB_ProductClassification_Context : DbContext
     }
     public DbSet<ProductType> ProductTypes { get; set; }
     public DbSet<ProductCategory> ProductCategories { get; set; }
+    public DbSet<Brand> Brands { get; set; }
+    public DbSet<VehicleModel> VehicleModels { get; set; }
     //////////////////////
-    
+
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -35,6 +37,49 @@ public class DB_ProductClassification_Context : DbContext
         modelBuilder.Entity<ProductCategory>()
             .Property(c => c.RowPointer)
             .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+        //Hai - Brand
+        modelBuilder.Entity<Brand>()
+            .ToTable("Brand")
+            .HasKey(c => c.RowPointer);
+
+        modelBuilder.Entity<Brand>()
+            .Property(c => c.RowPointer)
+            .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+        modelBuilder.Entity<Brand>()
+               .Property(c => c.BrandCode)
+               .IsRequired()
+               .HasMaxLength(100);
+
+        modelBuilder.Entity<Brand>()
+               .Property(c => c.BrandName)
+               .IsRequired()
+               .HasMaxLength(100);
+
+
+        //Hai - VehicleModel
+        modelBuilder.Entity<VehicleModel>()
+            .ToTable("VehicleModel")
+            .HasKey(c => c.RowPointer);
+
+        modelBuilder.Entity<VehicleModel>()
+            .Property(c => c.RowPointer)
+            .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+        modelBuilder.Entity<VehicleModel>()
+            .Property(vm => vm.ModelCode)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        modelBuilder.Entity<VehicleModel>()
+            .Property(vm => vm.ModelName)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        modelBuilder.Entity<VehicleModel>()
+            .Property(vm => vm.BrandID)
+            .IsRequired();
 
         base.OnModelCreating(modelBuilder);
     }
