@@ -17,7 +17,6 @@ using Servicer.Example;
 using Servicer.MasterData;
 using Servicer.ProductClassification;
 using Servicer.ProductProperties;
-using System.Drawing.Drawing2D;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,6 +77,10 @@ builder.Services.AddTransient<ICRUD_Service<StatusMaster, int>, StatusMasterProv
 //Warehouse - Hai
 builder.Services.AddTransient<IWarehouseProvider, WarehouseProvider>();
 builder.Services.AddTransient<ICRUD_Service<Warehouse, int>, WarehouseProvider>();
+//StorageBin - Duy
+builder.Services.AddTransient<IStorageBinProvider, StorageBinProvider>();
+builder.Services.AddTransient<ICRUD_Service<StorageBin, int>, StorageBinProvider>();
+
 #endregion
 
 #region Product_Properties

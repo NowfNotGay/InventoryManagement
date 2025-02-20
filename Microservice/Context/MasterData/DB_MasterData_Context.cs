@@ -1,11 +1,5 @@
-﻿using Core.BaseClass;
-using Core.MasterData;
+﻿using Core.MasterData;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Context.MasterData;
 public class DB_MasterData_Context : DbContext
@@ -16,7 +10,8 @@ public class DB_MasterData_Context : DbContext
     public DbSet<BusinessPartner> BusinessPartners { get; set; }
     public DbSet<TransactionType> TransactionTypes { get; set; }
     public DbSet<StatusMaster> StatusMasters { get; set; }
-    public DbSet<Warehouse> Warehouses{ get; set; }
+    public DbSet<Warehouse> Warehouses { get; set; }
+    public DbSet<StorageBin> StorageBins { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -47,7 +42,7 @@ public class DB_MasterData_Context : DbContext
         #region TransactionType
         modelBuilder.Entity<TransactionType>()
             .ToTable("TransactionType")
-            .HasKey(tt=>tt.RowPointer);
+            .HasKey(tt => tt.RowPointer);
 
         modelBuilder.Entity<TransactionType>()
             .Property(tt => tt.RowPointer)
@@ -110,6 +105,24 @@ public class DB_MasterData_Context : DbContext
         modelBuilder.Entity<Warehouse>()
             .Property(w => w.AllowNegativeStock)
             .HasDefaultValue(false);
+
+        //Duy - StorageBin
+        modelBuilder.Entity<StorageBin>()
+            .ToTable("StorageBin")
+            .HasKey(sb => sb.RowPointer);
+
+        modelBuilder.Entity<StorageBin>()
+            .Property(sb => sb.RowPointer)
+            .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+        modelBuilder.Entity<StorageBin>()
+                .Property(sb => sb.StorageBinCode)
+                    .HasMaxLength(100);
+
+        modelBuilder.Entity<StorageBin>()
+            .Property(sb => sb.Description)
+            .HasMaxLength(500);
+
 
         base.OnModelCreating(modelBuilder);
     }
