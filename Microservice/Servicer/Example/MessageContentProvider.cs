@@ -146,7 +146,7 @@ namespace Servicer.Example
                 }
                 catch (SqlException sqlex)
                 {
-
+                    return Task.FromResult(resultService);
                 }
                 catch (Exception ex)
                 {
