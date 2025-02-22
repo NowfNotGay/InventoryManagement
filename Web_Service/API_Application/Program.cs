@@ -59,6 +59,7 @@ builder.Services.AddTransient<DB_ProductClassification_Context>();
 #region Example
 builder.Services.AddTransient<IMessageContentProvider, MessageContentProvider>();
 builder.Services.AddTransient<ICRUD_Service<MessageContent, int>, MessageContentProvider>();
+builder.Services.AddTransient<ICRUD_Service_V2<MessageContent, int>, MessageContentProvider>();
 #endregion
 
 

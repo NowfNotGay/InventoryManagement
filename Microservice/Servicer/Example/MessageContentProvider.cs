@@ -1,6 +1,7 @@
 ﻿using Base.BaseService;
 using Base.Example;
 using Context.Example;
+using Core.BaseClass;
 using Core.ExampleClass;
 using Dapper;
 using Microsoft.Data.SqlClient;
@@ -15,7 +16,8 @@ using System.Transactions;
 namespace Servicer.Example
 {
     public class MessageContentProvider : IMessageContentProvider, 
-                                            ICRUD_Service<MessageContent, int>
+                                            ICRUD_Service<MessageContent, int>,
+                                            ICRUD_Service_V2<MessageContent, int>
     {
         private readonly DB_Testing_Context _databaseContext;
 
@@ -120,7 +122,65 @@ namespace Servicer.Example
             throw new NotImplementedException();
         }
 
+        Task<ResultService<MessageContent>> ICRUD_Service_V2<MessageContent, int>.Create(MessageContent entity)
+        {
+            ResultService<MessageContent> resultService = new();
+            using (var transaction = _databaseContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    _databaseContext.MessageContents.Add(entity);
+                    int change = _databaseContext.SaveChanges();
+                    if (change <= 0)
+                    {
+                        resultService.Message = "Failed to save data";
+                        resultService.Code = "1";
+                        resultService.Data = null;
+                        return Task.FromResult(resultService);
+                    }
+                    transaction.Commit();
+                    resultService.Message = "Success";
+                    resultService.Code = "0";
+                    resultService.Data = entity;
+                    return Task.FromResult(resultService);
+                }
+                catch (SqlException sqlex)
+                {
+
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    resultService.Message = ex.Message;
+                    resultService.Code = "1";
+                    resultService.Data = null;
+                    return Task.FromResult(resultService);
+                }
+            }
+
+        }
+
         Task<string> ICRUD_Service<MessageContent, int>.Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResultService<string>> ICRUD_Service_V2<MessageContent, int>.Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResultService<MessageContent>> ICRUD_Service_V2<MessageContent, int>.Get(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResultService<IEnumerable<MessageContent>>> ICRUD_Service_V2<MessageContent, int>.GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResultService<MessageContent>> ICRUD_Service_V2<MessageContent, int>.Update(MessageContent entity)
         {
             throw new NotImplementedException();
         }
