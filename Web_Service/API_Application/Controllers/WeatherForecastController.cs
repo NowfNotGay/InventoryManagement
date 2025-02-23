@@ -14,21 +14,22 @@ namespace API_Application.Controllers
     {
         private readonly IMessageContentProvider _messageContentProvider;
         private readonly ICRUD_Service<MessageContent, int> _messageContentService;
+        private readonly ICRUD_Service_V2<MessageContent, int> _messageContentService_V2;
 
-        public WeatherForecastController(IMessageContentProvider messageContentProvider, ICRUD_Service<MessageContent, int> messageContentService)
+        public WeatherForecastController(IMessageContentProvider messageContentProvider, ICRUD_Service<MessageContent, int> messageContentService, ICRUD_Service_V2<MessageContent, int> messageContentService_V2)
         {
             _messageContentProvider = messageContentProvider;
             _messageContentService = messageContentService;
+            _messageContentService_V2 = messageContentService_V2;
         }
-
 
         [HttpPost]
         [Consumes("application/json")]
         [Produces("application/json")]
         public async Task<IActionResult> Save([FromBody] MessageContent data)
         {
-            var result = await _messageContentService.Create(data);
-            return result == null ? BadRequest() : Ok(result);
+            var result = await _messageContentService_V2.Create(data);
+            return result.Code != "0" ? BadRequest(result) : Ok(result);
         }
 
 
