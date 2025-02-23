@@ -1,5 +1,79 @@
 [
   {
+    "ContainingType": "API_Application.Controllers.ProductClassification.BrandController",
+    "Method": "GetAll",
+    "RelativePath": "api/Brand",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.ProductClassification.BrandController",
+    "Method": "Create",
+    "RelativePath": "api/Brand",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "brand",
+        "Type": "Core.ProductClassification.Brand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.ProductClassification.BrandController",
+    "Method": "Update",
+    "RelativePath": "api/Brand",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "brand",
+        "Type": "Core.ProductClassification.Brand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.ProductClassification.BrandController",
+    "Method": "Delete",
+    "RelativePath": "api/Brand",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.ProductClassification.BrandController",
+    "Method": "GetById",
+    "RelativePath": "api/Brand/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "API_Application.Controllers.MasterData.BusinessPartnerController",
     "Method": "Save",
     "RelativePath": "api/BusinessPartner",
@@ -290,6 +364,80 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "API_Application.Controllers.MasterData.StorageBinController",
+    "Method": "GetAll",
+    "RelativePath": "api/StorageBin",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.MasterData.StorageBinController",
+    "Method": "Save",
+    "RelativePath": "api/StorageBin",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "storageBin",
+        "Type": "Core.MasterData.StorageBin",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.MasterData.StorageBinController",
+    "Method": "Update",
+    "RelativePath": "api/StorageBin",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "storageBin",
+        "Type": "Core.MasterData.StorageBin",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.MasterData.StorageBinController",
+    "Method": "Delete",
+    "RelativePath": "api/StorageBin",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.MasterData.StorageBinController",
+    "Method": "GetByID",
+    "RelativePath": "api/StorageBin/ID",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ID",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "API_Application.Controllers.MasterData.TransactionTypeController",
     "Method": "GetAll",
     "RelativePath": "api/TransactionType",
@@ -359,6 +507,80 @@
         "Name": "ID",
         "Type": "System.Int32",
         "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.ProductClassification.VehicleModelController",
+    "Method": "GetAll",
+    "RelativePath": "api/VehicleModel",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.ProductClassification.VehicleModelController",
+    "Method": "Create",
+    "RelativePath": "api/VehicleModel",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "vehicleModel",
+        "Type": "Core.ProductClassification.VehicleModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.ProductClassification.VehicleModelController",
+    "Method": "Update",
+    "RelativePath": "api/VehicleModel",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "vehicleModel",
+        "Type": "Core.ProductClassification.VehicleModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.ProductClassification.VehicleModelController",
+    "Method": "Delete",
+    "RelativePath": "api/VehicleModel",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.ProductClassification.VehicleModelController",
+    "Method": "GetById",
+    "RelativePath": "api/VehicleModel/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []

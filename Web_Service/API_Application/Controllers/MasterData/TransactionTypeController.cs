@@ -1,7 +1,6 @@
 ﻿using Base.BaseService;
 using Base.MasterData;
 using Core.MasterData;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Application.Controllers.MasterData
@@ -71,6 +70,6 @@ namespace API_Application.Controllers.MasterData
 
         }
 
-        
+
     }
 }

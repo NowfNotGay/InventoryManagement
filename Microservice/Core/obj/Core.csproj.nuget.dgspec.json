@@ -1,25 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Core\\Core.csproj": {}
+    "D:\\workspace\\InventoryManagement\\InventoryManagement\\Microservice\\Core\\Core.csproj": {}
   },
   "projects": {
-    "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Core\\Core.csproj": {
+    "D:\\workspace\\InventoryManagement\\InventoryManagement\\Microservice\\Core\\Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Core\\Core.csproj",
+        "projectUniqueName": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Microservice\\Core\\Core.csproj",
         "projectName": "Core",
-        "projectPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Core\\Core.csproj",
-        "packagesPath": "C:\\Users\\TrungNghia\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\TrungNghia\\Desktop\\work\\Microservice\\Core\\obj\\",
+        "projectPath": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Microservice\\Core\\Core.csproj",
+        "packagesPath": "C:\\Users\\luong\\.nuget\\packages\\",
+        "outputPath": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Microservice\\Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files\\DevExpress 24.1\\Components\\Offline Packages",
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\TrungNghia\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 24.1.config",
+          "C:\\Users\\luong\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -28,8 +26,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\DevExpress 24.1\\Components\\System\\Components\\Packages": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -69,7 +65,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.103/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

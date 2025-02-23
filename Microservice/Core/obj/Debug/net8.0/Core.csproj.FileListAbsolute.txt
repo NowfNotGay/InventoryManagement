@@ -10,3 +10,15 @@ C:\Users\TrungNghia\Desktop\work\Microservice\Core\obj\Debug\net8.0\Core.dll
 C:\Users\TrungNghia\Desktop\work\Microservice\Core\obj\Debug\net8.0\refint\Core.dll
 C:\Users\TrungNghia\Desktop\work\Microservice\Core\obj\Debug\net8.0\Core.pdb
 C:\Users\TrungNghia\Desktop\work\Microservice\Core\obj\Debug\net8.0\ref\Core.dll
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Core\bin\Debug\net8.0\Core.deps.json
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Core\bin\Debug\net8.0\Core.dll
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Core\bin\Debug\net8.0\Core.pdb
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Core\obj\Debug\net8.0\Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Core\obj\Debug\net8.0\Core.AssemblyInfoInputs.cache
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Core\obj\Debug\net8.0\Core.AssemblyInfo.cs
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Core\obj\Debug\net8.0\Core.csproj.CoreCompileInputs.cache
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Core\obj\Debug\net8.0\Core.sourcelink.json
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Core\obj\Debug\net8.0\Core.dll
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Core\obj\Debug\net8.0\refint\Core.dll
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Core\obj\Debug\net8.0\Core.pdb
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Core\obj\Debug\net8.0\ref\Core.dll

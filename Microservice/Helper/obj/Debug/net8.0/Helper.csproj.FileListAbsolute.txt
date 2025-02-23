@@ -10,3 +10,15 @@ C:\Users\TrungNghia\Desktop\work\Microservice\Helper\obj\Debug\net8.0\Helper.dll
 C:\Users\TrungNghia\Desktop\work\Microservice\Helper\obj\Debug\net8.0\refint\Helper.dll
 C:\Users\TrungNghia\Desktop\work\Microservice\Helper\obj\Debug\net8.0\Helper.pdb
 C:\Users\TrungNghia\Desktop\work\Microservice\Helper\obj\Debug\net8.0\ref\Helper.dll
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Helper\bin\Debug\net8.0\Helper.deps.json
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Helper\bin\Debug\net8.0\Helper.dll
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Helper\bin\Debug\net8.0\Helper.pdb
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Helper\obj\Debug\net8.0\Helper.GeneratedMSBuildEditorConfig.editorconfig
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Helper\obj\Debug\net8.0\Helper.AssemblyInfoInputs.cache
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Helper\obj\Debug\net8.0\Helper.AssemblyInfo.cs
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Helper\obj\Debug\net8.0\Helper.csproj.CoreCompileInputs.cache
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Helper\obj\Debug\net8.0\Helper.sourcelink.json
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Helper\obj\Debug\net8.0\Helper.dll
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Helper\obj\Debug\net8.0\refint\Helper.dll
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Helper\obj\Debug\net8.0\Helper.pdb
+D:\workspace\InventoryManagement\InventoryManagement\Microservice\Helper\obj\Debug\net8.0\ref\Helper.dll
