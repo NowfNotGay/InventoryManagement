@@ -56,7 +56,7 @@ namespace Servicer.Example
 
         public async Task<MessageContent> Get(int id)
         {
-            using (var sqlConnection = new SqlConnection("Data Source=104.197.108.88;Initial Catalog=Testing;Persist Security Info=True;User ID=sqlserver;Password=codingforever@3003;TrustServerCertificate=True;"))
+            using (var sqlConnection = new SqlConnection("Data Source=172.16.10.18,14332;Initial Catalog=Testing;Persist Security Info=True;User ID=sql_Trainning;Password=Dpt@3003;TrustServerCertificate=True;"))
             {
                 try
                 {
