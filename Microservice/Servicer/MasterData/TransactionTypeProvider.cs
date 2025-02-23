@@ -16,7 +16,6 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Transactions;
 using Microsoft.EntityFrameworkCore;
 using Core.BaseClass;
-using Google.Protobuf.WellKnownTypes;
 using System.Data.Common;
 
 namespace Servicer.MasterData
