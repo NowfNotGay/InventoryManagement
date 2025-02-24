@@ -26,8 +26,8 @@ public class ColorController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var rs = await _colorService.GetAll();
-        return rs == null ? BadRequest() : Ok(rs);
-
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+        
     }
 
     [HttpPost]
@@ -37,7 +37,7 @@ public class ColorController : ControllerBase
     public async Task<IActionResult> Save([FromBody] Color color)
     {
         var rs = await _colorService.Create(color);
-        return rs == null ? BadRequest() : Ok(rs);
+        return rs == null ? BadRequest(rs) : Ok(rs);
 
     }
 

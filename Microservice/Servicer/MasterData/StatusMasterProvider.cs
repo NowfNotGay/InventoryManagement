@@ -1,6 +1,7 @@
 ﻿using Base.BaseService;
 using Base.MasterData;
 using Context.MasterData;
+using Core.BaseClass;
 using Core.MasterData;
 using Dapper;
 using Helper.Method;
@@ -129,5 +130,30 @@ public class StatusMasterProvider : ICRUD_Service<StatusMaster, int>, IStatusMas
                 return null; // Optionally log the exception or handle it further
             }
         }
+    }
+
+    Task<ResultService<StatusMaster>> ICRUD_Service<StatusMaster, int>.Create(StatusMaster entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<string>> ICRUD_Service<StatusMaster, int>.Delete(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<StatusMaster>> ICRUD_Service<StatusMaster, int>.Get(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<IEnumerable<StatusMaster>>> ICRUD_Service<StatusMaster, int>.GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<StatusMaster>> ICRUD_Service<StatusMaster, int>.Update(StatusMaster entity)
+    {
+        throw new NotImplementedException();
     }
 }

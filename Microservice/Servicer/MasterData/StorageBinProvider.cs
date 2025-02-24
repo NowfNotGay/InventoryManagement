@@ -1,6 +1,7 @@
 ﻿using Base.BaseService;
 using Base.MasterData;
 using Context.MasterData;
+using Core.BaseClass;
 using Core.MasterData;
 using Helper.Method;
 using Microsoft.Data.SqlClient;
@@ -118,5 +119,30 @@ public class StorageBinProvider : ICRUD_Service<StorageBin, int>, IStorageBinPro
                 return null;
             }
         }
+    }
+
+    Task<ResultService<StorageBin>> ICRUD_Service<StorageBin, int>.Create(StorageBin entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<string>> ICRUD_Service<StorageBin, int>.Delete(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<StorageBin>> ICRUD_Service<StorageBin, int>.Get(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<IEnumerable<StorageBin>>> ICRUD_Service<StorageBin, int>.GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<StorageBin>> ICRUD_Service<StorageBin, int>.Update(StorageBin entity)
+    {
+        throw new NotImplementedException();
     }
 }

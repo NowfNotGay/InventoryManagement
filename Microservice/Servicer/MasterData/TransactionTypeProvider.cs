@@ -15,6 +15,7 @@ using Helper.Method;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Transactions;
 using Microsoft.EntityFrameworkCore;
+using Core.BaseClass;
 
 namespace Servicer.MasterData
 {
@@ -183,6 +184,31 @@ namespace Servicer.MasterData
             {
                 return $"{ex.GetType()}, {ex.Message}";
             }
+        }
+
+        Task<ResultService<TransactionType>> ICRUD_Service<TransactionType, int>.Create(TransactionType entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResultService<TransactionType>> ICRUD_Service<TransactionType, int>.Update(TransactionType entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResultService<string>> ICRUD_Service<TransactionType, int>.Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResultService<TransactionType>> ICRUD_Service<TransactionType, int>.Get(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResultService<IEnumerable<TransactionType>>> ICRUD_Service<TransactionType, int>.GetAll()
+        {
+            throw new NotImplementedException();
         }
     }
 }
