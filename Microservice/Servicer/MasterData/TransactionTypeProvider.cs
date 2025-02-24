@@ -20,7 +20,7 @@ using System.Data.Common;
 
 namespace Servicer.MasterData
 {
-    public class TransactionTypeProvider : ICRUD_Service_V2<TransactionType, int>, ITransactionTypeProvider
+    public class TransactionTypeProvider : ICRUD_Service<TransactionType, int>, ITransactionTypeProvider
     {
         private readonly DB_MasterData_Context _Context;
         private readonly IConfiguration _configuration;
@@ -275,7 +275,7 @@ namespace Servicer.MasterData
         }
 
 
-        async Task<ResultService<string>> ICRUD_Service_V2<TransactionType, int>.Delete(int id)
+        async Task<ResultService<string>> Delete(int id)
         {
             ResultService<string> resultService = new ResultService<string>();
             try
