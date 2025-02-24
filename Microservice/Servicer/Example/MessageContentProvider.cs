@@ -5,17 +5,11 @@ using Core.BaseClass;
 using Core.ExampleClass;
 using Dapper;
 using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
 
 namespace Servicer.Example
 {
-    public class MessageContentProvider : IMessageContentProvider, 
+    public class MessageContentProvider : IMessageContentProvider,
                                             ICRUD_Service<MessageContent, int>,
                                             ICRUD_Service_V2<MessageContent, int>
     {
@@ -34,8 +28,8 @@ namespace Servicer.Example
                 {
                     await _databaseContext.MessageContents.AddAsync(entity);
                     int change = await _databaseContext.SaveChangesAsync();
-                        
-                    if(change <= 0)
+
+                    if (change <= 0)
                     {
                         throw new Exception("Failed to save data");
                     }
@@ -92,7 +86,7 @@ namespace Servicer.Example
                 {
                     await sqlConnection.OpenAsync();
                     //var parameters = new DynamicParameters();
-                  
+
 
                     var result = await sqlConnection.QueryAsync<MessageContent>("MessageContents_GetAll",
                         new
@@ -102,7 +96,7 @@ namespace Servicer.Example
                         commandType: CommandType.StoredProcedure,
                         commandTimeout: 240);
 
-                    
+
                     return result;
                 }
                 catch (Exception ex)
