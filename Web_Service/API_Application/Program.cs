@@ -59,7 +59,6 @@ builder.Services.AddTransient<DB_ProductClassification_Context>();
 #region Example
 builder.Services.AddTransient<IMessageContentProvider, MessageContentProvider>();
 builder.Services.AddTransient<ICRUD_Service<MessageContent, int>, MessageContentProvider>();
-builder.Services.AddTransient<ICRUD_Service_V2<MessageContent, int>, MessageContentProvider>();
 #endregion
 
 
@@ -71,7 +70,7 @@ builder.Services.AddTransient<IBusinessPartnerProvider, BusinessPartnerProvider>
 builder.Services.AddTransient<ICRUD_Service<BusinessPartner, int>, BusinessPartnerProvider>();
 //Transaction Type
 builder.Services.AddTransient<ITransactionTypeProvider, TransactionTypeProvider>();
-builder.Services.AddTransient<ICRUD_Service_V2<TransactionType, int>, TransactionTypeProvider>();
+builder.Services.AddTransient<ICRUD_Service<TransactionType, int>, TransactionTypeProvider>();
 //Status Master - Hai
 builder.Services.AddTransient<IStatusMasterProvider, StatusMasterProvider>();
 builder.Services.AddTransient<ICRUD_Service<StatusMaster, int>, StatusMasterProvider>();

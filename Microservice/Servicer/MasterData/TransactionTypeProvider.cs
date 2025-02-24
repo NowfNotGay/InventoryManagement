@@ -12,7 +12,7 @@ using System.Data;
 
 namespace Servicer.MasterData
 {
-    public class TransactionTypeProvider : ICRUD_Service_V2<TransactionType, int>, ITransactionTypeProvider
+    public class TransactionTypeProvider : ICRUD_Service<TransactionType, int>, ITransactionTypeProvider
     {
         private readonly DB_MasterData_Context _Context;
         private readonly IConfiguration _configuration;
@@ -267,7 +267,7 @@ namespace Servicer.MasterData
         }
 
 
-        async Task<ResultService<string>> ICRUD_Service_V2<TransactionType, int>.Delete(int id)
+        async Task<ResultService<string>> Delete(int id)
         {
             ResultService<string> resultService = new ResultService<string>();
             try
@@ -335,6 +335,31 @@ namespace Servicer.MasterData
                     Message = $"{ex.GetType()}, {ex.Message}"
                 };
             }
+        }
+
+        Task<ResultService<TransactionType>> ICRUD_Service<TransactionType, int>.Create(TransactionType entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResultService<TransactionType>> ICRUD_Service<TransactionType, int>.Update(TransactionType entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResultService<string>> ICRUD_Service<TransactionType, int>.Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResultService<TransactionType>> ICRUD_Service<TransactionType, int>.Get(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResultService<IEnumerable<TransactionType>>> ICRUD_Service<TransactionType, int>.GetAll()
+        {
+            throw new NotImplementedException();
         }
 
 

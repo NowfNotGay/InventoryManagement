@@ -1,6 +1,7 @@
 ﻿using Base.BaseService;
 using Base.MasterData;
 using Context.MasterData;
+using Core.BaseClass;
 using Core.MasterData;
 using Dapper;
 using Helper.Method;
@@ -139,5 +140,29 @@ public class WarehouseProvider : ICRUD_Service<Warehouse, int>,
         }
     }
 
+    Task<ResultService<Warehouse>> ICRUD_Service<Warehouse, int>.Create(Warehouse entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<string>> ICRUD_Service<Warehouse, int>.Delete(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<Warehouse>> ICRUD_Service<Warehouse, int>.Get(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<IEnumerable<Warehouse>>> ICRUD_Service<Warehouse, int>.GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<Warehouse>> ICRUD_Service<Warehouse, int>.Update(Warehouse entity)
+    {
+        throw new NotImplementedException();
+    }
 }
 

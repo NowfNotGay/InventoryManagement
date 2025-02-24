@@ -10,48 +10,20 @@ using System.Data;
 namespace Servicer.Example
 {
     public class MessageContentProvider : IMessageContentProvider,
-                                            ICRUD_Service<MessageContent, int>,
-                                            ICRUD_Service_V2<MessageContent, int>
+                                            ICRUD_Service<MessageContent, int>
     {
-        private readonly DB_Testing_Context _databaseContext;
+        
+
+    private readonly DB_Testing_Context _databaseContext;
 
         public MessageContentProvider(DB_Testing_Context databaseContext)
         {
             _databaseContext = databaseContext;
         }
 
-        public async Task<MessageContent> Create(MessageContent entity)
+        public async Task<ResultService<MessageContent>> Get(int id)
         {
-            using (var transaction = _databaseContext.Database.BeginTransaction())
-            {
-                try
-                {
-                    await _databaseContext.MessageContents.AddAsync(entity);
-                    int change = await _databaseContext.SaveChangesAsync();
-
-                    if (change <= 0)
-                    {
-                        throw new Exception("Failed to save data");
-                    }
-                    await transaction.CommitAsync();
-                    return entity;
-                }
-                catch (Exception ex)
-                {
-
-                    await transaction.RollbackAsync();
-                    return null;
-                }
-            }
-        }
-
-        public Task<MessageContent> Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<MessageContent> Get(int id)
-        {
+            ResultService<MessageContent> result = new();
             using (var sqlConnection = new SqlConnection("Data Source=172.16.10.18,14332;Initial Catalog=Testing;Persist Security Info=True;User ID=sql_Trainning;Password=Dpt@3003;TrustServerCertificate=True;"))
             {
                 try
@@ -60,26 +32,48 @@ namespace Servicer.Example
                     //var parameters = new DynamicParameters();
 
 
-                    var result = await sqlConnection.QuerySingleOrDefaultAsync<MessageContent>("MessageContents_GetByID",
+                    result.Data = await sqlConnection.QuerySingleOrDefaultAsync<MessageContent>("MessageContents_GetByID",
                         new
                         {
                             ID = id
                         },
                         commandType: CommandType.StoredProcedure,
                         commandTimeout: 240);
+                    if(result.Data != null)
+                    {
+                        result.Message = "Success";
+                        result.Code = "0";
+                    }
+                    else
+                    {
+                        result.Message = "Failed to get data";
+                        result.Code = "1";
+                    }
 
 
                     return result;
                 }
+                catch (SqlException sqlex)
+                {
+                    result.Message = sqlex.Message;
+                    result.Code = "1";
+                    result.Data = null;
+                    return result;
+                }
                 catch (Exception ex)
                 {
-                    return null;
+                    result.Message = ex.Message;
+                    result.Code = "1";
+                    result.Data = null;
+                    return result;
                 }
             }
         }
 
-        public async Task<IEnumerable<MessageContent>> GetAll()
+        public async Task<ResultService<IEnumerable<MessageContent>>> GetAll()
         {
+
+            ResultService <IEnumerable<MessageContent>> result = new();
             using (var sqlConnection = new SqlConnection("Data Source=104.197.108.88;Initial Catalog=Testing;Persist Security Info=True;User ID=sqlserver;Password=codingforever@3003;TrustServerCertificate=True;"))
             {
                 try
@@ -88,7 +82,7 @@ namespace Servicer.Example
                     //var parameters = new DynamicParameters();
 
 
-                    var result = await sqlConnection.QueryAsync<MessageContent>("MessageContents_GetAll",
+                    result.Data = await sqlConnection.QueryAsync<MessageContent>("MessageContents_GetAll",
                         new
                         {
 
@@ -96,12 +90,31 @@ namespace Servicer.Example
                         commandType: CommandType.StoredProcedure,
                         commandTimeout: 240);
 
-
+                    if (result.Data != null)
+                    {
+                        result.Message = "Success";
+                        result.Code = "0";
+                    }
+                    else
+                    {
+                        result.Message = "Failed to get data";
+                        result.Code = "1";
+                    }
+                        return result;
+                }
+                catch (SqlException sqlex)
+                {
+                    result.Message = sqlex.Message;
+                    result.Code = "1";
+                    result.Data = null;
                     return result;
                 }
                 catch (Exception ex)
                 {
-                    return null;
+                    result.Message = ex.Message;
+                    result.Code = "1";
+                    result.Data = null;
+                    return result;
                 }
             }
         }
@@ -111,12 +124,9 @@ namespace Servicer.Example
             throw new NotImplementedException();
         }
 
-        public Task<MessageContent> Update(MessageContent entity)
-        {
-            throw new NotImplementedException();
-        }
+        
 
-        Task<ResultService<MessageContent>> ICRUD_Service_V2<MessageContent, int>.Create(MessageContent entity)
+        Task<ResultService<MessageContent>> ICRUD_Service<MessageContent, int>.Create(MessageContent entity)
         {
             ResultService<MessageContent> resultService = new();
             using (var transaction = _databaseContext.Database.BeginTransaction())
@@ -154,27 +164,16 @@ namespace Servicer.Example
 
         }
 
-        Task<string> ICRUD_Service<MessageContent, int>.Delete(int id)
+       
+
+        public async Task<ResultService<string>> Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        Task<ResultService<string>> ICRUD_Service_V2<MessageContent, int>.Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
 
-        Task<ResultService<MessageContent>> ICRUD_Service_V2<MessageContent, int>.Get(int id)
-        {
-            throw new NotImplementedException();
-        }
 
-        Task<ResultService<IEnumerable<MessageContent>>> ICRUD_Service_V2<MessageContent, int>.GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<ResultService<MessageContent>> ICRUD_Service_V2<MessageContent, int>.Update(MessageContent entity)
+        public async Task<ResultService<MessageContent>> Update(MessageContent entity)
         {
             throw new NotImplementedException();
         }

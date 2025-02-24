@@ -1,6 +1,7 @@
 ﻿using Base.BaseService;
 using Base.MasterData;
 using Context.MasterData;
+using Core.BaseClass;
 using Core.MasterData;
 using Dapper;
 using Helper.Method;
@@ -136,5 +137,30 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
                 return null;
             }
         }
+    }
+
+    Task<ResultService<BusinessPartner>> ICRUD_Service<BusinessPartner, int>.Create(BusinessPartner entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<string>> ICRUD_Service<BusinessPartner, int>.Delete(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<BusinessPartner>> ICRUD_Service<BusinessPartner, int>.Get(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<IEnumerable<BusinessPartner>>> ICRUD_Service<BusinessPartner, int>.GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<BusinessPartner>> ICRUD_Service<BusinessPartner, int>.Update(BusinessPartner entity)
+    {
+        throw new NotImplementedException();
     }
 }

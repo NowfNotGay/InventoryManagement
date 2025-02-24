@@ -2,6 +2,7 @@
 using Base.ProductClassification;
 using Context.ProductClassification;
 using Context.ProductProperties;
+using Core.BaseClass;
 using Core.ProductClassification;
 using Dapper;
 using Helper.Method;
@@ -134,5 +135,30 @@ public class BrandProvider : ICRUD_Service<Brand, int>, IBrandProvider
 
             }
         }
+    }
+
+    Task<ResultService<Brand>> ICRUD_Service<Brand, int>.Create(Brand entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<string>> ICRUD_Service<Brand, int>.Delete(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<Brand>> ICRUD_Service<Brand, int>.Get(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<IEnumerable<Brand>>> ICRUD_Service<Brand, int>.GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<Brand>> ICRUD_Service<Brand, int>.Update(Brand entity)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Base.BaseService;
 using Base.ProductClassification;
 using Context.ProductClassification;
+using Core.BaseClass;
 using Core.ProductClassification;
 using Dapper;
 using Helper.Method;
@@ -128,5 +129,30 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
                 return null;
             }
         }
+    }
+
+    Task<ResultService<ProductType>> ICRUD_Service<ProductType, int>.Create(ProductType entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<string>> ICRUD_Service<ProductType, int>.Delete(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<ProductType>> ICRUD_Service<ProductType, int>.Get(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<IEnumerable<ProductType>>> ICRUD_Service<ProductType, int>.GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ResultService<ProductType>> ICRUD_Service<ProductType, int>.Update(ProductType entity)
+    {
+        throw new NotImplementedException();
     }
 }
