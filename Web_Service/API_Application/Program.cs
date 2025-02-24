@@ -70,7 +70,7 @@ builder.Services.AddTransient<IBusinessPartnerProvider, BusinessPartnerProvider>
 builder.Services.AddTransient<ICRUD_Service<BusinessPartner, int>, BusinessPartnerProvider>();
 //Transaction Type
 builder.Services.AddTransient<ITransactionTypeProvider, TransactionTypeProvider>();
-builder.Services.AddTransient<ICRUD_Service<TransactionType, int>, TransactionTypeProvider>();
+builder.Services.AddTransient<ICRUD_Service_V2<TransactionType, int>, TransactionTypeProvider>();
 //Status Master - Hai
 builder.Services.AddTransient<IStatusMasterProvider, StatusMasterProvider>();
 builder.Services.AddTransient<ICRUD_Service<StatusMaster, int>, StatusMasterProvider>();
