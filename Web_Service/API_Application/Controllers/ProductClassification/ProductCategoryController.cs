@@ -29,7 +29,7 @@ public class ProductCategoryController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var rs = await _productCategoryService.GetAll();
-        return rs == null ? BadRequest() : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }
 
@@ -40,7 +40,7 @@ public class ProductCategoryController : ControllerBase
     public async Task<IActionResult> Save([FromBody] ProductCategory productCategory)
     {
         var rs = await _productCategoryService.Create(productCategory);
-        return rs == null ? BadRequest() : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }
 
@@ -51,7 +51,7 @@ public class ProductCategoryController : ControllerBase
     public async Task<IActionResult> Update([FromBody] ProductCategory productCategory)
     {
         var rs = await _productCategoryService.Update(productCategory);
-        return rs == null ? BadRequest() : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }
 
@@ -62,7 +62,7 @@ public class ProductCategoryController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var rs = await _productCategoryService.Delete(id);
-        return rs == null ? BadRequest() : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }
 

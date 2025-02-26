@@ -29,7 +29,7 @@ public class ProductTypeController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var rs = await _productTypeService.GetAll();
-        return rs == null ? BadRequest() : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }
 
@@ -40,7 +40,7 @@ public class ProductTypeController : ControllerBase
     public async Task<IActionResult> Save([FromBody] ProductType productType)
     {
         var rs = await _productTypeService.Create(productType);
-        return rs == null ? BadRequest() : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }
 
@@ -51,7 +51,7 @@ public class ProductTypeController : ControllerBase
     public async Task<IActionResult> Update([FromBody] ProductType productType)
     {
         var rs = await _productTypeService.Update(productType);
-        return rs == null ? BadRequest() : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }
 
@@ -62,7 +62,7 @@ public class ProductTypeController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var rs = await _productTypeService.Delete(id);
-        return rs == null ? BadRequest() : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }
 

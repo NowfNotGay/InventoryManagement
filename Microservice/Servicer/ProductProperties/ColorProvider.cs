@@ -1,4 +1,5 @@
-﻿using Base.BaseService;
+﻿using Azure;
+using Base.BaseService;
 using Base.ProductProperties;
 using Context.ProductProperties;
 using Core.BaseClass;
@@ -41,7 +42,7 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
                 if(_dB.SaveChanges() <= 0)
                 {
                     result.Message = "Failed to create data";
-                    result.Code = "1";
+                    result.Code = "-1";
                 }
                 await transaction.CommitAsync();
                 result.Message = "Success";
@@ -49,43 +50,25 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
                 result.Data = entity;
                 return result;
             }
-            catch (SqlException ex)
+            catch (SqlException sqlEx)
             {
                 await transaction.RollbackAsync();
-                switch (ex.Number)
-                {
-                    case 53:
-                        result.Code = "1001";
-                        result.Message = "Database connection failed";
-                        break;
-
-                    case 208:  
-                        result.Code = "1007";
-                        result.Message = "SQL Error: Table or column not found";
-                        break;
-
-                    case 156: 
-                        result.Code = "1005";
-                        result.Message = "SQL syntax error";
-                        break;
-
-                    case 1205:
-                        result.Code = "1006";
-                        result.Message = "Deadlock occurred, transaction rolled back";
-                        break;
-
-                    default:
-                        result.Code = "1099";
-                        result.Message = $"SQL Error: {ex.Message}";
-                        break;
-                }
+                result.Code = "1";
+                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return result;
+            }
+            catch (ArgumentException ex)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "2";
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
                 return result;
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
                 result.Message = ex.Message;
-                result.Code = "1";
+                result.Code = "999";
                 return result;
             }
         }
@@ -111,7 +94,7 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
                 if (_dB.SaveChanges() <=0)             
                 {
                     result.Message = "Failed to delete data";
-                    result.Code = "1";
+                    result.Code = "-1";
                     result.Data = "false";
                     return result;
                 }
@@ -121,46 +104,28 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
                 result.Data = "true";
                 return result;
             }
-            catch (SqlException ex)
+            catch (SqlException sqlEx)
             {
                 await transaction.RollbackAsync();
-                switch (ex.Number)
-                {
-                    case 53:
-                        result.Code = "1001";
-                        result.Message = "Database connection failed";
-                        break;
-
-                    case 208:
-                        result.Code = "1007";
-                        result.Message = "SQL Error: Table or column not found";
-                        break;
-
-                    case 156:
-                        result.Code = "1005";
-                        result.Message = "SQL syntax error";
-                        break;
-
-                    case 1205:
-                        result.Code = "1006";
-                        result.Message = "Deadlock occurred, transaction rolled back";
-                        break;
-
-                    default:
-                        result.Code = "1099";
-                        result.Message = $"SQL Error: {ex.Message}";
-                        break;
-                }
+                result.Code = "1";
+                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return result;
+            }
+            catch (ArgumentException ex)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "2";
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
                 return result;
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
                 result.Message = ex.Message;
-                result.Code = "1";
+                result.Code = "999";
                 return result;
             }
-            
+
         }
     }
 
@@ -169,25 +134,36 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
         ResultService<Color> result = new();
         using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
-            await sqlconnect.OpenAsync();
-            result.Data = await sqlconnect.QuerySingleOrDefaultAsync<Color>("Color_GetByID",
-                new
+            try
+            {
+                await sqlconnect.OpenAsync();
+                var rs = await sqlconnect.QuerySingleOrDefaultAsync<Color>("Color_GetByID",
+                    new
+                    {
+                        ID = id
+                    },
+                     commandType: CommandType.StoredProcedure,
+                     commandTimeout: 240);
+                if (rs == null)
                 {
-                    ID = id
-                },
-                 commandType: CommandType.StoredProcedure,
-                 commandTimeout: 240);
-            if (result.Data == null)
-            {
-                result.Message = "Failed to get data";
-                result.Code = "1";
-            }
-            else
-            {
-                result.Message = "Success";
-                result.Code = "0";
-            }
+                    result.Message = "Failed to get data";
+                    result.Code = "1";
+               
+                }
+                else
+                {
+                    result.Message = "Success";
+                    result.Code = "0";
+                }
+                result.Data = rs;
                 return result;
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
+            }
         }
     }
 
@@ -196,25 +172,34 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
         ResultService<IEnumerable<Color>> result = new();
         using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
-            await sqlconnect.OpenAsync();
-            result.Data = await sqlconnect.QueryAsync<Color>("Color_GetAll",
-                new
-                {
+            try
+            {
+                await sqlconnect.OpenAsync();
+                result.Data = await sqlconnect.QueryAsync<Color>("Color_GetAll",
+                    new
+                    {
 
-                },
-                 commandType: CommandType.StoredProcedure,
-                 commandTimeout: 240);
-            if(result.Data == null)
-            {
-                result.Message = "Failed to get data";
-                result.Code = "1";
+                    },
+                     commandType: CommandType.StoredProcedure,
+                     commandTimeout: 240);
+                if(result.Data == null)
+                {
+                    result.Message = "Failed to get data";
+                    result.Code = "1";
+                }
+                else
+                {
+                    result.Message = "Success";
+                    result.Code = "0";
+                }
+                return result;
             }
-            else
+            catch (Exception ex)
             {
-                result.Message = "Success";
-                result.Code = "0";
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
             }
-            return result;
         }
     }
 
@@ -229,7 +214,7 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
                 if (obj == null)
                 {
                     result.Message = "Data not found!";
-                    result.Code = "1";
+                    result.Code = "-1";
                     result.Data = null;
                     return result;
                 }
@@ -252,45 +237,26 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
                 result.Data = entity;
                 return result;
             }
-            catch (SqlException ex)
+            catch (SqlException sqlEx)
             {
                 await transaction.RollbackAsync();
-                switch (ex.Number)
-                {
-                    case 53:
-                        result.Code = "1001";
-                        result.Message = "Database connection failed";
-                        break;
-
-                    case 208:
-                        result.Code = "1007";
-                        result.Message = "SQL Error: Table or column not found";
-                        break;
-
-                    case 156:
-                        result.Code = "1005";
-                        result.Message = "SQL syntax error";
-                        break;
-
-                    case 1205:
-                        result.Code = "1006";
-                        result.Message = "Deadlock occurred, transaction rolled back";
-                        break;
-
-                    default:
-                        result.Code = "1099";
-                        result.Message = $"SQL Error: {ex.Message}";
-                        break;
-                }
+                result.Code = "1";
+                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return result;
+            }
+            catch (ArgumentException ex)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "2";
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
                 return result;
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
                 result.Message = ex.Message;
-                result.Code = "1";
+                result.Code = "999";
                 return result;
- 
             }
         }
     }
