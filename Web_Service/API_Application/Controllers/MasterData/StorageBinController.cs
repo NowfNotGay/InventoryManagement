@@ -24,7 +24,7 @@ namespace API_Application.Controllers.MasterData
         public async Task<IActionResult> GetAll()
         {
             var rs = await _ICRUD_Service.GetAll();
-            return rs == null ? BadRequest() : Ok(rs);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
 
         }
 
@@ -34,7 +34,7 @@ namespace API_Application.Controllers.MasterData
         public async Task<IActionResult> GetByID([FromQuery] int ID)
         {
             var rs = await _ICRUD_Service.Get(ID);
-            return rs == null ? BadRequest() : Ok(rs);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
 
         }
 
@@ -46,7 +46,7 @@ namespace API_Application.Controllers.MasterData
         public async Task<IActionResult> Save([FromBody] StorageBin storageBin)
         {
             var rs = await _ICRUD_Service.Create(storageBin);
-            return rs == null ? BadRequest() : Ok(rs);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
         }
 
         [HttpPut]
@@ -56,7 +56,7 @@ namespace API_Application.Controllers.MasterData
         public async Task<IActionResult> Update([FromBody] StorageBin storageBin)
         {
             var rs = await _ICRUD_Service.Update(storageBin);
-            return rs == null ? BadRequest() : Ok(rs);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
 
         }
         [HttpDelete]
@@ -66,7 +66,7 @@ namespace API_Application.Controllers.MasterData
         public async Task<IActionResult> Delete(int id)
         {
             var rs = await _ICRUD_Service.Delete(id);
-            return rs == null ? BadRequest() : Ok(rs);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
 
         }
 

@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="ProductClassification\" />
-    <Folder Include="ProductManagement\" />
   </ItemGroup>
 
 </Project>

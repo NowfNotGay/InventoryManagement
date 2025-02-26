@@ -12,9 +12,9 @@ namespace Servicer.Example
     public class MessageContentProvider : IMessageContentProvider,
                                             ICRUD_Service<MessageContent, int>
     {
-        
 
-    private readonly DB_Testing_Context _databaseContext;
+
+        private readonly DB_Testing_Context _databaseContext;
 
         public MessageContentProvider(DB_Testing_Context databaseContext)
         {
@@ -39,7 +39,7 @@ namespace Servicer.Example
                         },
                         commandType: CommandType.StoredProcedure,
                         commandTimeout: 240);
-                    if(result.Data != null)
+                    if (result.Data != null)
                     {
                         result.Message = "Success";
                         result.Code = "0";
@@ -73,7 +73,7 @@ namespace Servicer.Example
         public async Task<ResultService<IEnumerable<MessageContent>>> GetAll()
         {
 
-            ResultService <IEnumerable<MessageContent>> result = new();
+            ResultService<IEnumerable<MessageContent>> result = new();
             using (var sqlConnection = new SqlConnection("Data Source=104.197.108.88;Initial Catalog=Testing;Persist Security Info=True;User ID=sqlserver;Password=codingforever@3003;TrustServerCertificate=True;"))
             {
                 try
@@ -100,7 +100,7 @@ namespace Servicer.Example
                         result.Message = "Failed to get data";
                         result.Code = "1";
                     }
-                        return result;
+                    return result;
                 }
                 catch (SqlException sqlex)
                 {
@@ -124,7 +124,7 @@ namespace Servicer.Example
             throw new NotImplementedException();
         }
 
-        
+
 
         Task<ResultService<MessageContent>> ICRUD_Service<MessageContent, int>.Create(MessageContent entity)
         {
@@ -164,7 +164,7 @@ namespace Servicer.Example
 
         }
 
-       
+
 
         public async Task<ResultService<string>> Delete(int id)
         {

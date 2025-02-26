@@ -2075,7 +2075,7 @@
         },
         "runtime": {
           "Base.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }
@@ -2092,7 +2092,7 @@
         },
         "runtime": {
           "Context.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }
@@ -2100,7 +2100,7 @@
       "Core/1.0.0": {
         "runtime": {
           "Core.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }
@@ -2108,7 +2108,7 @@
       "Helper/1.0.0": {
         "runtime": {
           "Helper.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }
@@ -2121,7 +2121,7 @@
         },
         "runtime": {
           "Servicer.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }

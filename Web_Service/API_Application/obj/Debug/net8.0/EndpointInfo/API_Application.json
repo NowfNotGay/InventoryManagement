@@ -1209,7 +1209,7 @@
             "type": "string",
             "format": "date-time"
           },
-          "wareHouseID": {
+          "warehouseID": {
             "type": "integer",
             "format": "int32"
           },

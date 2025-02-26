@@ -3,6 +3,7 @@ using Base.MasterData;
 using Context.MasterData;
 using Core.BaseClass;
 using Core.MasterData;
+using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -21,128 +22,271 @@ public class StorageBinProvider : ICRUD_Service<StorageBin, int>, IStorageBinPro
         _configuration = configuration;
     }
 
-    public async Task<StorageBin> Create(StorageBin entity)
+    public async Task<ResultService<StorageBin>> Create(StorageBin entity)
     {
         using (var transaction = _db.Database.BeginTransaction())
         {
+            ResultService<StorageBin> result = new();
             try
             {
                 await _db.StorageBins.AddAsync(entity);
-                await _db.SaveChangesAsync();
+                if (_db.SaveChanges() <= 0)
+                {
+                    result.Message = "Failed to create data";
+                    result.Code = "1";
+                }
                 await transaction.CommitAsync();
-                return entity;
+                result.Message = "Success";
+                result.Code = "0";
+                result.Data = entity;
+                return result;
+            }
+            catch (SqlException ex)
+            {
+                await transaction.RollbackAsync();
+                switch (ex.Number)
+                {
+                    case 53:
+                        result.Code = "1001";
+                        result.Message = "Database connection failed";
+                        break;
+
+                    case 208:
+                        result.Code = "1007";
+                        result.Message = "SQL Error: Table or column not found";
+                        break;
+
+                    case 156:
+                        result.Code = "1005";
+                        result.Message = "SQL syntax error";
+                        break;
+
+                    case 1205:
+                        result.Code = "1006";
+                        result.Message = "Deadlock occurred, transaction rolled back";
+                        break;
+
+                    default:
+                        result.Code = "1099";
+                        result.Message = $"SQL Error: {ex.Message}";
+                        break;
+                }
+                return result;
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
-                return null;
+                await transaction.RollbackAsync();
+                result.Code = "1";
+                result.Message = $"{ex.GetType()} - {ex.Message}";
+                return result;
+
+
             }
         }
     }
 
-    public async Task<string> Delete(int id)
+    public async Task<ResultService<string>> Delete(int id)
     {
+        ResultService<string> result = new();
         using (var transaction = _db.Database.BeginTransaction())
         {
             try
             {
-                StorageBin obj = await Get(id);
-                if (obj == null)
+                var entity = await Get(id);
+                if (!entity.Code.Equals("0"))
                 {
-                    return null;
+                    result.Message = entity.Message;
+                    result.Code = entity.Code;
+                    result.Data = "false";
+                    return result;
                 }
-                _db.StorageBins.Remove(obj);
-                await _db.SaveChangesAsync();
+
+                _db.StorageBins.Remove(entity.Data);
+                if (_db.SaveChanges() <= 0)
+                {
+                    result.Message = "Failed to delete data";
+                    result.Code = "1";
+                    result.Data = "false";
+                    return result;
+                }
                 await transaction.CommitAsync();
-                return "true";
+                result.Message = "Success";
+                result.Code = "0";
+                result.Data = "true";
+                return result;
+            }
+            catch (SqlException ex)
+            {
+                await transaction.RollbackAsync();
+                switch (ex.Number)
+                {
+                    case 53:
+                        result.Code = "1001";
+                        result.Message = "Database connection failed";
+                        break;
+
+                    case 208:
+                        result.Code = "1007";
+                        result.Message = "SQL Error: Table or column not found";
+                        break;
+
+                    case 156:
+                        result.Code = "1005";
+                        result.Message = "SQL syntax error";
+                        break;
+
+                    case 1205:
+                        result.Code = "1006";
+                        result.Message = "Deadlock occurred, transaction rolled back";
+                        break;
+
+                    default:
+                        result.Code = "1099";
+                        result.Message = $"SQL Error: {ex.Message}";
+                        break;
+                }
+                return result;
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
-                return null;
+                await transaction.RollbackAsync();
+                result.Code = "1";
+                result.Message = $"{ex.GetType()} - {ex.Message}";
+                return result;
             }
         }
     }
 
-    public async Task<StorageBin> Get(int id)
+    public async Task<ResultService<StorageBin>> Get(int id)
     {
-        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
+        ResultService<StorageBin> result = new();
+        using (var sqlConnection = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
-            await sqlconnect.OpenAsync();
-            var rs = await sqlconnect.QuerySingleOrDefaultAsync<StorageBin>("StorageBin_GetByID",
+            await sqlConnection.OpenAsync();
+            result.Data = await sqlConnection.QuerySingleOrDefaultAsync<StorageBin>("StorageBin_GetByID",
                 new
                 {
                     ID = id
                 },
-                 commandType: CommandType.StoredProcedure,
-                 commandTimeout: 240);
-
-            return rs;
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: 240);
+            if (result.Data == null)
+            {
+                result.Message = "Failed to get data";
+                result.Code = "1";
+            }
+            else
+            {
+                result.Message = "Success";
+                result.Code = "0";
+            }
+            return result;
         }
     }
 
-    public async Task<IEnumerable<StorageBin>> GetAll()
+    public async Task<ResultService<IEnumerable<StorageBin>>> GetAll()
     {
+        ResultService<IEnumerable<StorageBin>> result = new();
         using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
             await sqlconnect.OpenAsync();
-            var rs = await sqlconnect.QueryAsync<StorageBin>("StorageBin_GetAll",
+            result.Data = await sqlconnect.QueryAsync<StorageBin>("StorageBin_GetAll",
+                new
+                {
+
+                },
                  commandType: CommandType.StoredProcedure,
                  commandTimeout: 240);
-
-            return rs;
+            if (result.Data == null)
+            {
+                result.Message = "Failed to get data";
+                result.Code = "1";
+            }
+            else
+            {
+                result.Message = "Success";
+                result.Code = "0";
+            }
+            return result;
         }
     }
 
-    public async Task<StorageBin> Update(StorageBin entity)
+    public async Task<ResultService<StorageBin>> Update(StorageBin entity)
     {
+        ResultService<StorageBin> result = new();
         using (var transaction = _db.Database.BeginTransaction())
         {
             try
             {
-                var obj = await _db.StorageBins.FindAsync(entity.RowPointer);
-                if (obj == null) return null;
+                var newObj = await _db.StorageBins.FindAsync(entity.RowPointer);
+                if (newObj == null)
+                {
+                    result.Message = "Data not found!";
+                    result.Code = "1";
+                    result.Data = null;
+                    return result;
+                }
+                newObj.StorageBinCode = entity.StorageBinCode;
+                newObj.Description = entity.Description;
+                newObj.WarehouseID = entity.WarehouseID;
+                newObj.UpdatedDate = DateTime.Now;
+                newObj.UpdatedBy = entity.UpdatedBy;
 
-                obj.WareHouseID = entity.WareHouseID;
-                obj.StorageBinCode = entity.StorageBinCode;
-                obj.Description = entity.Description;
-                obj.UpdatedDate = entity.UpdatedDate;
-                obj.CreatedDate = entity.CreatedDate;
 
-                await _db.SaveChangesAsync();
+
+                if (_db.SaveChanges() <= 0)
+                {
+                    result.Message = "Failed to update data";
+                    result.Code = "1";
+                    result.Data = null;
+                    return result;
+                }
                 await transaction.CommitAsync();
-                return entity;
+                result.Message = "Success";
+                result.Code = "0";
+                result.Data = entity;
+                return result;
+            }
+            catch (SqlException ex)
+            {
+                await transaction.RollbackAsync();
+                switch (ex.Number)
+                {
+                    case 53:
+                        result.Code = "1001";
+                        result.Message = "Database connection failed";
+                        break;
+
+                    case 208:
+                        result.Code = "1007";
+                        result.Message = "SQL Error: Table or column not found";
+                        break;
+
+                    case 156:
+                        result.Code = "1005";
+                        result.Message = "SQL syntax error";
+                        break;
+
+                    case 1205:
+                        result.Code = "1006";
+                        result.Message = "Deadlock occurred, transaction rolled back";
+                        break;
+
+                    default:
+                        result.Code = "1099";
+                        result.Message = $"SQL Error: {ex.Message}";
+                        break;
+                }
+                return result;
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
-                return null;
+                await transaction.RollbackAsync();
+                result.Message = ex.Message;
+                result.Code = "1";
+                return result;
+
             }
         }
-    }
-
-    Task<ResultService<StorageBin>> ICRUD_Service<StorageBin, int>.Create(StorageBin entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<string>> ICRUD_Service<StorageBin, int>.Delete(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<StorageBin>> ICRUD_Service<StorageBin, int>.Get(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<IEnumerable<StorageBin>>> ICRUD_Service<StorageBin, int>.GetAll()
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<StorageBin>> ICRUD_Service<StorageBin, int>.Update(StorageBin entity)
-    {
-        throw new NotImplementedException();
     }
 }
