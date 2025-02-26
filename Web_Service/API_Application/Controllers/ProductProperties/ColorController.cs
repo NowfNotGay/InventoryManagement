@@ -37,7 +37,7 @@ public class ColorController : ControllerBase
     public async Task<IActionResult> Save([FromBody] Color color)
     {
         var rs = await _colorService.Create(color);
-        return rs == null ? BadRequest(rs) : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }
 
@@ -48,7 +48,7 @@ public class ColorController : ControllerBase
     public async Task<IActionResult> Update([FromBody] Color color)
     {
         var rs = await _colorService.Update(color);
-        return rs == null ? BadRequest() : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }
 
@@ -59,7 +59,7 @@ public class ColorController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var rs = await _colorService.Delete(id);
-        return rs == null ? BadRequest() : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }
 

@@ -38,7 +38,7 @@ namespace API_Application.Controllers.MasterData
         public async Task<IActionResult> Save([FromBody] BusinessPartner businessPartner)
         {
             var rs = await _businessPartnerService.Create(businessPartner);
-            return rs == null ? BadRequest() : Ok(rs);
+            return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
         }
         [HttpPut]
@@ -48,7 +48,7 @@ namespace API_Application.Controllers.MasterData
         public async Task<IActionResult> Update([FromBody] BusinessPartner businessPartner)
         {
             var rs = await _businessPartnerService.Update(businessPartner);
-            return rs == null ? BadRequest() : Ok(rs);
+            return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
         }
 
@@ -59,7 +59,7 @@ namespace API_Application.Controllers.MasterData
         public async Task<IActionResult> Delete(int id)
         {
             var rs = await _businessPartnerService.Delete(id);
-            return rs == null ? BadRequest() : Ok(rs);
+            return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
         }
 
@@ -71,7 +71,7 @@ namespace API_Application.Controllers.MasterData
         public async Task<IActionResult> GetAll()
         {
             var rs = await _businessPartnerService.GetAll();
-            return rs == null ? BadRequest() : Ok(rs);
+            return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
         }
     }
