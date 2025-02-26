@@ -22,7 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-string chuỗi = General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory_DAPPER")!);
+string chuỗi = General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!);
 string xâu = General.EncryptString("Data Source=172.16.10.18,14332;Initial Catalog=DB_INTERN_TRAINING;Persist Security Info=True;User ID=sql_Trainning;Password=Dpt@3003;TrustServerCertificate=True;");
 builder.Services.AddDbContext<DB_Testing_Context>(options =>
           options.UseLazyLoadingProxies().UseSqlServer(
