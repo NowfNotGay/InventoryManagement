@@ -81,7 +81,7 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
         {
             try
             {
-                var obj = await Get(id, CommandType);
+                var obj = await Get(id);
                 if (!obj.Code.Equals("0"))
                 {
                     result.Message = obj.Message;
