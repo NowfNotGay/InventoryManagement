@@ -1,21 +1,13 @@
-﻿using Azure;
-using Base.BaseService;
+﻿using Base.BaseService;
 using Base.ProductProperties;
 using Context.ProductProperties;
 using Core.BaseClass;
-using Core.MasterData;
 using Core.ProductProperties;
 using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
 
 namespace Servicer.ProductProperties;
 public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
@@ -37,9 +29,9 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
             try
             {
                 await _dB.Colors.AddAsync(entity);
-                
-                 
-                if(_dB.SaveChanges() <= 0)
+
+
+                if (_dB.SaveChanges() <= 0)
                 {
                     result.Message = "Failed to create data";
                     result.Code = "-1";
@@ -88,10 +80,10 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
                     result.Code = obj.Code;
                     result.Data = "false";
                     return result;
-                    
+
                 }
                 _dB.Colors.Remove(obj.Data);
-                if (_dB.SaveChanges() <=0)             
+                if (_dB.SaveChanges() <= 0)
                 {
                     result.Message = "Failed to delete data";
                     result.Code = "-1";
@@ -148,7 +140,7 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
                 {
                     result.Message = "Failed to get data";
                     result.Code = "1";
-               
+
                 }
                 else
                 {
@@ -182,7 +174,7 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
                     },
                      commandType: CommandType.StoredProcedure,
                      commandTimeout: 240);
-                if(result.Data == null)
+                if (result.Data == null)
                 {
                     result.Message = "Failed to get data";
                     result.Code = "1";
@@ -223,8 +215,8 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
                 obj.UpdatedBy = entity.UpdatedBy;
                 obj.UpdatedDate = DateTime.Now;
 
-                
-                if( _dB.SaveChanges() <=0)
+
+                if (_dB.SaveChanges() <= 0)
                 {
                     result.Message = "Failed to update data";
                     result.Code = "1";

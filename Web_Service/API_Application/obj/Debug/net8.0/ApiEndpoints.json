@@ -306,6 +306,80 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "API_Application.Controllers.ProductManagement.ProductVarientController",
+    "Method": "GetAll",
+    "RelativePath": "api/ProductVarient",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.ProductManagement.ProductVarientController",
+    "Method": "Save",
+    "RelativePath": "api/ProductVarient",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productVariant",
+        "Type": "Core.ProductManagement.ProductVariant",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.ProductManagement.ProductVarientController",
+    "Method": "Update",
+    "RelativePath": "api/ProductVarient",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productVariant",
+        "Type": "Core.ProductManagement.ProductVariant",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.ProductManagement.ProductVarientController",
+    "Method": "Delete",
+    "RelativePath": "api/ProductVarient",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_Application.Controllers.ProductManagement.ProductVarientController",
+    "Method": "GetByID",
+    "RelativePath": "api/ProductVarient/ID",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ID",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "API_Application.Controllers.MasterData.StatusMasterController",
     "Method": "GetAll",
     "RelativePath": "api/StatusMaster",
