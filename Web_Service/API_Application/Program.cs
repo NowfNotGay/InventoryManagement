@@ -7,6 +7,7 @@ using Base.ProductProperties;
 using Context.Example;
 using Context.MasterData;
 using Context.ProductClassification;
+using Context.ProductManagement;
 using Context.ProductProperties;
 using Core.ExampleClass;
 using Core.MasterData;
@@ -44,6 +45,11 @@ builder.Services.AddDbContext<DB_ProductProperties_Context>(options =>
         );
 
 builder.Services.AddDbContext<DB_ProductClassification_Context>(options =>
+          options.UseLazyLoadingProxies().UseSqlServer(
+                     General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!),
+                      sqlServerOptions => sqlServerOptions.CommandTimeout(360))
+        );
+builder.Services.AddDbContext<DB_ProductManagement_Context>(options =>
           options.UseLazyLoadingProxies().UseSqlServer(
                      General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!),
                       sqlServerOptions => sqlServerOptions.CommandTimeout(360))
