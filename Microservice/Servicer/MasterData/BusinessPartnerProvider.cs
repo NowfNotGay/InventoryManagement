@@ -29,93 +29,195 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
         _configuration = configuration;
     }
 
-    public async Task<BusinessPartner> Create(BusinessPartner entity)
+    public async Task<ResultService<BusinessPartner>> Create(BusinessPartner entity)
     {
-       using(var transaction = _dB.Database.BeginTransaction())
+        ResultService<BusinessPartner> result = new();
+        using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
                 await _dB.BusinessPartners.AddAsync(entity);
-                await _dB.SaveChangesAsync();
+                if( _dB.SaveChanges() <= 0)
+                {
+                    result.Message = "Failed to save data";
+                    result.Code = "-1";
+                    result.Data = null;
+                    return result;
+                }
                 await transaction.CommitAsync();
-                return entity;
+                result.Message = "Success";
+                result.Code = "0";
+                result.Data = entity;
+                return result;
+            }
+            catch (SqlException sqlEx)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "1";
+                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return result;
+            }
+            catch (ArgumentException ex)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "2";
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                return result;
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
-             
-                return null;
+                await transaction.RollbackAsync();
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
+            }
+
+        }
+    }
+
+    public async Task<ResultService<string>> Delete(int id)
+    {
+        ResultService<string> result = new();
+        using (var transaction = _dB.Database.BeginTransaction())
+        {
+            try
+            {
+                var obj = await Get(id);
+                if (!obj.Code.Equals("0"))
+                {
+                    result.Message = "Entity Not Found!";
+                    result.Code = "-1";
+                    result.Data = string.Empty;
+                    return result;
+                }
+                _dB.BusinessPartners.Remove(obj.Data);
+                if(_dB.SaveChanges() <= 0)
+                {
+                    result.Message = "Failed to delete data";
+                    result.Code = "-1";
+                    result.Data = string.Empty;
+                    return result;
+                }
+                await transaction.CommitAsync();
+                result.Message = "Success";
+                result.Code = "0";
+                result.Data = string.Empty;
+                return result;
+            }
+            catch (SqlException sqlEx)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "1";
+                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return result;
+            }
+            catch (ArgumentException ex)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "2";
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
             }
         }
     }
 
-    public async Task<string> Delete(int id)
+    public async Task<ResultService<BusinessPartner>> Get(int id)
     {
+        ResultService<BusinessPartner> result = new();
+        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
+        {
+            try
+            {
+                await sqlconnect.OpenAsync();
+                var rs = await sqlconnect.QuerySingleOrDefaultAsync<BusinessPartner>("BusinessPartner_GetByID",
+                    new
+                    {
+                        ID = id
+                    },
+                     commandType: CommandType.StoredProcedure,
+                     commandTimeout: 240);
+                if(rs == null)
+                {
+                    result.Message = "Entity Not Found!";
+                    result.Code = "-1";
+                }
+                else
+                {
+                    result.Message = "Success";
+                    result.Code = "0";
+                }
+                result.Data = rs;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
+            }
+        }
+    }
+
+    public async Task<ResultService<IEnumerable<BusinessPartner>>> GetAll()
+    {
+        ResultService<IEnumerable<BusinessPartner>> result = new();
+        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
+        {
+            try
+            {
+                await sqlconnect.OpenAsync();
+                var rs = await sqlconnect.QueryAsync<BusinessPartner>("BusinessPartner_GetAll",
+                    new
+                    {
+
+                    },
+                     commandType: CommandType.StoredProcedure,
+                     commandTimeout: 240);
+                if (rs == null)
+                {
+                    result.Message = "Entity Not Found!";
+                    result.Code = "-1";
+                }
+                else
+                {
+                    result.Message = "Success";
+                    result.Code = "0";
+                }
+                result.Data = rs;
+                return result;
+            }
+            catch (Exception ex)
+            {
+            result.Message = ex.Message;
+            result.Code = "999";
+            return result;
+            }
+        }
+    }
+
+    public async Task<ResultService<BusinessPartner>> Update(BusinessPartner entity)
+    {
+        ResultService<BusinessPartner> result = new();
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
-            {   
-                BusinessPartner obj = await Get(id);
+            {
+
+                var obj = await _dB.BusinessPartners.FindAsync(entity.RowPointer);
                 if (obj == null)
                 {
-                    return null;
+                    result.Message = "Entity Not Found!";
+                    result.Code = "-1";
+                    result.Data = null;
+                    return result;
                 }
-                _dB.BusinessPartners.Remove(obj);
-                await _dB.SaveChangesAsync();
-                await transaction.CommitAsync();
-                return "true";
-            }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
-
-                return null;
-            }
-        }
-    }
-
-    public async Task<BusinessPartner> Get(int id)
-    {
-        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
-        {
-            await sqlconnect.OpenAsync();
-            var rs = await sqlconnect.QuerySingleOrDefaultAsync<BusinessPartner>("BusinessPartner_GetByID",
-                new
-                {
-                    ID = id
-                },
-                 commandType: CommandType.StoredProcedure,
-                 commandTimeout: 240);
-
-            return rs;
-        }
-    }
-
-    public async Task<IEnumerable<BusinessPartner>> GetAll()
-    {
-        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
-        {
-            await sqlconnect.OpenAsync();
-            var rs = await sqlconnect.QueryAsync<BusinessPartner>("BusinessPartner_GetAll",
-                new
-                {
-
-                },
-                 commandType: CommandType.StoredProcedure,
-                 commandTimeout: 240);
-
-            return rs;
-        }
-    }
-
-    public async Task<BusinessPartner> Update(BusinessPartner entity)
-    {
-        using (var transaction = _dB.Database.BeginTransaction())
-        {
-            try
-            {
-                var obj = await _dB.BusinessPartners.FindAsync(entity.RowPointer);
-                if (obj == null) return null;
 
                 obj.PartnerCode = entity.PartnerCode;
                 obj.PartnerName = entity.PartnerName;
@@ -126,41 +228,41 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
                 obj.UpdatedBy = entity.UpdatedBy;
                 obj.UpdatedDate = DateTime.Now;
 
-                await _dB.SaveChangesAsync();
+                if (_dB.SaveChanges() <= 0)
+                {
+                    result.Message = "Failed to save data";
+                    result.Code = "-1";
+                    result.Data = null;
+                    return result;
+                }
                 await transaction.CommitAsync();
-                return entity;
+                result.Message = "Success";
+                result.Code = "0";
+                result.Data = entity;
+                return result;
+            }
+            catch (SqlException sqlEx)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "1";
+                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return result;
+            }
+            catch (ArgumentException ex)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "2";
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                return result;
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
-
-                return null;
+                await transaction.RollbackAsync();
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
             }
+
         }
-    }
-
-    Task<ResultService<BusinessPartner>> ICRUD_Service<BusinessPartner, int>.Create(BusinessPartner entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<string>> ICRUD_Service<BusinessPartner, int>.Delete(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<BusinessPartner>> ICRUD_Service<BusinessPartner, int>.Get(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<IEnumerable<BusinessPartner>>> ICRUD_Service<BusinessPartner, int>.GetAll()
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<BusinessPartner>> ICRUD_Service<BusinessPartner, int>.Update(BusinessPartner entity)
-    {
-        throw new NotImplementedException();
     }
 }

@@ -26,133 +26,236 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
         _configuration = configuration;
     }
 
-    public async Task<ProductType> Create(ProductType entity)
+    public async Task<ResultService<ProductType>> Create(ProductType entity)
     {
         using (var transaction = _dB.Database.BeginTransaction())
         {
+            ResultService<ProductType> result = new();
             try
             {
                 await _dB.ProductTypes.AddAsync(entity);
-                await _dB.SaveChangesAsync();
+
+
+                if (_dB.SaveChanges() <= 0)
+                {
+                    result.Message = "Failed to create data";
+                    result.Code = "-1";
+                }
                 await transaction.CommitAsync();
-                return entity;
+                result.Message = "Success";
+                result.Code = "0";
+                result.Data = entity;
+                return result;
+            }
+            catch (SqlException sqlEx)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "1";
+                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return result;
+            }
+            catch (ArgumentException ex)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "2";
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                return result;
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return null;
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
             }
         }
     }
 
-    public async Task<string> Delete(int id)
+    public async Task<ResultService<string>> Delete(int id)
     {
+        ResultService<string> result = new();
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
-                ProductType obj = await Get(id);
-                if (obj == null)
+                var obj = await Get(id);
+                if (!obj.Code.Equals("0"))
                 {
-                    return null;
+                    result.Message = obj.Message;
+                    result.Code = obj.Code;
+                    result.Data = "false";
+                    return result;
+
                 }
-                _dB.ProductTypes.Remove(obj);
-                await _dB.SaveChangesAsync();
+                _dB.ProductTypes.Remove(obj.Data);
+                if (_dB.SaveChanges() <= 0)
+                {
+                    result.Message = "Failed to delete data";
+                    result.Code = "-1";
+                    result.Data = "false";
+                    return result;
+                }
                 await transaction.CommitAsync();
-                return "true";
+                result.Message = "Success";
+                result.Code = "0";
+                result.Data = "true";
+                return result;
+            }
+            catch (SqlException sqlEx)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "1";
+                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return result;
+            }
+            catch (ArgumentException ex)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "2";
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                return result;
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
+                await transaction.RollbackAsync();
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
+            }
 
-                return null;
+        }
+    }
+
+    public async Task<ResultService<ProductType>> Get(int id)
+    {
+        ResultService<ProductType> result = new();
+        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
+        {
+            try
+            {
+                await sqlconnect.OpenAsync();
+                var rs = await sqlconnect.QuerySingleOrDefaultAsync<ProductType>("ProductType_GetByID",
+                    new
+                    {
+                        ID = id
+                    },
+                     commandType: CommandType.StoredProcedure,
+                     commandTimeout: 240);
+                if (rs == null)
+                {
+                    result.Message = "Failed to get data";
+                    result.Code = "1";
+
+                }
+                else
+                {
+                    result.Message = "Success";
+                    result.Code = "0";
+                }
+                result.Data = rs;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
             }
         }
     }
 
-    public async Task<ProductType> Get(int id)
+    public async Task<ResultService<IEnumerable<ProductType>>> GetAll()
     {
+        ResultService<IEnumerable<ProductType>> result = new();
         using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
-            await sqlconnect.OpenAsync();
-            var rs = await sqlconnect.QuerySingleOrDefaultAsync<ProductType>("ProductType_GetByID",
-                new
-                {
-                    ID = id
-                },
-                 commandType: CommandType.StoredProcedure,
-                 commandTimeout: 240);
+            try
+            {
+                await sqlconnect.OpenAsync();
+                var rs = await sqlconnect.QueryAsync<ProductType>("ProductType_GetAll",
+                    new
+                    {
 
-            return rs;
+                    },
+                     commandType: CommandType.StoredProcedure,
+                     commandTimeout: 240);
+                if (rs == null)
+                {
+                    result.Message = "Failed to get data";
+                    result.Code = "1";
+                }
+                else
+                {
+                    result.Message = "Success";
+                    result.Code = "0";
+                }
+                result.Data = rs;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
+            }
         }
     }
 
-    public async Task<IEnumerable<ProductType>> GetAll()
+    public async Task<ResultService<ProductType>> Update(ProductType entity)
     {
-        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
-        {
-            await sqlconnect.OpenAsync();
-            var rs = await sqlconnect.QueryAsync<ProductType>("ProductType_GetAll",
-                new
-                {
-
-                },
-                 commandType: CommandType.StoredProcedure,
-                 commandTimeout: 240);
-
-            return rs;
-        }
-    }
-
-    public async Task<ProductType> Update(ProductType entity)
-    {
+        ResultService<ProductType> result = new();
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
                 var obj = await _dB.ProductTypes.FindAsync(entity.RowPointer);
-                if (obj == null) return null;
-
+                if (obj == null)
+                {
+                    result.Message = "Data not found!";
+                    result.Code = "-1";
+                    result.Data = null;
+                    return result;
+                }
                 obj.ProductTypeCode = entity.ProductTypeCode;
                 obj.ProductTypeName = entity.ProductTypeName;
                 obj.UpdatedBy = entity.UpdatedBy;
                 obj.UpdatedDate = DateTime.Now;
 
 
-                await _dB.SaveChangesAsync();
+                if (_dB.SaveChanges() <= 0)
+                {
+                    result.Message = "Failed to update data";
+                    result.Code = "1";
+                    result.Data = null;
+                    return result;
+                }
                 await transaction.CommitAsync();
-                return entity;
+                result.Message = "Success";
+                result.Code = "0";
+                result.Data = entity;
+                return result;
+            }
+            catch (SqlException sqlEx)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "1";
+                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return result;
+            }
+            catch (ArgumentException ex)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "2";
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                return result;
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return null;
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
             }
         }
-    }
-
-    Task<ResultService<ProductType>> ICRUD_Service<ProductType, int>.Create(ProductType entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<string>> ICRUD_Service<ProductType, int>.Delete(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<ProductType>> ICRUD_Service<ProductType, int>.Get(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<IEnumerable<ProductType>>> ICRUD_Service<ProductType, int>.GetAll()
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<ProductType>> ICRUD_Service<ProductType, int>.Update(ProductType entity)
-    {
-        throw new NotImplementedException();
     }
 }
