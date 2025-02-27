@@ -2,6 +2,7 @@
 using Base.Example;
 using Base.MasterData;
 using Base.ProductClassification;
+using Base.ProductManagement;
 using Base.ProductProperties;
 using Context.Example;
 using Context.MasterData;
@@ -10,12 +11,14 @@ using Context.ProductProperties;
 using Core.ExampleClass;
 using Core.MasterData;
 using Core.ProductClassification;
+using Core.ProductManagement;
 using Core.ProductProperties;
 using Helper.Method;
 using Microsoft.EntityFrameworkCore;
 using Servicer.Example;
 using Servicer.MasterData;
 using Servicer.ProductClassification;
+using Servicer.ProductManagement;
 using Servicer.ProductProperties;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -85,9 +88,17 @@ builder.Services.AddTransient<ICRUD_Service<StorageBin, int>, StorageBinProvider
 
 #region Product_Properties
 
-//Color
+//Color - Bao
 builder.Services.AddTransient<IColorProvider, ColorProvider>();
 builder.Services.AddTransient<ICRUD_Service<Color, int>, ColorProvider>();
+
+//Material - Bao
+builder.Services.AddTransient<IMaterialProvider, MaterialProvider>();
+builder.Services.AddTransient<ICRUD_Service<Material, int>, MaterialProvider>();
+
+//Dimension - Bao
+builder.Services.AddTransient<IDimensionProvider, DimensionProvider>();
+builder.Services.AddTransient<ICRUD_Service<Dimension, int>, DimensionProvider>();
 #endregion
 
 #region Product_Classification
@@ -104,6 +115,13 @@ builder.Services.AddTransient<ICRUD_Service<Brand, int>, BrandProvider>();
 builder.Services.AddTransient<IVehicleModelProvider, VehicleModelProvider>();
 builder.Services.AddTransient<ICRUD_Service<VehicleModel, int>, VehicleModelProvider>();
 #endregion
+
+#region Product_Management
+//Product - Bao
+builder.Services.AddTransient<IProductProvider, ProductProvider>();
+builder.Services.AddTransient<ICRUD_Service<Product, int>, ProductProvider>();
+#endregion
+
 
 #region Warehouse_Management
 //

@@ -1,9 +1,7 @@
-﻿using Azure;
-using Base.BaseService;
+﻿using Base.BaseService;
 using Base.ProductProperties;
 using Context.ProductProperties;
 using Core.BaseClass;
-using Core.MasterData;
 using Core.ProductProperties;
 using Dapper;
 using Helper.Method;
@@ -15,34 +13,33 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Transactions;
-using static Dapper.SqlMapper;
 
 namespace Servicer.ProductProperties;
-public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
+public class DimensionProvider : ICRUD_Service<Dimension, int>, IDimensionProvider
 {
     private readonly DB_ProductProperties_Context _dB;
     private readonly IConfiguration _configuration;
     private readonly string _dapperConnectionString;
 
-    public ColorProvider(DB_ProductProperties_Context dB, IConfiguration configuration)
+    public DimensionProvider(DB_ProductProperties_Context dB, IConfiguration configuration)
     {
         _dB = dB;
         _configuration = configuration;
         _dapperConnectionString = General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER")!);
     }
 
-    public async Task<ResultService<Color>> Create(Color entity)
+    public async Task<ResultService<Dimension>> Create(Dimension entity)
     {
         using (var transaction = _dB.Database.BeginTransaction())
         {
-            ResultService<Color> result = new();
+            ResultService<Dimension> result = new();
+            
             try
             {
-                await _dB.Colors.AddAsync(entity);
-                
-                 
-                if(_dB.SaveChanges() <= 0)
+                await _dB.Dimensions.AddAsync(entity);
+
+
+                if (_dB.SaveChanges() <= 0)
                 {
                     result.Message = "Failed to create data";
                     result.Code = "-1";
@@ -64,7 +61,7 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
             {
                 await transaction.RollbackAsync();
                 result.Code = "2";
-                result.Message = ex.Message;
+                result.Message =ex.Message;
                 return result;
             }
             catch (Exception ex)
@@ -91,10 +88,10 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
                     result.Code = obj.Code;
                     result.Data = "false";
                     return result;
-                    
+
                 }
-                _dB.Colors.Remove(obj.Data);
-                if (_dB.SaveChanges() <=0)             
+                _dB.Dimensions.Remove(obj.Data);
+                if (_dB.SaveChanges() <= 0)
                 {
                     result.Message = "Failed to delete data";
                     result.Code = "-1";
@@ -118,7 +115,7 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
             {
                 await transaction.RollbackAsync();
                 result.Code = "2";
-                result.Message = ex.Message;
+                result.Message =ex.Message;
                 return result;
             }
             catch (Exception ex)
@@ -132,15 +129,15 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
         }
     }
 
-    public async Task<ResultService<Color>> Get(int id)
+    public async Task<ResultService<Dimension>> Get(int id)
     {
-        ResultService<Color> result = new();
+        ResultService<Dimension> result = new();
         using (var sqlconnect = new SqlConnection(_dapperConnectionString))
         {
             try
             {
                 await sqlconnect.OpenAsync();
-                var rs = await sqlconnect.QuerySingleOrDefaultAsync<Color>("Color_GetByID",
+                var rs = await sqlconnect.QuerySingleOrDefaultAsync<Dimension>("Dimension_GetByID",
                     new
                     {
                         ID = id
@@ -151,7 +148,7 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
                 {
                     result.Message = "Failed to get data";
                     result.Code = "1";
-               
+
                 }
                 else
                 {
@@ -170,22 +167,22 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
         }
     }
 
-    public async Task<ResultService<IEnumerable<Color>>> GetAll()
+    public async Task<ResultService<IEnumerable<Dimension>>> GetAll()
     {
-        ResultService<IEnumerable<Color>> result = new();
+        ResultService<IEnumerable<Dimension>> result = new();
         using (var sqlconnect = new SqlConnection(_dapperConnectionString))
         {
             try
             {
                 await sqlconnect.OpenAsync();
-                result.Data = await sqlconnect.QueryAsync<Color>("Color_GetAll",
+                result.Data = await sqlconnect.QueryAsync<Dimension>("Dimension_GetAll",
                     new
                     {
 
                     },
                      commandType: CommandType.StoredProcedure,
                      commandTimeout: 240);
-                if(result.Data == null)
+                if (result.Data == null)
                 {
                     result.Message = "Failed to get data";
                     result.Code = "1";
@@ -206,14 +203,14 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
         }
     }
 
-    public async Task<ResultService<Color>> Update(Color entity)
+    public async Task<ResultService<Dimension>> Update(Dimension entity)
     {
-        ResultService<Color> result = new();
+        ResultService<Dimension> result = new();
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
-                var obj = await _dB.Colors.FindAsync(entity.RowPointer);
+                var obj = await _dB.Dimensions.FindAsync(entity.RowPointer);
                 if (obj == null)
                 {
                     result.Message = "Data not found!";
@@ -221,13 +218,15 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
                     result.Data = null;
                     return result;
                 }
-                obj.ColorCode = entity.ColorCode;
-                obj.ColorName = entity.ColorName;
+                obj.Height = entity.Height;
+                obj.Length = entity.Length;
+                obj.Width = entity.Width;
+                obj.UoMName = entity.UoMName;
                 obj.UpdatedBy = entity.UpdatedBy;
                 obj.UpdatedDate = DateTime.Now;
 
-                
-                if( _dB.SaveChanges() <=0)
+
+                if (_dB.SaveChanges() <= 0)
                 {
                     result.Message = "Failed to update data";
                     result.Code = "1";
@@ -251,7 +250,7 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
             {
                 await transaction.RollbackAsync();
                 result.Code = "2";
-                result.Message = ex.Message;
+                result.Message =ex.Message;
                 return result;
             }
             catch (Exception ex)
@@ -263,5 +262,4 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
             }
         }
     }
-
 }

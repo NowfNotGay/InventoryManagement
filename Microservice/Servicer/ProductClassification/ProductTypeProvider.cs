@@ -58,7 +58,7 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
             {
                 await transaction.RollbackAsync();
                 result.Code = "2";
-                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                result.Message = ex.Message;
                 return result;
             }
             catch (Exception ex)
@@ -112,7 +112,7 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
             {
                 await transaction.RollbackAsync();
                 result.Code = "2";
-                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                result.Message = ex.Message;
                 return result;
             }
             catch (Exception ex)
@@ -246,7 +246,7 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
             {
                 await transaction.RollbackAsync();
                 result.Code = "2";
-                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                result.Message = ex.Message;
                 return result;
             }
             catch (Exception ex)

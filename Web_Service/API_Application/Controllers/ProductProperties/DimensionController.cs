@@ -1,24 +1,21 @@
 ﻿using Base.BaseService;
 using Base.ProductProperties;
-using Core.MasterData;
 using Core.ProductProperties;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Servicer.ProductProperties;
 
 namespace API_Application.Controllers.ProductProperties;
 [Route("api/[controller]")]
 [ApiController]
-public class ColorController : ControllerBase
+public class DimensionController : ControllerBase
 {
-    private readonly ICRUD_Service<Color, int> _colorService;
-    private readonly IColorProvider _colorProvider;
+    private readonly ICRUD_Service<Dimension, int> _dimensionService;
+    private readonly IDimensionProvider _dimensionProvider;
 
-
-    public ColorController(ICRUD_Service<Color, int> colorService, IColorProvider colorProvider)
+    public DimensionController(ICRUD_Service<Dimension, int> dimensionService, IDimensionProvider dimensionProvider)
     {
-        _colorService = colorService;
-        _colorProvider = colorProvider;
+        _dimensionService = dimensionService;
+        _dimensionProvider = dimensionProvider;
     }
 
     [HttpGet]
@@ -27,18 +24,18 @@ public class ColorController : ControllerBase
 
     public async Task<IActionResult> GetAll()
     {
-        var rs = await _colorService.GetAll();
+        var rs = await _dimensionService.GetAll();
         return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
-        
+
     }
 
     [HttpPost]
     [Consumes("application/json")]
     [Produces("application/json")]
 
-    public async Task<IActionResult> Save([FromBody] Color color)
+    public async Task<IActionResult> Save([FromBody] Dimension dimension)
     {
-        var rs = await _colorService.Create(color);
+        var rs = await _dimensionService.Create(dimension);
         return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }
@@ -47,9 +44,9 @@ public class ColorController : ControllerBase
     [Consumes("application/json")]
     [Produces("application/json")]
 
-    public async Task<IActionResult> Update([FromBody] Color color)
+    public async Task<IActionResult> Update([FromBody] Dimension dimension)
     {
-        var rs = await _colorService.Update(color);
+        var rs = await _dimensionService.Update(dimension);
         return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }
@@ -60,9 +57,8 @@ public class ColorController : ControllerBase
 
     public async Task<IActionResult> Delete(int id)
     {
-        var rs = await _colorService.Delete(id);
+        var rs = await _dimensionService.Delete(id);
         return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }
-
 }
