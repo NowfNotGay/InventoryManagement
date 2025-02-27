@@ -2,20 +2,24 @@
 using Base.Example;
 using Base.MasterData;
 using Base.ProductClassification;
+using Base.ProductManagement;
 using Base.ProductProperties;
 using Context.Example;
 using Context.MasterData;
 using Context.ProductClassification;
+using Context.ProductManagement;
 using Context.ProductProperties;
 using Core.ExampleClass;
 using Core.MasterData;
 using Core.ProductClassification;
+using Core.ProductManagement;
 using Core.ProductProperties;
 using Helper.Method;
 using Microsoft.EntityFrameworkCore;
 using Servicer.Example;
 using Servicer.MasterData;
 using Servicer.ProductClassification;
+using Servicer.ProductManagement;
 using Servicer.ProductProperties;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +45,11 @@ builder.Services.AddDbContext<DB_ProductProperties_Context>(options =>
         );
 
 builder.Services.AddDbContext<DB_ProductClassification_Context>(options =>
+          options.UseLazyLoadingProxies().UseSqlServer(
+                     General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!),
+                      sqlServerOptions => sqlServerOptions.CommandTimeout(360))
+        );
+builder.Services.AddDbContext<DB_ProductManagement_Context>(options =>
           options.UseLazyLoadingProxies().UseSqlServer(
                      General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!),
                       sqlServerOptions => sqlServerOptions.CommandTimeout(360))
@@ -103,6 +112,12 @@ builder.Services.AddTransient<ICRUD_Service<Brand, int>, BrandProvider>();
 //Vehicle Model - Hai
 builder.Services.AddTransient<IVehicleModelProvider, VehicleModelProvider>();
 builder.Services.AddTransient<ICRUD_Service<VehicleModel, int>, VehicleModelProvider>();
+#endregion
+
+#region Product_Management
+//Product Variant - Duy
+builder.Services.AddTransient<IProductVariantProvider, ProductVariantProvider>();
+builder.Services.AddTransient<ICRUD_Service<ProductVariant, int>, ProductVariantProvider>();
 #endregion
 
 #region Warehouse_Management

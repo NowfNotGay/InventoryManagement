@@ -11,7 +11,7 @@ public class DB_ProductManagement_Context : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ProductVariant>()
-            .ToTable("Color")
+            .ToTable("ProductVariant")
             .HasKey(c => c.RowPointer);
 
         modelBuilder.Entity<ProductVariant>()

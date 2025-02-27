@@ -33,7 +33,7 @@ public class StorageBinProvider : ICRUD_Service<StorageBin, int>, IStorageBinPro
                 if (_db.SaveChanges() <= 0)
                 {
                     result.Message = "Failed to create data";
-                    result.Code = "1";
+                    result.Code = "-1";
                 }
                 await transaction.CommitAsync();
                 result.Message = "Success";
@@ -41,46 +41,19 @@ public class StorageBinProvider : ICRUD_Service<StorageBin, int>, IStorageBinPro
                 result.Data = entity;
                 return result;
             }
-            catch (SqlException ex)
+            catch (SqlException sqlEx)
             {
                 await transaction.RollbackAsync();
-                switch (ex.Number)
-                {
-                    case 53:
-                        result.Code = "1001";
-                        result.Message = "Database connection failed";
-                        break;
-
-                    case 208:
-                        result.Code = "1007";
-                        result.Message = "SQL Error: Table or column not found";
-                        break;
-
-                    case 156:
-                        result.Code = "1005";
-                        result.Message = "SQL syntax error";
-                        break;
-
-                    case 1205:
-                        result.Code = "1006";
-                        result.Message = "Deadlock occurred, transaction rolled back";
-                        break;
-
-                    default:
-                        result.Code = "1099";
-                        result.Message = $"SQL Error: {ex.Message}";
-                        break;
-                }
+                result.Code = "1";
+                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
                 return result;
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                result.Code = "1";
-                result.Message = $"{ex.GetType()} - {ex.Message}";
+                result.Message = ex.Message;
+                result.Code = "999";
                 return result;
-
-
             }
         }
     }
@@ -105,7 +78,7 @@ public class StorageBinProvider : ICRUD_Service<StorageBin, int>, IStorageBinPro
                 if (_db.SaveChanges() <= 0)
                 {
                     result.Message = "Failed to delete data";
-                    result.Code = "1";
+                    result.Code = "-1";
                     result.Data = "false";
                     return result;
                 }
@@ -115,43 +88,18 @@ public class StorageBinProvider : ICRUD_Service<StorageBin, int>, IStorageBinPro
                 result.Data = "true";
                 return result;
             }
-            catch (SqlException ex)
+            catch (SqlException sqlEx)
             {
                 await transaction.RollbackAsync();
-                switch (ex.Number)
-                {
-                    case 53:
-                        result.Code = "1001";
-                        result.Message = "Database connection failed";
-                        break;
-
-                    case 208:
-                        result.Code = "1007";
-                        result.Message = "SQL Error: Table or column not found";
-                        break;
-
-                    case 156:
-                        result.Code = "1005";
-                        result.Message = "SQL syntax error";
-                        break;
-
-                    case 1205:
-                        result.Code = "1006";
-                        result.Message = "Deadlock occurred, transaction rolled back";
-                        break;
-
-                    default:
-                        result.Code = "1099";
-                        result.Message = $"SQL Error: {ex.Message}";
-                        break;
-                }
+                result.Code = "1";
+                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
                 return result;
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                result.Code = "1";
-                result.Message = $"{ex.GetType()} - {ex.Message}";
+                result.Message = ex.Message;
+                result.Code = "999";
                 return result;
             }
         }
@@ -162,25 +110,38 @@ public class StorageBinProvider : ICRUD_Service<StorageBin, int>, IStorageBinPro
         ResultService<StorageBin> result = new();
         using (var sqlConnection = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
-            await sqlConnection.OpenAsync();
-            result.Data = await sqlConnection.QuerySingleOrDefaultAsync<StorageBin>("StorageBin_GetByID",
-                new
+            try
+            {
+                await sqlConnection.OpenAsync();
+                var rs = await sqlConnection.QuerySingleOrDefaultAsync<StorageBin>("StorageBin_GetByID",
+                    new
+                    {
+                        ID = id
+                    },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 240);
+                if (rs == null)
                 {
-                    ID = id
-                },
-                commandType: CommandType.StoredProcedure,
-                commandTimeout: 240);
-            if (result.Data == null)
-            {
-                result.Message = "Failed to get data";
-                result.Code = "1";
+                    result.Message = "Failed to get data";
+                    result.Code = "1";
+
+                }
+                else
+                {
+                    result.Message = "Success";
+                    result.Code = "0";
+                    result.Data = rs;
+                }
+
+                return result;
             }
-            else
+            catch (Exception ex)
             {
-                result.Message = "Success";
-                result.Code = "0";
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
             }
-            return result;
+
         }
     }
 
@@ -189,25 +150,34 @@ public class StorageBinProvider : ICRUD_Service<StorageBin, int>, IStorageBinPro
         ResultService<IEnumerable<StorageBin>> result = new();
         using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
-            await sqlconnect.OpenAsync();
-            result.Data = await sqlconnect.QueryAsync<StorageBin>("StorageBin_GetAll",
-                new
-                {
+            try
+            {
+                await sqlconnect.OpenAsync();
+                result.Data = await sqlconnect.QueryAsync<StorageBin>("StorageBin_GetAll",
+                    new
+                    {
 
-                },
-                 commandType: CommandType.StoredProcedure,
-                 commandTimeout: 240);
-            if (result.Data == null)
-            {
-                result.Message = "Failed to get data";
-                result.Code = "1";
+                    },
+                     commandType: CommandType.StoredProcedure,
+                     commandTimeout: 240);
+                if (result.Data == null)
+                {
+                    result.Message = "Failed to get data";
+                    result.Code = "1";
+                }
+                else
+                {
+                    result.Message = "Success";
+                    result.Code = "0";
+                }
+                return result;
             }
-            else
+            catch (Exception ex)
             {
-                result.Message = "Success";
-                result.Code = "0";
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
             }
-            return result;
         }
     }
 
@@ -222,7 +192,7 @@ public class StorageBinProvider : ICRUD_Service<StorageBin, int>, IStorageBinPro
                 if (newObj == null)
                 {
                     result.Message = "Data not found!";
-                    result.Code = "1";
+                    result.Code = "-1";
                     result.Data = null;
                     return result;
                 }
@@ -247,45 +217,19 @@ public class StorageBinProvider : ICRUD_Service<StorageBin, int>, IStorageBinPro
                 result.Data = entity;
                 return result;
             }
-            catch (SqlException ex)
+            catch (SqlException sqlEx)
             {
                 await transaction.RollbackAsync();
-                switch (ex.Number)
-                {
-                    case 53:
-                        result.Code = "1001";
-                        result.Message = "Database connection failed";
-                        break;
-
-                    case 208:
-                        result.Code = "1007";
-                        result.Message = "SQL Error: Table or column not found";
-                        break;
-
-                    case 156:
-                        result.Code = "1005";
-                        result.Message = "SQL syntax error";
-                        break;
-
-                    case 1205:
-                        result.Code = "1006";
-                        result.Message = "Deadlock occurred, transaction rolled back";
-                        break;
-
-                    default:
-                        result.Code = "1099";
-                        result.Message = $"SQL Error: {ex.Message}";
-                        break;
-                }
+                result.Code = "1";
+                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
                 return result;
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
                 result.Message = ex.Message;
-                result.Code = "1";
+                result.Code = "999";
                 return result;
-
             }
         }
     }
