@@ -61,6 +61,7 @@ builder.Services.AddTransient<DB_Testing_Context>();
 builder.Services.AddTransient<DB_MasterData_Context>();
 builder.Services.AddTransient<DB_ProductProperties_Context>();
 builder.Services.AddTransient<DB_ProductClassification_Context>();
+builder.Services.AddTransient<DB_ProductManagement_Context>();
 #endregion
 
 #region Add Dependency Injection
