@@ -61,7 +61,6 @@ builder.Services.AddTransient<DB_Testing_Context>();
 builder.Services.AddTransient<DB_MasterData_Context>();
 builder.Services.AddTransient<DB_ProductProperties_Context>();
 builder.Services.AddTransient<DB_ProductClassification_Context>();
-builder.Services.AddTransient<DB_ProductManagement_Context>();
 #endregion
 
 #region Add Dependency Injection
@@ -95,17 +94,9 @@ builder.Services.AddTransient<ICRUD_Service<StorageBin, int>, StorageBinProvider
 
 #region Product_Properties
 
-//Color - Bao
+//Color
 builder.Services.AddTransient<IColorProvider, ColorProvider>();
 builder.Services.AddTransient<ICRUD_Service<Color, int>, ColorProvider>();
-
-//Material - Bao
-builder.Services.AddTransient<IMaterialProvider, MaterialProvider>();
-builder.Services.AddTransient<ICRUD_Service<Material, int>, MaterialProvider>();
-
-//Dimension - Bao
-builder.Services.AddTransient<IDimensionProvider, DimensionProvider>();
-builder.Services.AddTransient<ICRUD_Service<Dimension, int>, DimensionProvider>();
 #endregion
 
 #region Product_Classification
@@ -124,11 +115,10 @@ builder.Services.AddTransient<ICRUD_Service<VehicleModel, int>, VehicleModelProv
 #endregion
 
 #region Product_Management
-//Product - Bao
-builder.Services.AddTransient<IProductProvider, ProductProvider>();
-builder.Services.AddTransient<ICRUD_Service<Product, int>, ProductProvider>();
+//Product Variant - Duy
+builder.Services.AddTransient<IProductVariantProvider, ProductVariantProvider>();
+builder.Services.AddTransient<ICRUD_Service<ProductVariant, int>, ProductVariantProvider>();
 #endregion
-
 
 #region Warehouse_Management
 //

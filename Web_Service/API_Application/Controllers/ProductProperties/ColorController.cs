@@ -4,7 +4,6 @@ using Core.MasterData;
 using Core.ProductProperties;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Servicer.ProductProperties;
 
 namespace API_Application.Controllers.ProductProperties;
 [Route("api/[controller]")]
@@ -13,7 +12,6 @@ public class ColorController : ControllerBase
 {
     private readonly ICRUD_Service<Color, int> _colorService;
     private readonly IColorProvider _colorProvider;
-
 
     public ColorController(ICRUD_Service<Color, int> colorService, IColorProvider colorProvider)
     {

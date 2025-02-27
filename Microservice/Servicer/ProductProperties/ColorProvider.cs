@@ -8,20 +8,17 @@ using Helper.Method;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
-using static Dapper.SqlMapper;
 
 namespace Servicer.ProductProperties;
 public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
 {
     private readonly DB_ProductProperties_Context _dB;
     private readonly IConfiguration _configuration;
-    private readonly string _dapperConnectionString;
 
     public ColorProvider(DB_ProductProperties_Context dB, IConfiguration configuration)
     {
         _dB = dB;
         _configuration = configuration;
-        _dapperConnectionString = General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER")!);
     }
 
     public async Task<ResultService<Color>> Create(Color entity)
@@ -56,7 +53,7 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
             {
                 await transaction.RollbackAsync();
                 result.Code = "2";
-                result.Message = ex.Message;
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
                 return result;
             }
             catch (Exception ex)
@@ -110,7 +107,7 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
             {
                 await transaction.RollbackAsync();
                 result.Code = "2";
-                result.Message = ex.Message;
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
                 return result;
             }
             catch (Exception ex)
@@ -127,7 +124,7 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
     public async Task<ResultService<Color>> Get(int id)
     {
         ResultService<Color> result = new();
-        using (var sqlconnect = new SqlConnection(_dapperConnectionString))
+        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
             try
             {
@@ -165,7 +162,7 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
     public async Task<ResultService<IEnumerable<Color>>> GetAll()
     {
         ResultService<IEnumerable<Color>> result = new();
-        using (var sqlconnect = new SqlConnection(_dapperConnectionString))
+        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
             try
             {
@@ -243,7 +240,7 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
             {
                 await transaction.RollbackAsync();
                 result.Code = "2";
-                result.Message = ex.Message;
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
                 return result;
             }
             catch (Exception ex)
@@ -255,5 +252,4 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
             }
         }
     }
-
 }
