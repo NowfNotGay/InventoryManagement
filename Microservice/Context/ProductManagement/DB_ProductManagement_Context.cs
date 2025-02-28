@@ -8,8 +8,10 @@ public class DB_ProductManagement_Context : DbContext
     {
     }
     public DbSet<ProductVariant> ProductVariants { get; set; }
+    public DbSet<ProductAttribute> ProductAttributes { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        //Product Variant
         modelBuilder.Entity<ProductVariant>()
             .ToTable("ProductVariant")
             .HasKey(c => c.RowPointer);
@@ -25,6 +27,15 @@ public class DB_ProductManagement_Context : DbContext
         modelBuilder.Entity<ProductVariant>()
             .Property(c => c.Attributes)
             .HasMaxLength(500);
+
+        //Product Attribute
+        modelBuilder.Entity<ProductVariant>()
+            .ToTable("ProductAttribute")
+            .HasKey(c => c.RowPointer);
+
+        modelBuilder.Entity<ProductVariant>()
+            .Property(c => c.RowPointer)
+            .HasDefaultValueSql("NEWSEQUENTIALID()");
 
         base.OnModelCreating(modelBuilder);
     }

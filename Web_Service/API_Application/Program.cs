@@ -118,6 +118,9 @@ builder.Services.AddTransient<ICRUD_Service<VehicleModel, int>, VehicleModelProv
 //Product Variant - Duy
 builder.Services.AddTransient<IProductVariantProvider, ProductVariantProvider>();
 builder.Services.AddTransient<ICRUD_Service<ProductVariant, int>, ProductVariantProvider>();
+//Product Attribute - Duy
+builder.Services.AddTransient<IProductAttributeProvider, ProductAttributeProvider>();
+builder.Services.AddTransient<ICRUD_Service<ProductAttribute, int>, ProductAttributeProvider>();
 #endregion
 
 #region Warehouse_Management
