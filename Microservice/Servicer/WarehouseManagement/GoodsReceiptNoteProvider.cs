@@ -19,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using static Dapper.SqlMapper;
 using Azure;
+using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 namespace Servicer.WarehouseManagement
 {
@@ -363,10 +364,10 @@ namespace Servicer.WarehouseManagement
             try
             {
                 string Message = string.Empty;
-                entity.GRNCode = entity.GRNCode == "string" ? string.Empty : entity.GRNCode;
+                entity.GRNCode = !entity.GRNCode.Contains("GRN") ? string.Empty : entity.GRNCode;
                 List<GoodsReceiptNote> lst = new List<GoodsReceiptNote>();
                 lst.Add(entity);
-                DataTable dt = General.ConvertToDataTable(lst);
+                DataTable dtHeader = General.ConvertToDataTable(lst);
                 string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
                 using (var connection = new SqlConnection(conn))
                 {
@@ -374,7 +375,8 @@ namespace Servicer.WarehouseManagement
                     await connection.OpenAsync();
                     var param = new DynamicParameters();
                     param.Add("@CreatedBy", entity.CreatedBy);
-                    param.Add("@udtt_Header", dt.AsTableValuedParameter("UDTT_GoodsReceiptNoteHeader"));
+                    
+                    param.Add("@udtt_Header", dtHeader.AsTableValuedParameter("UDTT_GoodsReceiptNoteHeader"));
                     param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
                     await connection.QueryAsync<GoodsReceiptNote>("GoodsReceiptNote_Create",
                        param,
@@ -462,7 +464,294 @@ namespace Servicer.WarehouseManagement
                     }
                     else
                     {
-                        resultService.Code = "-999"; // Success
+                        resultService.Code = "-999";
+                        resultService.Message = "Failed";
+                    }
+
+                    return resultService;
+                }
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "2",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "3",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+            catch (OperationCanceledException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "4",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+            catch (SqlException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "5",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "6",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+        }
+
+        public async Task<ResultService<GoodsReceiptNote_Param>> CreateHeaderAndLine(GoodsReceiptNote_Param entity)
+            {
+            var response = new ResultService<GoodsReceiptNote_Param>();
+            if (entity == null)
+            {
+                return new ResultService<GoodsReceiptNote_Param>()
+                {
+                    Code = "1",
+                    Message = "Entity is not valid"
+                };
+            }
+            try
+            {
+                string Message = string.Empty;
+                entity.GRNs[0].GRNCode = !entity.GRNs[0].GRNCode.Contains("GRN") ? string.Empty : entity.GRNs[0].GRNCode;
+
+                string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+                using (var connection = new SqlConnection(conn))
+                {
+                    await connection.OpenAsync();
+                    var param = new DynamicParameters();
+                    param.Add("@CreatedBy", entity.CreatedBy);
+                    param.Add("@udtt_Header", General.ConvertToDataTable(entity.GRNs).AsTableValuedParameter("UDTT_GoodsReceiptNoteHeader"));
+                    param.Add("@udtt_Detail", General.ConvertToDataTable(entity.GRNLines).AsTableValuedParameter("UDTT_GoodsReceiptNoteDetail"));
+                    param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                    await connection.QueryAsync<GoodsReceiptNote>("GoodsReceiptNote_Create",
+                       param,
+                       commandType: CommandType.StoredProcedure,
+                          commandTimeout: TimeoutInSeconds);
+                    var resultMessage = param.Get<string>("@Message");
+
+                    if (resultMessage.Contains("OK"))
+                    {
+                        response.Code = "0"; // Success
+                        response.Message = "Save Successfully";
+                    }
+                    else
+                    {
+                        response.Code = "-999"; // Success
+                        response.Message = "Failed";
+                    }
+
+                    return response;
+
+                }
+            }
+            catch (SqlException sqlex)
+            {
+
+                response.Code = "2";
+                response.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
+                return response;
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+
+                response.Code = "3";
+                response.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (DbUpdateException ex)
+            {
+
+                response.Code = "4";
+                response.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (OperationCanceledException ex)
+            {
+
+                response.Code = "5";
+                response.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (Exception ex)
+            {
+
+                response.Code = "6";
+                response.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+        }
+
+        public async  Task<ResultService<string>> DeleteLine(List<GoodsReceiptNoteLine> entity)
+        {
+            ResultService<string> resultService = new ResultService<string>();
+            try
+            {
+                string Message = string.Empty;
+                string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+                using (var connection = new SqlConnection(conn))
+                {
+
+                    await connection.OpenAsync();
+                    var param = new DynamicParameters();
+                    param.Add("@udtt_Detail", General.ConvertToDataTable(entity).AsTableValuedParameter("UDTT_GoodsReceiptNoteDetail"));
+                    param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                    await connection.QueryAsync<GoodsReceiptNote>("GoodReceiptNoteDetail_Delete_Multi",
+                       param,
+                       commandType: CommandType.StoredProcedure,
+                          commandTimeout: TimeoutInSeconds);
+                    var resultMessage = param.Get<string>("@Message");
+
+                    if (resultMessage.Contains("OK"))
+                    {
+                        resultService.Code = "0"; // Success
+                        resultService.Message = "Deleted Successfully";
+                    }
+                    else
+                    {
+                        resultService.Code = "-999";
+                        resultService.Message = "Failed";
+                    }
+
+                    return resultService;
+                }
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "2",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "3",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+            catch (OperationCanceledException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "4",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+            catch (SqlException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "5",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "6",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+        }
+
+        public async  Task<ResultService<IEnumerable<GoodsReceiptNoteLine>>> GetLineByRefCode(string GRNcode)
+        {
+            var response = new ResultService<IEnumerable<GoodsReceiptNoteLine>>();
+            string connectionString = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+                {
+                    await sqlConnection.OpenAsync();
+                    var parameter = new DynamicParameters();
+                    parameter.Add("@GRNCode", GRNcode);
+                    var result = await sqlConnection.QueryAsync<GoodsReceiptNoteLine>("GoodsReceiptNoteDetail_GetByGRNCode",
+                        commandType: CommandType.StoredProcedure,
+                           commandTimeout: TimeoutInSeconds);
+
+                    response.Code = "0";// Success
+                    response.Message = "Success";
+                    response.Data = result;
+                    return response;
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                response.Code = "1";
+                response.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return response;
+            }
+            catch (ArgumentException ex)
+            {
+                response.Code = "2";
+                response.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Code = "999";
+                response.Message = $"An error occurred while executing store Procedure. Details: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+        }
+
+        public async Task<ResultService<string>> Delete_HeaderAndDetail(int grnID)
+        {
+            ResultService<string> resultService = new ResultService<string>();
+            try
+            {
+                string Message = string.Empty;
+                string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+                using (var connection = new SqlConnection(conn))
+                {
+                    await connection.OpenAsync();
+                    var param = new DynamicParameters();
+                    param.Add("@grnID", grnID);
+                    param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                    await connection.QueryAsync<GoodsReceiptNote>("GoodReceiptNote_Delete_HeaderAndDetail",
+                       param,
+                       commandType: CommandType.StoredProcedure,
+                          commandTimeout: TimeoutInSeconds);
+                    var resultMessage = param.Get<string>("@Message");
+
+                    if (resultMessage.Contains("OK"))
+                    {
+                        resultService.Code = "0"; // Success
+                        resultService.Message = "Deleted Successfully";
+                    }
+                    else
+                    {
+                        resultService.Code = "-999";
                         resultService.Message = "Failed";
                     }
 

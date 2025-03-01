@@ -88,5 +88,45 @@ namespace API_Application.Controllers.WarehouseManagement
             var rs = await _GoodsReceiptNoteProvider.CreateByDapper(GoodsReceiptNote);
             return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
         }
+
+        [HttpGet("/GoodsReceiptNoteLine/GRNCode")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+
+        public async Task<IActionResult> GoodsReceiptNoteLine_GetAll([FromQuery]string GRNCode)
+        {
+            var rs = await _GoodsReceiptNoteProvider.GetLineByRefCode(GRNCode);
+            return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
+        }
+
+        [HttpPost("/HeaderLine/CreateAndCreate")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+
+        public async Task<IActionResult> GoodsReceiptNote_Create_HeaderAndLine([FromBody]GoodsReceiptNote_Param param)
+        {
+            var rs = await _GoodsReceiptNoteProvider.CreateHeaderAndLine(param);
+            return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
+        }
+
+        [HttpDelete("/GoodsReceiptNoteLine/DeleteMultiLine")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+
+        public async Task<IActionResult> GoodsReceiptNoteLine_Delete_Multi([FromBody] List<GoodsReceiptNoteLine> param)
+        {
+            var rs = await _GoodsReceiptNoteProvider.DeleteLine(param);
+            return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
+        }
+
+        [HttpDelete("/HeaderLine/DeleteHeaderAndLine/ID")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+
+        public async Task<IActionResult> Delete_HeaderAndDetail([FromQuery]int grnID)
+        {
+            var rs = await _GoodsReceiptNoteProvider.Delete_HeaderAndDetail(grnID);
+            return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+        }
     }
 }
