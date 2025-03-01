@@ -29,11 +29,11 @@ public class DB_ProductManagement_Context : DbContext
             .HasMaxLength(500);
 
         //Product Attribute
-        modelBuilder.Entity<ProductVariant>()
+        modelBuilder.Entity<ProductAttribute>()
             .ToTable("ProductAttribute")
             .HasKey(c => c.RowPointer);
 
-        modelBuilder.Entity<ProductVariant>()
+        modelBuilder.Entity<ProductAttribute>()
             .Property(c => c.RowPointer)
             .HasDefaultValueSql("NEWSEQUENTIALID()");
 
