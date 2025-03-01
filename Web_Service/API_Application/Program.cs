@@ -4,16 +4,19 @@ using Base.MasterData;
 using Base.ProductClassification;
 using Base.ProductManagement;
 using Base.ProductProperties;
+using Base.WarehouseManagement;
 using Context.Example;
 using Context.MasterData;
 using Context.ProductClassification;
 using Context.ProductManagement;
 using Context.ProductProperties;
+using Context.WarehouseManagement;
 using Core.ExampleClass;
 using Core.MasterData;
 using Core.ProductClassification;
 using Core.ProductManagement;
 using Core.ProductProperties;
+using Core.WarehouseManagement;
 using Helper.Method;
 using Microsoft.EntityFrameworkCore;
 using Servicer.Example;
@@ -21,6 +24,7 @@ using Servicer.MasterData;
 using Servicer.ProductClassification;
 using Servicer.ProductManagement;
 using Servicer.ProductProperties;
+using Servicer.WarehouseManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +58,11 @@ builder.Services.AddDbContext<DB_ProductManagement_Context>(options =>
                      General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!),
                       sqlServerOptions => sqlServerOptions.CommandTimeout(360))
         );
+builder.Services.AddDbContext<DB_WarehouseManagement_Context>(options =>
+          options.UseLazyLoadingProxies().UseSqlServer(
+                     General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!),
+                      sqlServerOptions => sqlServerOptions.CommandTimeout(360))
+        );
 
 
 #region Transient Context
@@ -61,6 +70,7 @@ builder.Services.AddTransient<DB_Testing_Context>();
 builder.Services.AddTransient<DB_MasterData_Context>();
 builder.Services.AddTransient<DB_ProductProperties_Context>();
 builder.Services.AddTransient<DB_ProductClassification_Context>();
+builder.Services.AddTransient<DB_WarehouseManagement_Context>();
 #endregion
 
 #region Add Dependency Injection
@@ -125,8 +135,11 @@ builder.Services.AddTransient<ICRUD_Service<ProductAttribute, int>, ProductAttri
 
 #region Warehouse_Management
 //
+builder.Services.AddTransient<ICRUD_Service<GoodsReceiptNote, int>, GoodsReceiptNoteProvider>();
+builder.Services.AddTransient<IGoodsReceiptNoteProvider, GoodsReceiptNoteProvider>();
 //
 #endregion
+
 
 #endregion
 
