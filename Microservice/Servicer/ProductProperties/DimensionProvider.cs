@@ -1,8 +1,8 @@
 ﻿using Base.BaseService;
-using Base.ProductClassification;
-using Context.ProductClassification;
+using Base.ProductProperties;
+using Context.ProductProperties;
 using Core.BaseClass;
-using Core.ProductClassification;
+using Core.ProductProperties;
 using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;
@@ -14,26 +14,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Servicer.ProductClassification;
-public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductTypeProvider
+namespace Servicer.ProductProperties;
+public class DimensionProvider : ICRUD_Service<Dimension, int>, IDimensionProvider
 {
-    private readonly DB_ProductClassification_Context _dB;
+    private readonly DB_ProductProperties_Context _dB;
     private readonly IConfiguration _configuration;
+    private readonly string _dapperConnectionString;
 
-    public ProductTypeProvider(DB_ProductClassification_Context dB, IConfiguration configuration)
+    public DimensionProvider(DB_ProductProperties_Context dB, IConfiguration configuration)
     {
         _dB = dB;
         _configuration = configuration;
+        _dapperConnectionString = General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER")!);
     }
 
-    public async Task<ResultService<ProductType>> Create(ProductType entity)
+    public async Task<ResultService<Dimension>> Create(Dimension entity)
     {
         using (var transaction = _dB.Database.BeginTransaction())
         {
-            ResultService<ProductType> result = new();
+            ResultService<Dimension> result = new();
+
             try
             {
-                await _dB.ProductTypes.AddAsync(entity);
+                await _dB.Dimensions.AddAsync(entity);
 
 
                 if (_dB.SaveChanges() <= 0)
@@ -87,7 +90,7 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
                     return result;
 
                 }
-                _dB.ProductTypes.Remove(obj.Data);
+                _dB.Dimensions.Remove(obj.Data);
                 if (_dB.SaveChanges() <= 0)
                 {
                     result.Message = "Failed to delete data";
@@ -126,15 +129,15 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
         }
     }
 
-    public async Task<ResultService<ProductType>> Get(int id)
+    public async Task<ResultService<Dimension>> Get(int id)
     {
-        ResultService<ProductType> result = new();
-        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
+        ResultService<Dimension> result = new();
+        using (var sqlconnect = new SqlConnection(_dapperConnectionString))
         {
             try
             {
                 await sqlconnect.OpenAsync();
-                var rs = await sqlconnect.QuerySingleOrDefaultAsync<ProductType>("ProductType_GetByID",
+                var rs = await sqlconnect.QuerySingleOrDefaultAsync<Dimension>("Dimension_GetByID",
                     new
                     {
                         ID = id
@@ -164,22 +167,22 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
         }
     }
 
-    public async Task<ResultService<IEnumerable<ProductType>>> GetAll()
+    public async Task<ResultService<IEnumerable<Dimension>>> GetAll()
     {
-        ResultService<IEnumerable<ProductType>> result = new();
-        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
+        ResultService<IEnumerable<Dimension>> result = new();
+        using (var sqlconnect = new SqlConnection(_dapperConnectionString))
         {
             try
             {
                 await sqlconnect.OpenAsync();
-                var rs = await sqlconnect.QueryAsync<ProductType>("ProductType_GetAll",
+                result.Data = await sqlconnect.QueryAsync<Dimension>("Dimension_GetAll",
                     new
                     {
 
                     },
                      commandType: CommandType.StoredProcedure,
                      commandTimeout: 240);
-                if (rs == null)
+                if (result.Data == null)
                 {
                     result.Message = "Failed to get data";
                     result.Code = "1";
@@ -189,7 +192,6 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
                     result.Message = "Success";
                     result.Code = "0";
                 }
-                result.Data = rs;
                 return result;
             }
             catch (Exception ex)
@@ -201,14 +203,14 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
         }
     }
 
-    public async Task<ResultService<ProductType>> Update(ProductType entity)
+    public async Task<ResultService<Dimension>> Update(Dimension entity)
     {
-        ResultService<ProductType> result = new();
+        ResultService<Dimension> result = new();
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
-                var obj = await _dB.ProductTypes.FindAsync(entity.RowPointer);
+                var obj = await _dB.Dimensions.FindAsync(entity.RowPointer);
                 if (obj == null)
                 {
                     result.Message = "Data not found!";
@@ -216,8 +218,10 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
                     result.Data = null;
                     return result;
                 }
-                obj.ProductTypeCode = entity.ProductTypeCode;
-                obj.ProductTypeName = entity.ProductTypeName;
+                obj.Height = entity.Height;
+                obj.Length = entity.Length;
+                obj.Width = entity.Width;
+                obj.UoMName = entity.UoMName;
                 obj.UpdatedBy = entity.UpdatedBy;
                 obj.UpdatedDate = DateTime.Now;
 

@@ -4,16 +4,19 @@ using Base.MasterData;
 using Base.ProductClassification;
 using Base.ProductManagement;
 using Base.ProductProperties;
+using Base.WarehouseManagement;
 using Context.Example;
 using Context.MasterData;
 using Context.ProductClassification;
 using Context.ProductManagement;
 using Context.ProductProperties;
+using Context.WarehouseManagement;
 using Core.ExampleClass;
 using Core.MasterData;
 using Core.ProductClassification;
 using Core.ProductManagement;
 using Core.ProductProperties;
+using Core.WarehouseManagement;
 using Helper.Method;
 using Microsoft.EntityFrameworkCore;
 using Servicer.Example;
@@ -21,6 +24,7 @@ using Servicer.MasterData;
 using Servicer.ProductClassification;
 using Servicer.ProductManagement;
 using Servicer.ProductProperties;
+using Servicer.WarehouseManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +58,11 @@ builder.Services.AddDbContext<DB_ProductManagement_Context>(options =>
                      General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!),
                       sqlServerOptions => sqlServerOptions.CommandTimeout(360))
         );
+builder.Services.AddDbContext<DB_WarehouseManagement_Context>(options =>
+          options.UseLazyLoadingProxies().UseSqlServer(
+                     General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!),
+                      sqlServerOptions => sqlServerOptions.CommandTimeout(360))
+        );
 
 
 #region Transient Context
@@ -61,6 +70,7 @@ builder.Services.AddTransient<DB_Testing_Context>();
 builder.Services.AddTransient<DB_MasterData_Context>();
 builder.Services.AddTransient<DB_ProductProperties_Context>();
 builder.Services.AddTransient<DB_ProductClassification_Context>();
+builder.Services.AddTransient<DB_WarehouseManagement_Context>();
 #endregion
 
 #region Add Dependency Injection
@@ -97,6 +107,13 @@ builder.Services.AddTransient<ICRUD_Service<StorageBin, int>, StorageBinProvider
 //Color
 builder.Services.AddTransient<IColorProvider, ColorProvider>();
 builder.Services.AddTransient<ICRUD_Service<Color, int>, ColorProvider>();
+//Material - Bao
+builder.Services.AddTransient<IMaterialProvider, MaterialProvider>();
+builder.Services.AddTransient<ICRUD_Service<Material, int>, MaterialProvider>();
+
+//Dimension - Bao
+builder.Services.AddTransient<IDimensionProvider, DimensionProvider>();
+builder.Services.AddTransient<ICRUD_Service<Dimension, int>, DimensionProvider>();
 #endregion
 
 #region Product_Classification
@@ -115,6 +132,9 @@ builder.Services.AddTransient<ICRUD_Service<VehicleModel, int>, VehicleModelProv
 #endregion
 
 #region Product_Management
+//Product - Bao
+builder.Services.AddTransient<IProductProvider, ProductProvider>();
+builder.Services.AddTransient<ICRUD_Service<Product, int>, ProductProvider>();
 //Product Variant - Duy
 builder.Services.AddTransient<IProductVariantProvider, ProductVariantProvider>();
 builder.Services.AddTransient<ICRUD_Service<ProductVariant, int>, ProductVariantProvider>();
@@ -125,8 +145,11 @@ builder.Services.AddTransient<ICRUD_Service<ProductAttribute, int>, ProductAttri
 
 #region Warehouse_Management
 //
+builder.Services.AddTransient<ICRUD_Service<GoodsReceiptNote, int>, GoodsReceiptNoteProvider>();
+builder.Services.AddTransient<IGoodsReceiptNoteProvider, GoodsReceiptNoteProvider>();
 //
 #endregion
+
 
 #endregion
 
