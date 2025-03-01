@@ -21,6 +21,8 @@ namespace API_Application.Controllers.WarehouseManagement
             _ICRUD_Service = iCRUD_Service;
         }
 
+
+        #region GoodsReceiptNote
         [HttpGet]
         [Consumes("application/json")]
         [Produces("application/json")]
@@ -93,21 +95,16 @@ namespace API_Application.Controllers.WarehouseManagement
         [Consumes("application/json")]
         [Produces("application/json")]
 
+        #endregion
+
+        #region GoodsReceiptNoteLine
+
         public async Task<IActionResult> GoodsReceiptNoteLine_GetAll([FromQuery]string GRNCode)
         {
             var rs = await _GoodsReceiptNoteProvider.GetLineByRefCode(GRNCode);
             return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
         }
 
-        [HttpPost("/HeaderLine/CreateAndCreate")]
-        [Consumes("application/json")]
-        [Produces("application/json")]
-
-        public async Task<IActionResult> GoodsReceiptNote_Create_HeaderAndLine([FromBody]GoodsReceiptNote_Param param)
-        {
-            var rs = await _GoodsReceiptNoteProvider.CreateHeaderAndLine(param);
-            return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
-        }
 
         [HttpDelete("/GoodsReceiptNoteLine/DeleteMultiLine")]
         [Consumes("application/json")]
@@ -116,6 +113,19 @@ namespace API_Application.Controllers.WarehouseManagement
         public async Task<IActionResult> GoodsReceiptNoteLine_Delete_Multi([FromBody] List<GoodsReceiptNoteLine> param)
         {
             var rs = await _GoodsReceiptNoteProvider.DeleteLine(param);
+            return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
+        }
+        #endregion
+
+        #region GoodsReceiptNoteHeaderAndLine
+
+        [HttpPost("/HeaderLine/CreateBoth")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+
+        public async Task<IActionResult> GoodsReceiptNote_Create_HeaderAndLine([FromBody] GoodsReceiptNote_Param param)
+        {
+            var rs = await _GoodsReceiptNoteProvider.CreateHeaderAndLine(param);
             return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
         }
 
@@ -128,5 +138,8 @@ namespace API_Application.Controllers.WarehouseManagement
             var rs = await _GoodsReceiptNoteProvider.Delete_HeaderAndDetail(grnID);
             return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
         }
+
+        #endregion
+
     }
 }
