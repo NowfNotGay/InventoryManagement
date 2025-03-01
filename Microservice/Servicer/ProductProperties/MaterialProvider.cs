@@ -1,8 +1,8 @@
 ﻿using Base.BaseService;
-using Base.ProductClassification;
-using Context.ProductClassification;
+using Base.ProductProperties;
+using Context.ProductProperties;
 using Core.BaseClass;
-using Core.ProductClassification;
+using Core.ProductProperties;
 using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;
@@ -14,26 +14,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Servicer.ProductClassification;
-public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductTypeProvider
+namespace Servicer.ProductProperties;
+public class MaterialProvider : ICRUD_Service<Material, int>, IMaterialProvider
 {
-    private readonly DB_ProductClassification_Context _dB;
+    private readonly DB_ProductProperties_Context _dB;
     private readonly IConfiguration _configuration;
+    private readonly string _dapperConnectionString;
 
-    public ProductTypeProvider(DB_ProductClassification_Context dB, IConfiguration configuration)
+    public MaterialProvider(DB_ProductProperties_Context dB, IConfiguration configuration)
     {
         _dB = dB;
         _configuration = configuration;
+        _dapperConnectionString = General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER")!);
     }
 
-    public async Task<ResultService<ProductType>> Create(ProductType entity)
+    public async Task<ResultService<Material>> Create(Material entity)
     {
         using (var transaction = _dB.Database.BeginTransaction())
         {
-            ResultService<ProductType> result = new();
+            ResultService<Material> result = new();
             try
             {
-                await _dB.ProductTypes.AddAsync(entity);
+                await _dB.Materials.AddAsync(entity);
 
 
                 if (_dB.SaveChanges() <= 0)
@@ -87,7 +89,7 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
                     return result;
 
                 }
-                _dB.ProductTypes.Remove(obj.Data);
+                _dB.Materials.Remove(obj.Data);
                 if (_dB.SaveChanges() <= 0)
                 {
                     result.Message = "Failed to delete data";
@@ -126,15 +128,15 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
         }
     }
 
-    public async Task<ResultService<ProductType>> Get(int id)
+    public async Task<ResultService<Material>> Get(int id)
     {
-        ResultService<ProductType> result = new();
-        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
+        ResultService<Material> result = new();
+        using (var sqlconnect = new SqlConnection(_dapperConnectionString))
         {
             try
             {
                 await sqlconnect.OpenAsync();
-                var rs = await sqlconnect.QuerySingleOrDefaultAsync<ProductType>("ProductType_GetByID",
+                var rs = await sqlconnect.QuerySingleOrDefaultAsync<Material>("Material_GetByID",
                     new
                     {
                         ID = id
@@ -164,22 +166,22 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
         }
     }
 
-    public async Task<ResultService<IEnumerable<ProductType>>> GetAll()
+    public async Task<ResultService<IEnumerable<Material>>> GetAll()
     {
-        ResultService<IEnumerable<ProductType>> result = new();
-        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
+        ResultService<IEnumerable<Material>> result = new();
+        using (var sqlconnect = new SqlConnection(_dapperConnectionString))
         {
             try
             {
                 await sqlconnect.OpenAsync();
-                var rs = await sqlconnect.QueryAsync<ProductType>("ProductType_GetAll",
+                result.Data = await sqlconnect.QueryAsync<Material>("Material_GetAll",
                     new
                     {
 
                     },
                      commandType: CommandType.StoredProcedure,
                      commandTimeout: 240);
-                if (rs == null)
+                if (result.Data == null)
                 {
                     result.Message = "Failed to get data";
                     result.Code = "1";
@@ -189,7 +191,6 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
                     result.Message = "Success";
                     result.Code = "0";
                 }
-                result.Data = rs;
                 return result;
             }
             catch (Exception ex)
@@ -201,14 +202,14 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
         }
     }
 
-    public async Task<ResultService<ProductType>> Update(ProductType entity)
+    public async Task<ResultService<Material>> Update(Material entity)
     {
-        ResultService<ProductType> result = new();
+        ResultService<Material> result = new();
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
-                var obj = await _dB.ProductTypes.FindAsync(entity.RowPointer);
+                var obj = await _dB.Materials.FindAsync(entity.RowPointer);
                 if (obj == null)
                 {
                     result.Message = "Data not found!";
@@ -216,8 +217,8 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
                     result.Data = null;
                     return result;
                 }
-                obj.ProductTypeCode = entity.ProductTypeCode;
-                obj.ProductTypeName = entity.ProductTypeName;
+                obj.MaterialCode = entity.MaterialCode;
+                obj.MaterialName = entity.MaterialName;
                 obj.UpdatedBy = entity.UpdatedBy;
                 obj.UpdatedDate = DateTime.Now;
 
