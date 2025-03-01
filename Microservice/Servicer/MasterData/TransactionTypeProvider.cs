@@ -26,94 +26,6 @@ namespace Servicer.MasterData
 
         }
 
-        public async Task<ResultService<IEnumerable<TransactionType>>> GetAll()
-        {
-            var response = new ResultService<IEnumerable<TransactionType>>();
-            string connectionString = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
-            try
-            {
-                using (SqlConnection sqlConnection = new SqlConnection(connectionString))
-                {
-                    await sqlConnection.OpenAsync();
-                    var result = await sqlConnection.QueryAsync<TransactionType>("TransactionType_GetAll",
-                        commandType: CommandType.StoredProcedure,
-                           commandTimeout: TimeoutInSeconds);
-
-                    response.Code = "0";// Success
-                    response.Message = "Success";
-                    response.Data = result;
-                    return response;
-                }
-            }
-            catch (SqlException sqlEx)
-            {
-                response.Code = "1";
-                response.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
-                return response;
-            }
-            catch (ArgumentException ex)
-            {
-                response.Code = "2";
-                response.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
-                return response;
-            }
-            catch (Exception ex)
-            {
-                response.Code = "999";
-                response.Message = $"An error occurred while executing store Procedure. Details: {ex.GetType()} - {ex.Message}";
-                return response;
-            }
-        }
-
-        public async Task<ResultService<TransactionType>> Get(int id)
-        {
-            var response = new ResultService<TransactionType>();
-            string connectionString = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
-            try
-            {
-                using (SqlConnection sqlConnection = new SqlConnection(connectionString))
-                {
-                    await sqlConnection.OpenAsync();
-                    var param = new DynamicParameters();
-                    param.Add("@ID", id);
-                    var result = await sqlConnection.QuerySingleOrDefaultAsync<TransactionType>("TransactionType_GetByID",
-                        param,
-                        commandType: CommandType.StoredProcedure,
-                           commandTimeout: TimeoutInSeconds);
-                    if (result == null)
-                    {
-                        return new ResultService<TransactionType>()
-                        {
-                            Code = "-1",
-                            Message = "Entity not found",
-                            Data = null
-                        };
-                    }
-                    response.Code = "0";// Success
-                    response.Message = "Success";
-                    response.Data = result;
-                    return response;
-                }
-            }
-            catch (SqlException sqlEx)
-            {
-                response.Code = "1";
-                response.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
-                return response;
-            }
-            catch (ArgumentException ex)
-            {
-                response.Code = "2";
-                response.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
-                return response;
-            }
-            catch (Exception ex)
-            {
-                response.Code = "999";
-                response.Message = $"An error occurred while executing store Procedure. Details: {ex.GetType()} - {ex.Message}";
-                return response;
-            }
-        }
 
         public async Task<ResultService<TransactionType>> Create(TransactionType entity)
         {
@@ -182,7 +94,6 @@ namespace Servicer.MasterData
                     return response;
                 }
             }
-
         }
 
         public async Task<ResultService<TransactionType>> Update(TransactionType entity)
@@ -266,8 +177,7 @@ namespace Servicer.MasterData
             }
         }
 
-
-        async Task<ResultService<string>> Delete(int id)
+        public async Task<ResultService<string>> Delete(int id)
         {
             ResultService<string> resultService = new ResultService<string>();
             try
@@ -337,29 +247,93 @@ namespace Servicer.MasterData
             }
         }
 
-        Task<ResultService<TransactionType>> ICRUD_Service<TransactionType, int>.Create(TransactionType entity)
+        public async Task<ResultService<TransactionType>> Get(int id)
         {
-            throw new NotImplementedException();
+            var response = new ResultService<TransactionType>();
+            string connectionString = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+                {
+                    await sqlConnection.OpenAsync();
+                    var param = new DynamicParameters();
+                    param.Add("@ID", id);
+                    var result = await sqlConnection.QuerySingleOrDefaultAsync<TransactionType>("TransactionType_GetByID",
+                        param,
+                        commandType: CommandType.StoredProcedure,
+                           commandTimeout: TimeoutInSeconds);
+                    if (result == null)
+                    {
+                        return new ResultService<TransactionType>()
+                        {
+                            Code = "-1",
+                            Message = "Entity not found",
+                            Data = null
+                        };
+                    }
+                    response.Code = "0";// Success
+                    response.Message = "Success";
+                    response.Data = result;
+                    return response;
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                response.Code = "1";
+                response.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return response;
+            }
+            catch (ArgumentException ex)
+            {
+                response.Code = "2";
+                response.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Code = "999";
+                response.Message = $"An error occurred while executing store Procedure. Details: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
         }
 
-        Task<ResultService<TransactionType>> ICRUD_Service<TransactionType, int>.Update(TransactionType entity)
+        public async Task<ResultService<IEnumerable<TransactionType>>> GetAll()
         {
-            throw new NotImplementedException();
-        }
+            var response = new ResultService<IEnumerable<TransactionType>>();
+            string connectionString = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+                {
+                    await sqlConnection.OpenAsync();
+                    var result = await sqlConnection.QueryAsync<TransactionType>("TransactionType_GetAll",
+                        commandType: CommandType.StoredProcedure,
+                           commandTimeout: TimeoutInSeconds);
 
-        Task<ResultService<string>> ICRUD_Service<TransactionType, int>.Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<ResultService<TransactionType>> ICRUD_Service<TransactionType, int>.Get(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<ResultService<IEnumerable<TransactionType>>> ICRUD_Service<TransactionType, int>.GetAll()
-        {
-            throw new NotImplementedException();
+                    response.Code = "0";// Success
+                    response.Message = "Success";
+                    response.Data = result;
+                    return response;
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                response.Code = "1";
+                response.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return response;
+            }
+            catch (ArgumentException ex)
+            {
+                response.Code = "2";
+                response.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Code = "999";
+                response.Message = $"An error occurred while executing store Procedure. Details: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
         }
 
 
