@@ -18,6 +18,8 @@ public class DB_ProductProperties_Context : DbContext
     public DbSet<Material> Materials { get; set; }
 
     public DbSet<Dimension> Dimensions { get; set; }
+    public DbSet<UnitOfMeasure> UnitOfMeasures { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -42,6 +44,14 @@ public class DB_ProductProperties_Context : DbContext
 
         modelBuilder.Entity<Dimension>()
             .Property(d => d.RowPointer)
+            .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+        //Unit Of Measure - Hai
+        modelBuilder.Entity<UnitOfMeasure>()
+            .ToTable("UnitOfMeasure")
+            .HasKey(c => c.RowPointer);
+        modelBuilder.Entity<UnitOfMeasure>()
+            .Property(c => c.RowPointer)
             .HasDefaultValueSql("NEWSEQUENTIALID()");
 
 

@@ -1,12 +1,13 @@
-﻿using Base.BaseService;
-using Base.MasterData;
-using Context.MasterData;
+﻿using Azure;
+using Base.BaseService;
+using Base.ProductProperties;
+using Context.ProductProperties;
 using Core.BaseClass;
 using Core.MasterData;
+using Core.ProductProperties;
 using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -14,29 +15,30 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using static Dapper.SqlMapper;
 
-namespace Servicer.MasterData;
-public class WarehouseProvider : ICRUD_Service<Warehouse, int>,
-    IWarehouseProvider
+namespace Servicer.ProductProperties;
+public class UnitOfMeasureProvider : ICRUD_Service<UnitOfMeasure, int>, IUnitOfMeasureProvider
 {
-    private readonly DB_MasterData_Context _dB;
+    private readonly DB_ProductProperties_Context _dB;
     private readonly IConfiguration _configuration;
-    public WarehouseProvider(DB_MasterData_Context dB, IConfiguration configuration)
+    private readonly string _dapperConnectionString;
+    public UnitOfMeasureProvider(DB_ProductProperties_Context dB, IConfiguration configuration)
     {
         _dB = dB;
         _configuration = configuration;
+        _dapperConnectionString = General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER")!);
     }
 
-
-    public async Task<ResultService<Warehouse>> Create(Warehouse entity)
+    public async Task<ResultService<UnitOfMeasure>> Create(UnitOfMeasure entity)
     {
         using (var transaction = _dB.Database.BeginTransaction())
         {
-            ResultService<Warehouse> result = new();
+            ResultService<UnitOfMeasure> result = new();
             try
             {
-                await _dB.Warehouses.AddAsync(entity);
+                await _dB.UnitOfMeasures.AddAsync(entity);
 
                 if (_dB.SaveChanges() <= 0)
                 {
@@ -60,7 +62,7 @@ public class WarehouseProvider : ICRUD_Service<Warehouse, int>,
             {
                 await transaction.RollbackAsync();
                 result.Code = "2";
-                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                result.Message = ex.Message;
                 return result;
             }
             catch (Exception ex)
@@ -89,7 +91,8 @@ public class WarehouseProvider : ICRUD_Service<Warehouse, int>,
                     return result;
 
                 }
-                _dB.Warehouses.Remove(obj.Data);
+
+                _dB.UnitOfMeasures.Remove(obj.Data);
                 if (_dB.SaveChanges() <= 0)
                 {
                     result.Message = "Failed to delete data";
@@ -114,7 +117,7 @@ public class WarehouseProvider : ICRUD_Service<Warehouse, int>,
             {
                 await transaction.RollbackAsync();
                 result.Code = "2";
-                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                result.Message = ex.Message;
                 return result;
             }
             catch (Exception ex)
@@ -127,23 +130,20 @@ public class WarehouseProvider : ICRUD_Service<Warehouse, int>,
         }
     }
 
-    public async Task<ResultService<Warehouse>> Get(int id)
+    public async Task<ResultService<UnitOfMeasure>> Get(int id)
     {
-        ResultService<Warehouse> result = new();
-        using (var sqlconnect = new SqlConnection(General.DecryptString
-                    (_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
-        {
+        ResultService<UnitOfMeasure> result = new();
+        using (var sqlconnect = new SqlConnection(_dapperConnectionString))
             try
             {
                 await sqlconnect.OpenAsync();
-                var rs = await sqlconnect.QuerySingleOrDefaultAsync<Warehouse>(
-                    "Warehouse_GetByID",
+                var rs = await sqlconnect.QuerySingleOrDefaultAsync<UnitOfMeasure>("UoM_GetByID",
                     new
                     {
                         ID = id
                     },
-                    commandType: CommandType.StoredProcedure,
-                    commandTimeout: 240);
+                     commandType: CommandType.StoredProcedure,
+                     commandTimeout: 240);
                 if (rs == null)
                 {
                     result.Message = "Failed to get data";
@@ -164,22 +164,19 @@ public class WarehouseProvider : ICRUD_Service<Warehouse, int>,
                 result.Code = "999";
                 return result;
             }
-        }
     }
 
-    public async Task<ResultService<IEnumerable<Warehouse>>> GetAll()
+    public async Task<ResultService<IEnumerable<UnitOfMeasure>>> GetAll()
     {
-        ResultService<IEnumerable<Warehouse>> result = new();
-        using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
-        {
+        ResultService<IEnumerable<UnitOfMeasure>> result = new();
+        using (var sqlconnect = new SqlConnection(_dapperConnectionString))
             try
-            {
+        {
                 await sqlconnect.OpenAsync();
-                result.Data = await sqlconnect.QueryAsync<Warehouse>("Warehouse_GetAll",
-
-                     commandType: CommandType.StoredProcedure,
-                     commandTimeout: 240);
-
+                result.Data = await sqlconnect.QueryAsync<UnitOfMeasure>("UoM_GetAll",
+                    
+                         commandType: CommandType.StoredProcedure,
+                         commandTimeout: 240);
                 if (result.Data == null)
                 {
                     result.Message = "Failed to get data";
@@ -198,18 +195,17 @@ public class WarehouseProvider : ICRUD_Service<Warehouse, int>,
                 result.Code = "999";
                 return result;
             }
-        }
     }
 
-
-    public async Task<ResultService<Warehouse>> Update(Warehouse entity)
+    public async Task<ResultService<UnitOfMeasure>> Update(UnitOfMeasure entity)
     {
-        ResultService<Warehouse> result = new();
+        ResultService<UnitOfMeasure> result = new();
+
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
-                var obj = await _dB.Warehouses.FindAsync(entity.RowPointer);
+                var obj = await _dB.UnitOfMeasures.FindAsync(entity.RowPointer);
                 if (obj == null)
                 {
                     result.Message = "Data not found!";
@@ -218,14 +214,12 @@ public class WarehouseProvider : ICRUD_Service<Warehouse, int>,
                     return result;
                 }
 
-                obj.WarehouseCode = entity.WarehouseCode;
-                obj.WarehouseName = entity.WarehouseName;
-                obj.AllowNegativeStock = entity.AllowNegativeStock;
-                obj.Address = entity.Address;
-                obj.BinLocationCount = entity.BinLocationCount;
-                obj.UpdatedDate = DateTime.Now;
+                // Update properties
+                obj.UoMCode = entity.UoMCode;
+                obj.UoMName = entity.UoMName;
+                obj.UoMDescription = entity.UoMDescription;
                 obj.UpdatedBy = entity.UpdatedBy;
-
+                obj.UpdatedDate = DateTime.Now;
                 if (_dB.SaveChanges() <= 0)
                 {
                     result.Message = "Failed to update data";
@@ -250,7 +244,7 @@ public class WarehouseProvider : ICRUD_Service<Warehouse, int>,
             {
                 await transaction.RollbackAsync();
                 result.Code = "2";
-                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                result.Message = ex.Message;
                 return result;
             }
             catch (Exception ex)
@@ -263,4 +257,3 @@ public class WarehouseProvider : ICRUD_Service<Warehouse, int>,
         }
     }
 }
-

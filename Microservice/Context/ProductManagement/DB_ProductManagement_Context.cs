@@ -10,6 +10,8 @@ public class DB_ProductManagement_Context : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductVariant> ProductVariants { get; set; }
     public DbSet<ProductAttribute> ProductAttributes { get; set; }
+    public DbSet<ProductUoMConversion> ProductUoMConversions { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         //Product
@@ -43,6 +45,14 @@ public class DB_ProductManagement_Context : DbContext
             .HasKey(c => c.RowPointer);
 
         modelBuilder.Entity<ProductAttribute>()
+            .Property(c => c.RowPointer)
+            .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+        // ProductUoMConversion - Hai
+        modelBuilder.Entity<ProductUoMConversion>()
+            .ToTable("ProductUoMConversion")
+            .HasKey(c => c.RowPointer);
+        modelBuilder.Entity<ProductUoMConversion>()
             .Property(c => c.RowPointer)
             .HasDefaultValueSql("NEWSEQUENTIALID()");
 

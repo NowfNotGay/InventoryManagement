@@ -27,93 +27,195 @@ public class VehicleModelProvider : ICRUD_Service<VehicleModel, int>, IVehicleMo
         _configuration = configuration;
     }
 
-    public async Task<VehicleModel> Create(VehicleModel entity)
+    public async Task<ResultService<VehicleModel>> Create(VehicleModel entity)
     {
         using (var transaction = _dB.Database.BeginTransaction())
         {
+            ResultService<VehicleModel> result = new();
             try
             {
                 await _dB.VehicleModels.AddAsync(entity);
-                await _dB.SaveChangesAsync();
+
+
+                if (_dB.SaveChanges() <= 0)
+                {
+                    result.Message = "Failed to create data";
+                    result.Code = "-1";
+                }
                 await transaction.CommitAsync();
-                return entity;
+                result.Message = "Success";
+                result.Code = "0";
+                result.Data = entity;
+                return result;
+            }
+            catch (SqlException sqlEx)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "1";
+                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return result;
+            }
+            catch (ArgumentException ex)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "2";
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                return result;
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                throw; // Ensuring any exceptions are thrown back to the caller
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
             }
         }
     }
 
-    public async Task<string> Delete(int id)
+    public async Task<ResultService<string>> Delete(int id)
     {
+        ResultService<string> result = new();
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
-                VehicleModel obj = await Get(id);
-                if (obj == null)
+                var obj = await Get(id);
+                if (!obj.Code.Equals("0"))
                 {
-                    return null;
+                    result.Message = obj.Message;
+                    result.Code = obj.Code;
+                    result.Data = "false";
+                    return result;
+
                 }
-                _dB.VehicleModels.Remove(obj);
-                await _dB.SaveChangesAsync();
+                _dB.VehicleModels.Remove(obj.Data);
+                if (_dB.SaveChanges() <= 0)
+                {
+                    result.Message = "Failed to delete data";
+                    result.Code = "-1";
+                    result.Data = "false";
+                    return result;
+                }
                 await transaction.CommitAsync();
-                return "true";
+                result.Message = "Success";
+                result.Code = "0";
+                result.Data = "true";
+                return result;
+            }
+            catch (SqlException sqlEx)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "1";
+                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return result;
+            }
+            catch (ArgumentException ex)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "2";
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                return result;
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                throw;
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
             }
         }
     }
 
-    public async Task<VehicleModel> Get(int id)
+    public async Task<ResultService<VehicleModel>> Get(int id)
     {
+        ResultService<VehicleModel> result = new();
         using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
-            await sqlconnect.OpenAsync();
-            var rs = await 
-                sqlconnect.QuerySingleOrDefaultAsync<VehicleModel>("VehicleModel_GetByID",
-                new
+            try
+            {
+                await sqlconnect.OpenAsync();
+                var rs = await sqlconnect.QuerySingleOrDefaultAsync<VehicleModel>("VehicleModel_GetByID",
+                    new
+                    {
+                        ID = id
+                    },
+                     commandType: CommandType.StoredProcedure,
+                     commandTimeout: 240);
+                if (rs == null)
                 {
-                    ID = id
-                },
-                 commandType: CommandType.StoredProcedure,
-                 commandTimeout: 240);
+                    result.Message = "Failed to get data";
+                    result.Code = "1";
 
-            return rs;
+                }
+                else
+                {
+                    result.Message = "Success";
+                    result.Code = "0";
+                }
+                result.Data = rs;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
+            }
         }
     }
-    public async Task<IEnumerable<VehicleModel>> GetAll()
+
+    public async Task<ResultService<IEnumerable<VehicleModel>>> GetAll()
     {
+        ResultService<IEnumerable<VehicleModel>> result = new();
         using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
-            await sqlconnect.OpenAsync();
-            var rs = await sqlconnect.QueryAsync<VehicleModel>("VehicleModel_GetAll",
-                new
+            try
+            {
+                await sqlconnect.OpenAsync();
+                result.Data = await sqlconnect.QueryAsync<VehicleModel>("VehicleModel_GetAll",
+                    new
+                    {
+
+                    },
+                     commandType: CommandType.StoredProcedure,
+                     commandTimeout: 240);
+                if (result.Data == null)
                 {
-
-                },
-                 commandType: CommandType.StoredProcedure,
-                 commandTimeout: 240);
-
-            return rs;
+                    result.Message = "Failed to get data";
+                    result.Code = "1";
+                }
+                else
+                {
+                    result.Message = "Success";
+                    result.Code = "0";
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
+            }
         }
     }
 
-
-    public async Task<VehicleModel> Update(VehicleModel entity)
+    public async Task<ResultService<VehicleModel>> Update(VehicleModel entity)
     {
+        ResultService<VehicleModel> result = new();
+
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
                 var obj = await _dB.VehicleModels.FindAsync(entity.RowPointer);
-                if (obj == null) return null;
-
+                if (obj == null)
+                {
+                    result.Message = "Data not found!";
+                    result.Code = "-1";
+                    result.Data = null;
+                    return result;
+                }
                 // Update properties as necessary
                 obj.ModelCode = entity.ModelCode;
                 obj.ModelName = entity.ModelName;
@@ -121,41 +223,42 @@ public class VehicleModelProvider : ICRUD_Service<VehicleModel, int>, IVehicleMo
                 obj.UpdatedBy = entity.UpdatedBy;
                 obj.UpdatedDate = DateTime.Now;
 
-                await _dB.SaveChangesAsync();
+
+                if (_dB.SaveChanges() <= 0)
+                {
+                    result.Message = "Failed to update data";
+                    result.Code = "1";
+                    result.Data = null;
+                    return result;
+                }
                 await transaction.CommitAsync();
-                return entity;
+                result.Message = "Success";
+                result.Code = "0";
+                result.Data = entity;
+                return result;
+            }
+            catch (SqlException sqlEx)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "1";
+                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return result;
+            }
+            catch (ArgumentException ex)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "2";
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                return result;
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                throw; // Rethrow the exception
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
             }
         }
-    }
-
-    Task<ResultService<VehicleModel>> ICRUD_Service<VehicleModel, int>.Create(VehicleModel entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<string>> ICRUD_Service<VehicleModel, int>.Delete(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<VehicleModel>> ICRUD_Service<VehicleModel, int>.Get(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<IEnumerable<VehicleModel>>> ICRUD_Service<VehicleModel, int>.GetAll()
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<VehicleModel>> ICRUD_Service<VehicleModel, int>.Update(VehicleModel entity)
-    {
-        throw new NotImplementedException();
     }
 }
 

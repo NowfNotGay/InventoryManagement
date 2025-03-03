@@ -114,6 +114,10 @@ builder.Services.AddTransient<ICRUD_Service<Material, int>, MaterialProvider>();
 //Dimension - Bao
 builder.Services.AddTransient<IDimensionProvider, DimensionProvider>();
 builder.Services.AddTransient<ICRUD_Service<Dimension, int>, DimensionProvider>();
+
+//Unit Of Measure - Hai
+builder.Services.AddTransient<IUnitOfMeasureProvider, UnitOfMeasureProvider>();
+builder.Services.AddTransient<ICRUD_Service<UnitOfMeasure, int>, UnitOfMeasureProvider>();
 #endregion
 
 #region Product_Classification
@@ -141,6 +145,10 @@ builder.Services.AddTransient<ICRUD_Service<ProductVariant, int>, ProductVariant
 //Product Attribute - Duy
 builder.Services.AddTransient<IProductAttributeProvider, ProductAttributeProvider>();
 builder.Services.AddTransient<ICRUD_Service<ProductAttribute, int>, ProductAttributeProvider>();
+
+//Product UoM Conversion- Hai
+builder.Services.AddTransient<IProductUoMConversionProvider, ProductUoMConversionProvider>();
+builder.Services.AddTransient<ICRUD_Service<ProductUoMConversion, int>, ProductUoMConversionProvider>();
 #endregion
 
 #region Warehouse_Management

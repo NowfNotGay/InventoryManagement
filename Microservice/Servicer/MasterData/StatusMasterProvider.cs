@@ -27,16 +27,56 @@ public class StatusMasterProvider : ICRUD_Service<StatusMaster, int>, IStatusMas
         _configuration = configuration;
     }
 
-    public async Task<StatusMaster> Create(StatusMaster entity)
+    public async Task<ResultService<StatusMaster>> Create(StatusMaster entity)
     {
         using (var transaction = _dB.Database.BeginTransaction())
         {
+            ResultService<StatusMaster> result = new();
             try
             {
                 await _dB.StatusMasters.AddAsync(entity);
-                await _dB.SaveChangesAsync();
+                if (_dB.SaveChanges() <= 0)
+                {
+                    result.Message = "Failed to create data";
+                    result.Code = "1";
+                }
                 await transaction.CommitAsync();
-                return entity;
+                result.Message = "Success";
+                result.Code = "0";
+                result.Data = entity;
+                return result;
+            }
+            catch (SqlException ex)
+            {
+                await transaction.RollbackAsync();
+                switch (ex.Number)
+                {
+                    case 53:
+                        result.Code = "1001";
+                        result.Message = "Database connection failed";
+                        break;
+
+                    case 208:
+                        result.Code = "1007";
+                        result.Message = "SQL Error: Table or column not found";
+                        break;
+
+                    case 156:
+                        result.Code = "1005";
+                        result.Message = "SQL syntax error";
+                        break;
+
+                    case 1205:
+                        result.Code = "1006";
+                        result.Message = "Deadlock occurred, transaction rolled back";
+                        break;
+
+                    default:
+                        result.Code = "1099";
+                        result.Message = $"SQL Error: {ex.Message}";
+                        break;
+                }
+                return result;
             }
             catch (Exception ex)
             {
@@ -46,114 +86,240 @@ public class StatusMasterProvider : ICRUD_Service<StatusMaster, int>, IStatusMas
         }
     }
 
-    public async Task<string> Delete(int id)
+    public async Task<ResultService<string>> Delete(int id)
     {
+        ResultService<string> result = new();
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
-                StatusMaster obj = await Get(id);
-                if (obj == null)
+                var obj = await Get(id);
+                if (!obj.Code.Equals("0"))
                 {
-                    return null;
+                    result.Message = obj.Message;
+                    result.Code = obj.Code;
+                    result.Data = "false";
+                    return result;
                 }
-                _dB.StatusMasters.Remove(obj);
-                await _dB.SaveChangesAsync();
+                _dB.StatusMasters.Remove(obj.Data);
+                if (_dB.SaveChanges() <= 0)
+                {
+                    result.Message = "Failed to delete data";
+                    result.Code = "1";
+                    result.Data = "false";
+                    return result;
+                }
                 await transaction.CommitAsync();
-                return "Deleted successfully";
+                result.Message = "Success";
+                result.Code = "0";
+                result.Data = "true";
+                return result;
+            }
+            catch (SqlException ex)
+            {
+                await transaction.RollbackAsync();
+                switch (ex.Number)
+                {
+                    case 53:
+                        result.Code = "1001";
+                        result.Message = "Database connection failed";
+                        break;
+
+                    case 208:
+                        result.Code = "1007";
+                        result.Message = "SQL Error: Table or column not found";
+                        break;
+
+                    case 156:
+                        result.Code = "1005";
+                        result.Message = "SQL syntax error";
+                        break;
+
+                    case 1205:
+                        result.Code = "1006";
+                        result.Message = "Deadlock occurred, transaction rolled back";
+                        break;
+
+                    default:
+                        result.Code = "1099";
+                        result.Message = $"SQL Error: {ex.Message}";
+                        break;
+                }
+                return result;
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
-                return null; // Optionally log the exception or handle it further
+                await transaction.RollbackAsync();
+                result.Message = ex.Message;
+                result.Code = "1";
+                return result;
             }
         }
     }
 
-    public async Task<StatusMaster> Get(int id)
+    public async Task<ResultService<StatusMaster>> Get(int id)
     {
+        ResultService<StatusMaster> result = new();
         using (var sqlconnect = new SqlConnection(General.DecryptString
             (_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
         {
             await sqlconnect.OpenAsync();
-            var rs = await sqlconnect.QuerySingleOrDefaultAsync<StatusMaster>(
+            result.Data = await sqlconnect.QuerySingleOrDefaultAsync<StatusMaster>(
                 "StatusMaster_GetByID",
                 new
                 {
                     ID = id
                 },
-                commandType: CommandType.StoredProcedure,
+                commandType: CommandType.StoredProcedure, // Fixed the error here
                 commandTimeout: 240
                 );
-            return rs;
+            if (result.Data == null)
+            {
+                result.Message = "Failed to get data";
+                result.Code = "1";
+            }
+            else
+            {
+                result.Message = "Success";
+                result.Code = "0";
+            }
+            return result;
         }
-
     }
 
-    public async Task<IEnumerable<StatusMaster>> GetAll()
+    //public async Task<ResultService<IEnumerable<StatusMaster>>> GetAll()
+    //{
+    //    ResultService<IEnumerable<StatusMaster>> result = new();
+    //    using (var sqlconnect = new SqlConnection(General.DecryptString
+    //        (_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
+    //    {
+    //        await sqlconnect.OpenAsync();
+    //        result.Data = await sqlconnect.QueryAsync<StatusMaster>(
+    //            "StatusMaster_GetAll",
+    //            commandType: CommandType.StoredProcedure,
+    //            commandTimeout: 240
+    //            );
+    //        if (result.Data == null)
+    //        {
+    //            result.Message = "Failed to get data";
+    //            result.Code = "1";
+    //        }
+    //        else
+    //        {
+    //            result.Message = "Success";
+    //            result.Code = "0";
+    //        }
+    //        return result;
+    //    }
+    //}
+    public async Task<ResultService<IEnumerable<StatusMaster>>> GetAll()
     {
-        using (var sqlconnect = new SqlConnection(General.DecryptString
-            (_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
+        ResultService<IEnumerable<StatusMaster>> result = new();
+        try
         {
-            await sqlconnect.OpenAsync();
-            var rs = await sqlconnect.QueryAsync<StatusMaster>(
-                "StatusMaster_GetAll",
-                commandType: CommandType.StoredProcedure,
-                commandTimeout: 240
+            using (var sqlconnect = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
+            {
+                await sqlconnect.OpenAsync();
+                var data = await sqlconnect.QueryAsync<StatusMaster>(
+                    "StatusMaster_GetAll",
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 240
                 );
-            return rs;
+
+                result.Data = data.ToList();
+                result.Message = result.Data.Any() ? "Success" : "No data found";
+                result.Code = result.Data.Any() ? "0" : "1";
+            }
         }
+        catch (SqlException ex)
+        {
+            result.Message = $"SQL Error: {ex.Message}";
+            result.Code = "1099";
+        }
+        catch (Exception ex)
+        {
+            result.Message = $"Error: {ex.Message}";
+            result.Code = "1";
+        }
+
+        return result;
     }
 
-    public async Task<StatusMaster> Update(StatusMaster entity)
+    public async Task<ResultService<StatusMaster>> Update(StatusMaster entity)
     {
+        ResultService<StatusMaster> result = new();
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
                 var obj = await _dB.StatusMasters.FindAsync(entity.RowPointer);
-                if (obj == null) return null;
+                if (obj == null)
+                {
+                    result.Message = "Data not found!";
+                    result.Code = "1";
+                    result.Data = null;
+                    return result;
+                }
 
                 obj.StatusCode = entity.StatusCode;
                 obj.StatusName = entity.StatusName;
                 obj.Description = entity.Description;
                 obj.UpdatedDate = DateTime.Now;
-         
 
-                await _dB.SaveChangesAsync();
+                if (_dB.SaveChanges() <= 0)
+                {
+                    result.Message = "Failed to update data";
+                    result.Code = "1";
+                    result.Data = null;
+                    return result;
+                }
+
                 await transaction.CommitAsync();
-                return entity;
+                result.Message = "Success";
+                result.Code = "0";
+                result.Data = entity;
+                return result;
+            }
+            catch (SqlException ex)
+            {
+                await transaction.RollbackAsync();
+                switch (ex.Number)
+                {
+                    case 53:
+                        result.Code = "1001";
+                        result.Message = "Database connection failed";
+                        break;
+
+                    case 208:
+                        result.Code = "1007";
+                        result.Message = "SQL Error: Table or column not found";
+                        break;
+
+                    case 156:
+                        result.Code = "1005";
+                        result.Message = "SQL syntax error";
+                        break;
+
+                    case 1205:
+                        result.Code = "1006";
+                        result.Message = "Deadlock occurred, transaction rolled back";
+                        break;
+
+                    default:
+                        result.Code = "1099";
+                        result.Message = $"SQL Error: {ex.Message}";
+                        break;
+                }
+                return result;
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
-                return null; // Optionally log the exception or handle it further
+                await transaction.RollbackAsync();
+                result.Message = ex.Message;
+                result.Code = "1";
+                return result;
+
             }
         }
-    }
-
-    Task<ResultService<StatusMaster>> ICRUD_Service<StatusMaster, int>.Create(StatusMaster entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<string>> ICRUD_Service<StatusMaster, int>.Delete(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<StatusMaster>> ICRUD_Service<StatusMaster, int>.Get(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<IEnumerable<StatusMaster>>> ICRUD_Service<StatusMaster, int>.GetAll()
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ResultService<StatusMaster>> ICRUD_Service<StatusMaster, int>.Update(StatusMaster entity)
-    {
-        throw new NotImplementedException();
     }
 }
