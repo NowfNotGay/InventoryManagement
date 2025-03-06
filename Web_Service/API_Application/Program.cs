@@ -155,6 +155,9 @@ builder.Services.AddTransient<ICRUD_Service<ProductUoMConversion, int>, ProductU
 //
 builder.Services.AddTransient<ICRUD_Service<GoodsReceiptNote, int>, GoodsReceiptNoteProvider>();
 builder.Services.AddTransient<IGoodsReceiptNoteProvider, GoodsReceiptNoteProvider>();
+builder.Services.AddTransient<ICRUD_Service<CurrentStock, int>, CurrentStockProvider>();
+builder.Services.AddTransient<ICurrentStockProvider, CurrentStockProvider>();
+
 //
 #endregion
 
