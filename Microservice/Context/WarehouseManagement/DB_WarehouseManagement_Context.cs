@@ -15,6 +15,8 @@ namespace Context.WarehouseManagement
         }
         public DbSet<GoodsReceiptNote> GoodsReceiptNotes { get; set; }
         public DbSet<GoodsReceiptNoteLine> GoodsReceiptNoteLines { get; set; }
+        public DbSet<GoodsIssueNote> GoodsIssueNotes { get; set; }
+        public DbSet<GoodsIssueNoteLine> GoodsIssueNoteLines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +33,17 @@ namespace Context.WarehouseManagement
             modelBuilder.Entity<GoodsReceiptNoteLine>()
                 .Property(c => c.RowPointer)
                 .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+            modelBuilder.Entity<GoodsIssueNote>()
+                .ToTable("GoodsIssueNote")
+                .HasKey(c => c.RowPointer);
+            modelBuilder.Entity<GoodsIssueNote>()
+                .Property(c => c.RowPointer)
+                .HasDefaultValueSql("NEWSEQUENTIALID()");
+            modelBuilder.Entity<GoodsIssueNoteLine>()
+                .ToTable("GoodsIssueNoteLine")
+                .HasKey(c => c.RowPointer);
+
             base.OnModelCreating(modelBuilder);
         }
     }

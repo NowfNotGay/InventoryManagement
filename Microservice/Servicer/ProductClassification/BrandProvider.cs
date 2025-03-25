@@ -284,7 +284,7 @@ public class BrandProvider : ICRUD_Service<Brand, int>, IBrandProvider
             string Message = string.Empty;
             entity.BrandCode = !entity.BrandCode.Contains("BR") ? string.Empty : entity.BrandCode;
             List<Brand> lst = new List<Brand>();
-
+            entity.RowPointer = Guid.Empty;
             lst.Add(entity);
 
             DataTable dtHeader = General.ConvertToDataTable(lst);
@@ -303,14 +303,14 @@ public class BrandProvider : ICRUD_Service<Brand, int>, IBrandProvider
                       commandTimeout: TimeoutInSeconds);
                 var resultMessage = param.Get<string>("@Message");
 
-                if (resultMessage.Contains("OK"))
+                if (resultMessage.Contains("successfully"))
                 {
                     response.Code = "0"; // Success
                     response.Message = "Save Successfully";
                 }
                 else
                 {
-                    response.Code = "-999"; // Success
+                    response.Code = "-999"; // Fail
                     response.Message = "Failed";
                 }
 
