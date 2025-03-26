@@ -8,12 +8,7 @@ using Helper.Method;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Servicer.MasterData;
 public class StatusMasterProvider : ICRUD_Service<StatusMaster, int>, IStatusMasterProvider
@@ -118,7 +113,7 @@ public class StatusMasterProvider : ICRUD_Service<StatusMaster, int>, IStatusMas
                 obj.StatusName = entity.StatusName;
                 obj.Description = entity.Description;
                 obj.UpdatedDate = DateTime.Now;
-         
+
 
                 await _dB.SaveChangesAsync();
                 await transaction.CommitAsync();

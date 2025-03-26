@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Core.WarehouseManagement;
+﻿using Core.WarehouseManagement;
 using Microsoft.EntityFrameworkCore;
 
 namespace Context.WarehouseManagement
@@ -15,6 +10,8 @@ namespace Context.WarehouseManagement
         }
         public DbSet<GoodsReceiptNote> GoodsReceiptNotes { get; set; }
         public DbSet<GoodsReceiptNoteLine> GoodsReceiptNoteLines { get; set; }
+        public DbSet<StockTransfer> StockTransfers { get; set; }
+        public DbSet<StockTransferDetail> StockTransferDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +26,21 @@ namespace Context.WarehouseManagement
                 .ToTable("GoodsReceiptNoteLine")
                 .HasKey(c => c.RowPointer);
             modelBuilder.Entity<GoodsReceiptNoteLine>()
+                .Property(c => c.RowPointer)
+                .HasDefaultValueSql("NEWSEQUENTIALID()");
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<StockTransfer>()
+                .ToTable("GoodsReceiptNote")
+                .HasKey(c => c.RowPointer);
+            modelBuilder.Entity<StockTransferDetail>()
+                .Property(c => c.RowPointer)
+                .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+            modelBuilder.Entity<StockTransfer>()
+                .ToTable("GoodsReceiptNoteLine")
+                .HasKey(c => c.RowPointer);
+            modelBuilder.Entity<StockTransferDetail>()
                 .Property(c => c.RowPointer)
                 .HasDefaultValueSql("NEWSEQUENTIALID()");
             base.OnModelCreating(modelBuilder);
