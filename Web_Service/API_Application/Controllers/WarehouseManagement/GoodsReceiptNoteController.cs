@@ -125,7 +125,7 @@ namespace API_Application.Controllers.WarehouseManagement
 
         public async Task<IActionResult> GoodsReceiptNote_Create_HeaderAndLine([FromBody] GoodsReceiptNote_Param param)
         {
-            var rs = await _GoodsReceiptNoteProvider.CreateHeaderAndLine(param);
+            var rs = await _GoodsReceiptNoteProvider.Save(param);
             return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
         }
 

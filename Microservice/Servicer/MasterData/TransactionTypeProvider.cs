@@ -3,6 +3,7 @@ using Base.MasterData;
 using Context.MasterData;
 using Core.BaseClass;
 using Core.MasterData;
+using Core.WarehouseManagement;
 using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;
@@ -336,6 +337,89 @@ namespace Servicer.MasterData
             }
         }
 
+        public async Task<ResultService<string>> Save(TransactionType entity)
+        {
+            var response = new ResultService<string>();
+            if (entity == null)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "1",
+                    Message = "Entity is not valid"
+                };
+            }
+            try
+            {
+                string Message = string.Empty;
+                List<TransactionType> listentity = new List<TransactionType>();
+                listentity.Add(entity);
+                listentity[0].TransactionTypeCode = !listentity[0].TransactionTypeCode.Contains("TT") ? string.Empty : listentity[0].TransactionTypeCode;
+                DataTable dt = General.ConvertToDataTable(listentity);
 
+                string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+                using (var connection = new SqlConnection(conn))
+                {
+                    await connection.OpenAsync();
+                    var param = new DynamicParameters();
+                    param.Add("@ActionBy", entity.CreatedBy);
+                    param.Add("@udtt_Header", dt.AsTableValuedParameter("UDTT_TransactionType"));
+                    param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                    await connection.QueryAsync<GoodsReceiptNote>("Transactiontype_Create",
+                       param,
+                       commandType: CommandType.StoredProcedure,
+                          commandTimeout: TimeoutInSeconds);
+                    var resultMessage = param.Get<string>("@Message");
+
+                    if (resultMessage.Contains("OK"))
+                    {
+                        response.Code = "0"; // Success
+                        response.Message = "Save Successfully";
+                    }
+                    else
+                    {
+                        response.Code = "-999"; // Success
+                        response.Message = "Failed";
+                    }
+
+                    return response;
+
+                }
+            }
+            catch (SqlException sqlex)
+            {
+
+                response.Code = "2";
+                response.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
+                return response;
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+
+                response.Code = "3";
+                response.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (DbUpdateException ex)
+            {
+
+                response.Code = "4";
+                response.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (OperationCanceledException ex)
+            {
+
+                response.Code = "5";
+                response.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (Exception ex)
+            {
+
+                response.Code = "6";
+                response.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+        }
     }
 }
