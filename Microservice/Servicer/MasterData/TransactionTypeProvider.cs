@@ -353,7 +353,6 @@ namespace Servicer.MasterData
                 string Message = string.Empty;
                 List<TransactionType> listentity = new List<TransactionType>();
                 listentity.Add(entity);
-                listentity[0].TransactionTypeCode = !listentity[0].TransactionTypeCode.Contains("TT") ? string.Empty : listentity[0].TransactionTypeCode;
                 DataTable dt = General.ConvertToDataTable(listentity);
 
                 string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));

@@ -733,7 +733,6 @@ namespace Servicer.WarehouseManagement
             try
             {
                 string Message = string.Empty;
-                entity.GRNs[0].GRNCode = !entity.GRNs[0].GRNCode.Contains("GRN") ? string.Empty : entity.GRNs[0].GRNCode;
 
                 string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
                 using (var connection = new SqlConnection(conn))
