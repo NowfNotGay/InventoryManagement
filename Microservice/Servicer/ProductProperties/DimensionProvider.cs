@@ -20,6 +20,7 @@ public class DimensionProvider : ICRUD_Service<Dimension, int>, IDimensionProvid
     private readonly DB_ProductProperties_Context _dB;
     private readonly IConfiguration _configuration;
     private readonly string _dapperConnectionString;
+    private const int TimeoutInSeconds = 240;
 
     public DimensionProvider(DB_ProductProperties_Context dB, IConfiguration configuration)
     {
@@ -33,6 +34,7 @@ public class DimensionProvider : ICRUD_Service<Dimension, int>, IDimensionProvid
         using (var transaction = _dB.Database.BeginTransaction())
         {
             ResultService<Dimension> result = new();
+            entity.RowPointer = Guid.Empty;
 
             try
             {
@@ -221,7 +223,9 @@ public class DimensionProvider : ICRUD_Service<Dimension, int>, IDimensionProvid
                 obj.Height = entity.Height;
                 obj.Length = entity.Length;
                 obj.Width = entity.Width;
-                obj.UoMName = entity.UoMName;
+                obj.UoMHeightCode = entity.UoMHeightCode;
+                obj.UoMLengthCode = entity.UoMLengthCode;
+                obj.UoMWidthCode = entity.UoMWidthCode;
                 obj.UpdatedBy = entity.UpdatedBy;
                 obj.UpdatedDate = DateTime.Now;
 
