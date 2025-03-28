@@ -177,6 +177,11 @@ namespace Servicer.ProductManagement
             }
         }
 
+        public Task<ResultService<string>> Save(ProductAttribute entity)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<ResultService<ProductAttribute>> Update(ProductAttribute entity)
         {
             ResultService<ProductAttribute> result = new();
@@ -231,3 +236,4 @@ namespace Servicer.ProductManagement
         }
     }
 }
+
