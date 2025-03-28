@@ -22,15 +22,15 @@ public class WarehouseController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var rs = await _warehouseService.GetAll();
-        return rs == null ? BadRequest("No records found") : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
     }
 
     [HttpGet("{id}")]
     [Produces("application/json")]
     public async Task<IActionResult> GetById(int id)
     {
-        var warehouse = await _warehouseService.Get(id);
-        return warehouse == null ? NotFound($"Warehouse with ID {id} not found") : Ok(warehouse);
+        var rs = await _warehouseService.Get(id);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
     }
 
     [HttpPost]
@@ -39,7 +39,7 @@ public class WarehouseController : ControllerBase
     public async Task<IActionResult> Create([FromBody] Warehouse warehouse)
     {
         var rs = await _warehouseService.Create(warehouse);
-        return rs == null ? BadRequest("Failed to create warehouse") : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
     }
 
     [HttpPut]
@@ -48,7 +48,7 @@ public class WarehouseController : ControllerBase
     public async Task<IActionResult> Update([FromBody] Warehouse warehouse)
     {
         var rs = await _warehouseService.Update(warehouse);
-        return rs == null ? BadRequest("Failed to update warehouse") : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
     }
 
     [HttpDelete]
@@ -57,6 +57,6 @@ public class WarehouseController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var rs = await _warehouseService.Delete(id);
-        return rs == null ? BadRequest("Failed to delete warehouse") : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
     }
 }

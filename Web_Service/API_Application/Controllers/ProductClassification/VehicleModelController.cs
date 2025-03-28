@@ -13,6 +13,7 @@ namespace API_Application.Controllers.ProductClassification;
 public class VehicleModelController : ControllerBase
 {
     private readonly ICRUD_Service<VehicleModel, int> _vehicleModelService;
+
     private readonly IVehicleModelProvider _vehicleModelProvider;
 
     public VehicleModelController(ICRUD_Service<VehicleModel, int> vehicleModelService, IVehicleModelProvider vehicleModelProvider)
@@ -27,16 +28,18 @@ public class VehicleModelController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var rs = await _vehicleModelService.GetAll();
-        return rs == null ? BadRequest("No vehicle models found") : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
     }
 
-    [HttpGet("{id}")]
-    [Produces("application/json")]
-    public async Task<IActionResult> GetById(int id)
-    {
-        var vehicleModel = await _vehicleModelService.Get(id);
-        return vehicleModel == null ? NotFound($"Vehicle model with ID {id} not found") : Ok(vehicleModel);
-    }
+    //[HttpGet("ID")]
+    //[Consumes("application/json")]
+    //[Produces("application/json")]
+    //public async Task<IActionResult> GetByID([FromQuery] int ID)
+    //{
+    //    var rs = await _ICRUD_Service.Get(ID);
+    //    return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
+    //}
 
     [HttpPost]
     [Consumes("application/json")]
@@ -44,7 +47,8 @@ public class VehicleModelController : ControllerBase
     public async Task<IActionResult> Create([FromBody] VehicleModel vehicleModel)
     {
         var rs = await _vehicleModelService.Create(vehicleModel);
-        return rs == null ? BadRequest("Failed to create vehicle model") : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
     }
 
     [HttpPut]
@@ -54,7 +58,8 @@ public class VehicleModelController : ControllerBase
     {
 
         var rs = await _vehicleModelService.Update(vehicleModel);
-        return rs == null ? BadRequest("Failed to update vehicle model") : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
     }
 
     [HttpDelete]
@@ -63,6 +68,7 @@ public class VehicleModelController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var rs = await _vehicleModelService.Delete(id);
-        return rs == null ? BadRequest("Failed to delete vehicle model") : Ok(rs);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
     }
 }

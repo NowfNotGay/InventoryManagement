@@ -179,17 +179,155 @@ namespace Servicer.WarehouseManagement
             }
             try
             {
+                string Message = string.Empty;
+                entity.TransferCode = !entity.TransferCode.Contains("ST") ? string.Empty : entity.TransferCode;
+                List<StockTransfer> lst = new List<StockTransfer>();
+                lst.Add(entity);
+                DataTable dtHeader = General.ConvertToDataTable(lst);
+                string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+                using (var connection = new SqlConnection(conn))
+                {
+                    await connection.OpenAsync();
+                    var param = new DynamicParameters();
+                    param.Add("@createdBy", entity.CreatedBy);
 
+                    param.Add("@udtt_Header", dtHeader.AsTableValuedParameter("UDTT_StockTransferHeader"));
+                    param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                    await connection.QueryAsync<StockTransfer>("StockTransfer_Create",
+                            param,
+                            commandType: CommandType.StoredProcedure,
+                                commandTimeout: TimeoutInSeconds);
+                    var resultMessage = param.Get<string>("@Message");
+
+                    if (resultMessage.Contains("OK"))
+                    {
+                        response.Code = "0";
+                        response.Message = "Save Successfully";
+                    }
+                    else
+                    {
+                        response.Code = "0";
+                        response.Message = resultMessage;
+                    }
+
+                    return response;
+                }
             }
-            catch (Exception)
+            catch (SqlException sqlex)
             {
 
+                response.Code = "2";
+                response.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
+                return response;
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+
+                response.Code = "3";
+                response.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (DbUpdateException ex)
+            {
+
+                response.Code = "4";
+                response.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (OperationCanceledException ex)
+            {
+
+                response.Code = "5";
+                response.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (Exception ex)
+            {
+
+                response.Code = "6";
+                response.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
+                return response;
             }
         }
 
-        public Task<ResultService<StockTransfer_Param>> CreateHeaderAndDetail(StockTransfer_Param entity)
+        public async Task<ResultService<StockTransfer_Param>> CreateHeaderAndDetail(StockTransfer_Param entity)
         {
-            throw new NotImplementedException();
+            var response = new ResultService<StockTransfer_Param>();
+            if (entity == null)
+            {
+                return new ResultService<StockTransfer_Param>()
+                {
+                    Code = "1",
+                    Message = "Entity is not valid"
+                };
+            }
+            try
+            {
+                string Message = string.Empty;
+                string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+                using (var connection = new SqlConnection(conn))
+                {
+                    await connection.OpenAsync();
+                    var param = new DynamicParameters();
+                    param.Add("CreateBy", entity.CreatedBy);
+                    param.Add("@udtt_Header", General.ConvertToDataTable(entity.StockTransfers).AsTableValuedParameter("UDTT_StockTransferHeader"));
+                    param.Add("@udtt_Detail", General.ConvertToDataTable(entity.StockTransferDetails).AsTableValuedParameter("UDTT_StockTransferDetail"));
+                    param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                    await connection.QueryAsync<StockTransfer>("StockTransfer_Create",
+                            param,
+                            commandType: CommandType.StoredProcedure,
+                                commandTimeout: TimeoutInSeconds);
+                    var resultMessage = param.Get<string>("@Message");
+
+                    if (resultMessage.Contains("OK"))
+                    {
+                        response.Code = "0";
+                        response.Message = "Save Successfully";
+                    }
+                    else
+                    {
+                        response.Code = "0";
+                        response.Message = resultMessage;
+                    }
+
+                    return response;
+                }
+            }
+            catch (SqlException sqlex)
+            {
+
+                response.Code = "2";
+                response.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
+                return response;
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+
+                response.Code = "3";
+                response.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (DbUpdateException ex)
+            {
+
+                response.Code = "4";
+                response.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (OperationCanceledException ex)
+            {
+
+                response.Code = "5";
+                response.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (Exception ex)
+            {
+
+                response.Code = "6";
+                response.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
         }
 
         public async Task<ResultService<string>> Delete(int id)
@@ -262,14 +400,165 @@ namespace Servicer.WarehouseManagement
             }
         }
 
-        public Task<ResultService<string>> DeleteByDapper(string stCode)
+        public async Task<ResultService<string>> DeleteByDapper(string stCode)
         {
-            throw new NotImplementedException();
+            ResultService<string> resultService = new ResultService<string>();
+            try
+            {
+                string Message = string.Empty;
+                string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+                using (var connection = new SqlConnection(conn))
+                {
+                    await connection.OpenAsync();
+                    var param = new DynamicParameters();
+                    param.Add("@TransferCode", stCode);
+                    param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                    await connection.QueryAsync<StockTransfer>("StockTransfer_Delete",
+                            param,
+                            commandType: CommandType.StoredProcedure,
+                                commandTimeout: TimeoutInSeconds);
+                    var resultMessage = param.Get<string>("@Message");
+
+                    if (resultMessage.Contains("Ok"))
+                    {
+                        resultService.Code = "0";
+                        resultService.Message = "Delete Successfully";
+                    }
+                    else
+                    {
+                        resultService.Code = "0";
+                        resultService.Message = resultMessage;
+                    }
+
+                    return resultService;
+                }
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "2",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "3",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+            catch (OperationCanceledException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "4",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+            catch (SqlException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "5",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "6",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
         }
 
-        public Task<ResultService<string>> DeleteDetail(List<StockTransferDetail> entity)
+        public async Task<ResultService<string>> DeleteDetail(List<StockTransferDetail> entity)
         {
-            throw new NotImplementedException();
+            ResultService<string> resultService = new ResultService<string>();
+            try
+            {
+                string Message = string.Empty;
+                string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+                using (var connection = new SqlConnection(conn))
+                {
+                    await connection.OpenAsync();
+                    var param = new DynamicParameters();
+                    param.Add("@udtt_Detail", General.ConvertToDataTable(entity).AsTableValuedParameter("UDTT_StockTransferDetail"));
+                    param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                    await connection.QueryAsync<StockTransfer>("StockTransfer_Delete_Multi",
+                            param,
+                            commandType: CommandType.StoredProcedure,
+                                commandTimeout: TimeoutInSeconds);
+                    var resultMessage = param.Get<string>("@Message");
+
+                    if (resultMessage.Contains("OK"))
+                    {
+                        resultService.Code = "0";
+                        resultService.Message = "Delete Successfully";
+                    }
+                    else
+                    {
+                        resultService.Code = "-999";
+                        resultService.Message = "Failed";
+                    }
+
+                    return resultService;
+                }
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "2",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "3",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+            catch (OperationCanceledException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "4",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+            catch (SqlException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "5",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "6",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
         }
 
         public async Task<ResultService<StockTransfer>> Update(StockTransfer entity)
@@ -352,9 +641,131 @@ namespace Servicer.WarehouseManagement
 
         }
 
-        public Task<ResultService<string>> Delete_HeaderAndDetail(int stID)
+        public async Task<ResultService<string>> Delete_HeaderAndDetail(int stID)
+        {
+            ResultService<string> resultService = new ResultService<string>();
+            try
+            {
+                string Message = string.Empty;
+                string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+                using (var connection = new SqlConnection(conn))
+                {
+                    await connection.OpenAsync();
+                    var param = new DynamicParameters();
+                    param.Add("stID", stID);
+                    param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                    await connection.QueryAsync<StockTransfer>("StockTransfer_Delete_HeaderAndDetail",
+                            param,
+                            commandType: CommandType.StoredProcedure,
+                                commandTimeout: TimeoutInSeconds);
+                    var resultMessage = param.Get<string>("@Message");
+
+                    if (resultMessage.Contains("OK"))
+                    {
+                        resultService.Code = "0";
+                        resultService.Message = "Delete Successfully";
+                    }
+                    else
+                    {
+                        resultService.Code = "-999";
+                        resultService.Message = "Failed";
+                    }
+
+                    return resultService;
+                }
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "2",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "3",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+            catch (OperationCanceledException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "4",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+            catch (SqlException ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "5",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultService<string>()
+                {
+                    Code = "6",
+                    Data = null,
+                    Message = $"{ex.GetType()}, {ex.Message}"
+                };
+            }
+        }
+
+        public Task<ResultService<string>> Save(StockTransfer entity)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<ResultService<IEnumerable<StockTransferDetail>>> GetDetailByStockTransferID(string stCode)
+        {
+            var response = new ResultService<IEnumerable<StockTransferDetail>>();
+            string connectionString = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+                {
+                    await sqlConnection.OpenAsync();
+                    var param = new DynamicParameters();
+                    param.Add("@TFCode", stCode);
+                    var result = await sqlConnection.QueryAsync<StockTransferDetail>("StockTransferDetail_GetByStockTransferID",
+                        param,
+                        commandType: CommandType.StoredProcedure,
+                        commandTimeout: TimeoutInSeconds);
+                    response.Code = "0";
+                    response.Message = "Success";
+                    response.Data = result;
+                    return response;
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                response.Code = "1";
+                response.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return response;
+            }
+            catch (ArgumentException ex)
+            {
+                response.Code = "2";
+                response.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Code = "999";
+                response.Message = $"An error occurred while executing store Procedure. Details: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
         }
     }
 }

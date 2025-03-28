@@ -114,6 +114,10 @@ builder.Services.AddTransient<ICRUD_Service<Material, int>, MaterialProvider>();
 //Dimension - Bao
 builder.Services.AddTransient<IDimensionProvider, DimensionProvider>();
 builder.Services.AddTransient<ICRUD_Service<Dimension, int>, DimensionProvider>();
+
+//Unit Of Measure - Hai
+builder.Services.AddTransient<IUnitOfMeasureProvider, UnitOfMeasureProvider>();
+builder.Services.AddTransient<ICRUD_Service<UnitOfMeasure, int>, UnitOfMeasureProvider>();
 #endregion
 
 #region Product_Classification
@@ -141,14 +145,23 @@ builder.Services.AddTransient<ICRUD_Service<ProductVariant, int>, ProductVariant
 //Product Attribute - Duy
 builder.Services.AddTransient<IProductAttributeProvider, ProductAttributeProvider>();
 builder.Services.AddTransient<ICRUD_Service<ProductAttribute, int>, ProductAttributeProvider>();
+
+//Product UoM Conversion- Hai
+builder.Services.AddTransient<IProductUoMConversionProvider, ProductUoMConversionProvider>();
+builder.Services.AddTransient<ICRUD_Service<ProductUoMConversion, int>, ProductUoMConversionProvider>();
 #endregion
 
 #region Warehouse_Management
 //
 builder.Services.AddTransient<ICRUD_Service<GoodsReceiptNote, int>, GoodsReceiptNoteProvider>();
 builder.Services.AddTransient<IGoodsReceiptNoteProvider, GoodsReceiptNoteProvider>();
-//
+//Good Issue Note - Hai
+builder.Services.AddTransient<ICRUD_Service<GoodsIssueNote, int>, GoodsIssueNoteProvider>();
+builder.Services.AddTransient<IGoodsIssueNoteProvider, GoodsIssueNoteProvider>();
 #endregion
+//Stock Transfer - Duy
+builder.Services.AddTransient<ICRUD_Service<StockTransfer, int>, StockTransferProvider>();
+builder.Services.AddTransient<IStockTransferProvider, StockTransferProvider>();
 
 
 #endregion
