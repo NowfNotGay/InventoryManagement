@@ -3,6 +3,7 @@ using Base.ProductProperties;
 using Core.ProductProperties;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Servicer.ProductProperties;
 
 namespace API_Application.Controllers.ProductProperties;
 [Route("api/[controller]")]
@@ -58,6 +59,30 @@ public class MaterialController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var rs = await _materialService.Delete(id);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
+    }
+
+
+
+    [HttpPost]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    [Route("SaveByDapper")]
+    public async Task<IActionResult> SaveByDapper([FromBody] Material material)
+    {
+        var rs = await _materialProvider.SaveByDapper(material);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
+    }
+
+    [HttpDelete]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    [Route("DeleteByDapper/{materialCode}")]
+    public async Task<IActionResult> DeleteByDapper(string materialCode)
+    {
+        var rs = await _materialProvider.DeleteByDapper(materialCode);
         return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }
