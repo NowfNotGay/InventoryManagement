@@ -66,4 +66,28 @@ public class ProductCategoryController : ControllerBase
 
     }
 
+
+
+    [HttpPost]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    [Route("SaveByDapper")]
+    public async Task<IActionResult> SaveByDapper([FromBody] ProductCategory productCategory)
+    {
+        var rs = await _productCategoryProvider.SaveByDapper(productCategory);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
+    }
+
+    [HttpDelete]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    [Route("DeleteByDapper/{categoryCode}")]
+    public async Task<IActionResult> DeleteByDapper(string categoryCode)
+    {
+        var rs = await _productCategoryProvider.DeleteByDapper(categoryCode);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
+    }
+
 }
