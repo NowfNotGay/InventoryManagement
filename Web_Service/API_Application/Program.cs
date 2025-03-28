@@ -159,6 +159,9 @@ builder.Services.AddTransient<IGoodsReceiptNoteProvider, GoodsReceiptNoteProvide
 builder.Services.AddTransient<ICRUD_Service<GoodsIssueNote, int>, GoodsIssueNoteProvider>();
 builder.Services.AddTransient<IGoodsIssueNoteProvider, GoodsIssueNoteProvider>();
 #endregion
+//Stock Transfer - Duy
+builder.Services.AddTransient<ICRUD_Service<StockTransfer, int>, StockTransferProvider>();
+builder.Services.AddTransient<IStockTransferProvider, StockTransferProvider>();
 
 
 #endregion
