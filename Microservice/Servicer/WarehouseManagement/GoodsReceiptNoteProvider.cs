@@ -1,25 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Base.BaseService;
+﻿using Base.BaseService;
 using Base.WarehouseManagement;
-using Context.MasterData;
-using Microsoft.Extensions.Configuration;
 using Context.WarehouseManagement;
 using Core.BaseClass;
 using Core.WarehouseManagement;
-using Core.MasterData;
+using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;
-using System.Data;
-using Dapper;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Microsoft.Extensions.Configuration;
+using System.Data;
 using static Dapper.SqlMapper;
-using Azure;
-using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 namespace Servicer.WarehouseManagement
 {
@@ -134,6 +124,7 @@ namespace Servicer.WarehouseManagement
                 {
                     Code = "1",
                     Message = "Entity is not valid"
+
                 };
             }
 
@@ -368,7 +359,7 @@ namespace Servicer.WarehouseManagement
                     await connection.OpenAsync();
                     var param = new DynamicParameters();
                     param.Add("@CreatedBy", entity.CreatedBy);
-                    
+
                     param.Add("@udtt_Header", dtHeader.AsTableValuedParameter("UDTT_GoodsReceiptNoteHeader"));
                     param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
                     await connection.QueryAsync<GoodsReceiptNote>("GoodsReceiptNote_Create",
@@ -553,7 +544,7 @@ namespace Servicer.WarehouseManagement
                 return response;
             }
         }
-        public async  Task<ResultService<string>> DeleteLine(List<GoodsReceiptNoteLine> entity)
+        public async Task<ResultService<string>> DeleteLine(List<GoodsReceiptNoteLine> entity)
         {
             ResultService<string> resultService = new ResultService<string>();
             try
