@@ -2,10 +2,12 @@
 using Base.ProductProperties;
 using Context.ProductProperties;
 using Core.BaseClass;
+using Core.ProductClassification;
 using Core.ProductProperties;
 using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 
@@ -14,11 +16,14 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
 {
     private readonly DB_ProductProperties_Context _dB;
     private readonly IConfiguration _configuration;
+    private readonly string _dapperConnectionString = string.Empty;
+    private const int TimeoutInSeconds = 240;
 
     public ColorProvider(DB_ProductProperties_Context dB, IConfiguration configuration)
     {
         _dB = dB;
         _configuration = configuration;
+        _dapperConnectionString = General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"));
     }
 
     public async Task<ResultService<Color>> Create(Color entity)
@@ -252,4 +257,158 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
             }
         }
     }
+
+    #region DAPPER CRUD
+    public async Task<ResultService<Color>> SaveByDapper(Color entity)
+    {
+        ResultService<Color> result = new();
+        if (entity == null)
+        {
+            result.Code = "-1";
+            result.Data = null;
+            return result;
+        }
+        try
+        {
+            string Message = String.Empty;
+            entity.RowPointer = Guid.Empty;
+            entity.ColorCode = !entity.ColorCode.Contains("CL") ? string.Empty : entity.ColorCode;
+            List<Color> list = new();
+            list.Add(entity);
+            DataTable data = General.ConvertToDataTable(list);
+
+            using (var connection = new SqlConnection(_dapperConnectionString))
+            {
+                await connection.OpenAsync();
+                var param = new DynamicParameters();
+                param.Add("@CreatedBy", entity.CreatedBy);
+                param.Add("@udtt_Color", data.AsTableValuedParameter("UDTT_Color"));
+                param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+
+                await connection.QueryAsync<Color>("Color_Save",
+                    param,
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: TimeoutInSeconds);
+                var resultMessage = param.Get<string>("@Message");
+                if (resultMessage.Contains("successfully"))
+                {
+                    result.Code = "0";
+                    result.Message = "Save Successfully";
+                }
+                else
+                {
+                    result.Code = "-1";
+                    result.Message = "Failed";
+                }
+                return result;
+            }
+        }
+        catch (SqlException sqlex)
+        {
+
+            result.Code = "2";
+            result.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
+            return result;
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+
+            result.Code = "3";
+            result.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (DbUpdateException ex)
+        {
+
+            result.Code = "4";
+            result.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (OperationCanceledException ex)
+        {
+
+            result.Code = "5";
+            result.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (Exception ex)
+        {
+            result.Code = "6";
+            result.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+    }
+
+
+    public async Task<ResultService<string>> DeleteByDapper(string code)
+    {
+        ResultService<string> result = new();
+        if (string.IsNullOrEmpty(code))
+        {
+            result.Code = "-1";
+            result.Message = "Entity is null";
+            return result;
+        }
+        try
+        {
+            string Message = string.Empty;
+            using (var connection = new SqlConnection(_dapperConnectionString))
+            {
+                await connection.OpenAsync();
+                var param = new DynamicParameters();
+                param.Add("@ColorCode", code);
+                param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                await connection.QueryAsync<string>("Color_Delete", param, commandType: CommandType.StoredProcedure, commandTimeout: TimeoutInSeconds);
+                //Output Message từ Procedure
+                var resultMessage = param.Get<string>("@Message");
+                if (resultMessage.ToLower().Contains("successfully"))
+                {
+                    result.Code = "0";
+                    result.Message = resultMessage;
+                    result.Data = code;
+                }
+                else
+                {
+                    result.Code = "-1";
+                    result.Message = resultMessage;
+                    result.Data = string.Empty;
+                }
+                return result;
+            }
+        }
+        catch (SqlException sqlex)
+        {
+            result.Code = "2";
+            result.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
+            return result;
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            result.Code = "3";
+            result.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (DbUpdateException ex)
+        {
+            result.Code = "4";
+            result.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (OperationCanceledException ex)
+        {
+            result.Code = "5";
+            result.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (Exception ex)
+        {
+            result.Code = "6";
+            result.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+
+    }
+
+
+    #endregion
 }
