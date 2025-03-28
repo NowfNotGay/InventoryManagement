@@ -1,4 +1,5 @@
-﻿using Base.BaseService;
+﻿using Azure;
+using Base.BaseService;
 using Base.MasterData;
 using Context.MasterData;
 using Core.BaseClass;
@@ -22,11 +23,14 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
 {
     private readonly DB_MasterData_Context _dB;
     private readonly IConfiguration _configuration;
+    private readonly string _dapperConnectionString = string.Empty;
+    private const int TimeoutInSeconds = 240;
 
     public BusinessPartnerProvider(DB_MasterData_Context dB, IConfiguration configuration)
     {
         _dB = dB;
         _configuration = configuration;
+        _dapperConnectionString = General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"));
     }
 
     public async Task<ResultService<BusinessPartner>> Create(BusinessPartner entity)
@@ -201,7 +205,6 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
             }
         }
     }
-
     public async Task<ResultService<BusinessPartner>> Update(BusinessPartner entity)
     {
         ResultService<BusinessPartner> result = new();
@@ -265,4 +268,158 @@ public class BusinessPartnerProvider : ICRUD_Service<BusinessPartner, int>, IBus
 
         }
     }
+
+    #region DAPPER CRUD
+    public async Task<ResultService<BusinessPartner>> SaveByDapper(BusinessPartner entity)
+    {
+        ResultService<BusinessPartner> result = new();
+        if (entity == null)
+        {
+            result.Code = "-1";
+            result.Message = "Entity is null";
+            return result;
+        }
+
+        try
+        {
+            string Message = string.Empty;
+            entity.PartnerCode = !entity.PartnerCode.Contains("BP") ? string.Empty : entity.PartnerCode;
+            List<BusinessPartner> list = new List<BusinessPartner>();
+            entity.RowPointer = Guid.Empty;
+            list.Add(entity);
+            DataTable data = General.ConvertToDataTable(list);
+            using (var connection = new SqlConnection(_dapperConnectionString))
+            {
+                await connection.OpenAsync();
+                var param = new DynamicParameters();
+                param.Add("@CreatedBy", entity.CreatedBy);
+                param.Add("@udtt_BusinessPartner", data.AsTableValuedParameter("UDTT_BusinessPartner"));
+                param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                await connection.QueryAsync<BusinessPartner>("BusinessPartner_Save", param, commandType: CommandType.StoredProcedure, commandTimeout: TimeoutInSeconds);
+                //Output Message từ Procedure
+                var resultMessage = param.Get<string>("@Message");
+
+                if (resultMessage.Contains("successfully"))
+                {
+                    result.Code = "0";
+                    result.Message = resultMessage;
+                    result.Data = entity;
+
+                }
+                else
+                {
+                    result.Code = "-1";
+                    result.Message = resultMessage;
+                    result.Data = null;
+
+                }
+                return result;
+            }
+        }
+        catch (SqlException sqlex)
+        {
+
+            result.Code = "2";
+            result.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
+            return result;
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+
+            result.Code = "3";
+            result.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (DbUpdateException ex)
+        {
+
+            result.Code = "4";
+            result.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (OperationCanceledException ex)
+        {
+
+            result.Code = "5";
+            result.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (Exception ex)
+        {
+
+            result.Code = "6";
+            result.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+    }
+
+    public async Task<ResultService<string>> DeleteByDapper(string partnerCode)
+    {
+        ResultService<string> result = new();
+        if (string.IsNullOrEmpty(partnerCode))
+        {
+            result.Code = "-1";
+            result.Message = "Entity is null";
+            return result;
+        }
+        try
+        {
+            string Message = string.Empty;
+            using (var connection = new SqlConnection(_dapperConnectionString))
+            {
+                await connection.OpenAsync();
+                var param = new DynamicParameters();
+                param.Add("@PartnerCode", partnerCode);
+                param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                await connection.QueryAsync<string>("BusinessPartner_Delete", param, commandType: CommandType.StoredProcedure, commandTimeout: TimeoutInSeconds);
+                //Output Message từ Procedure
+                var resultMessage = param.Get<string>("@Message");
+                if (resultMessage.ToLower().Contains("successfully"))
+                {
+                    result.Code = "0";
+                    result.Message = resultMessage;
+                    result.Data = partnerCode;
+                }
+                else
+                {
+                    result.Code = "-1";
+                    result.Message = resultMessage;
+                    result.Data = string.Empty;
+                }
+                return result;
+            }
+        }
+        catch (SqlException sqlex)
+        {
+            result.Code = "2";
+            result.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
+            return result;
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            result.Code = "3";
+            result.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (DbUpdateException ex)
+        {
+            result.Code = "4";
+            result.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (OperationCanceledException ex)
+        {
+            result.Code = "5";
+            result.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (Exception ex)
+        {
+            result.Code = "6";
+            result.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+    }
+
+    #endregion
 }

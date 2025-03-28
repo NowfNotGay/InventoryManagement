@@ -74,5 +74,28 @@ namespace API_Application.Controllers.MasterData
             return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
         }
+
+
+        [HttpPost]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        [Route("SaveByDapper")]
+        public async Task<IActionResult> SaveByDapper([FromBody] BusinessPartner businessPartner)
+        {
+            var rs = await _businessPartnerProvider.SaveByDapper(businessPartner);
+            return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
+        }
+
+        [HttpDelete]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        [Route("DeleteByDapper/{partnerCode}")]
+        public async Task<IActionResult> DeleteByDapper(string partnerCode)
+        {
+            var rs = await _businessPartnerProvider.DeleteByDapper(partnerCode);
+            return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
+        }
     }
 }
