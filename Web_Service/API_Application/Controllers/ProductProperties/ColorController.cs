@@ -1,6 +1,7 @@
 ﻿using Base.BaseService;
 using Base.ProductProperties;
 using Core.MasterData;
+using Core.ProductClassification;
 using Core.ProductProperties;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -59,6 +60,29 @@ public class ColorController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var rs = await _colorService.Delete(id);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
+    }
+
+
+    [HttpPost]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    [Route("SaveByDapper")]
+    public async Task<IActionResult> SaveByDapper([FromBody] Color color)
+    {
+        var rs = await _colorProvider.SaveByDapper(color);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
+    }
+
+    [HttpDelete]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    [Route("DeleteByDapper/{colorCode}")]
+    public async Task<IActionResult> DeleteByDapper(string colorCode)
+    {
+        var rs = await _colorProvider.DeleteByDapper(colorCode);
         return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }

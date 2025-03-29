@@ -6,6 +6,7 @@ using Core.ProductClassification;
 using Core.ProductProperties;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Servicer.ProductClassification;
 
 namespace API_Application.Controllers.ProductProperties;
 [Route("api/[controller]")]
@@ -62,6 +63,30 @@ public class ProductTypeController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var rs = await _productTypeService.Delete(id);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
+    }
+
+
+
+    [HttpPost]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    [Route("SaveByDapper")]
+    public async Task<IActionResult> SaveByDapper([FromBody] ProductType productType)
+    {
+        var rs = await _productTypeProvider.SaveByDapper(productType);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
+    }
+
+    [HttpDelete]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    [Route("DeleteByDapper/{productTypeCode}")]
+    public async Task<IActionResult> DeleteByDapper(string productTypeCode)
+    {
+        var rs = await _productTypeProvider.DeleteByDapper(productTypeCode);
         return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }

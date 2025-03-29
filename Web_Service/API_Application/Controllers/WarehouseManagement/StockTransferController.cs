@@ -1,28 +1,24 @@
 ﻿using Base.BaseService;
-using Base.MasterData;
 using Base.WarehouseManagement;
-using Core.MasterData;
 using Core.WarehouseManagement;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Application.Controllers.WarehouseManagement
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GoodsReceiptNoteController : ControllerBase
+    public class StockTransferController : ControllerBase
     {
-        private readonly IGoodsReceiptNoteProvider _GoodsReceiptNoteProvider;
-        private readonly ICRUD_Service<GoodsReceiptNote, int> _ICRUD_Service;
+        private readonly IStockTransferProvider _StockTransferProvider;
+        private readonly ICRUD_Service<StockTransfer, int> _ICRUD_Service;
 
-        public GoodsReceiptNoteController(IGoodsReceiptNoteProvider goodsReceiptNoteProvider, ICRUD_Service<GoodsReceiptNote, int> iCRUD_Service)
+        public StockTransferController(IStockTransferProvider stockTransferProvider, ICRUD_Service<StockTransfer, int> iCRUD_Service)
         {
-            _GoodsReceiptNoteProvider = goodsReceiptNoteProvider;
+            _StockTransferProvider = stockTransferProvider;
             _ICRUD_Service = iCRUD_Service;
         }
 
 
-        #region GoodsReceiptNote
         [HttpGet]
         [Consumes("application/json")]
         [Produces("application/json")]
@@ -46,17 +42,17 @@ namespace API_Application.Controllers.WarehouseManagement
         [Consumes("application/json")]
         [Produces("application/json")]
 
-        public async Task<IActionResult> Save([FromBody] GoodsReceiptNote GoodsReceiptNote)
+        public async Task<IActionResult> Save([FromBody] StockTransfer stockTransfer)
         {
-            var rs = await _ICRUD_Service.Create(GoodsReceiptNote);
+            var rs = await _ICRUD_Service.Create(stockTransfer);
             return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
         }
         [HttpPut]
         [Consumes("application/json")]
         [Produces("application/json")]
-        public async Task<IActionResult> Update([FromBody] GoodsReceiptNote GoodsReceiptNote)
+        public async Task<IActionResult> Update([FromBody] StockTransfer stockTransfer)
         {
-            var rs = await _ICRUD_Service.Update(GoodsReceiptNote);
+            var rs = await _ICRUD_Service.Update(stockTransfer);
             return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
 
         }
@@ -75,9 +71,9 @@ namespace API_Application.Controllers.WarehouseManagement
         [Consumes("application/json")]
         [Produces("application/json")]
 
-        public async Task<IActionResult> DeleteV2(string grCode)
+        public async Task<IActionResult> DeleteV2(string stCode)
         {
-            var rs = await _GoodsReceiptNoteProvider.DeleteByDapper(grCode);
+            var rs = await _StockTransferProvider.DeleteByDapper(stCode);
             return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
         }
 
@@ -85,47 +81,39 @@ namespace API_Application.Controllers.WarehouseManagement
         [Consumes("application/json")]
         [Produces("application/json")]
 
-        public async Task<IActionResult> CreateV2([FromBody] GoodsReceiptNote GoodsReceiptNote)
+        public async Task<IActionResult> CreateV2([FromBody] StockTransfer stockTransfer)
         {
-            var rs = await _GoodsReceiptNoteProvider.CreateByDapper(GoodsReceiptNote);
+            var rs = await _StockTransferProvider.CreateByDapper(stockTransfer);
             return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
         }
 
-        [HttpGet("/GoodsReceiptNoteLine/GRNCode")]
+        [HttpGet("/StockTransferDetail/STCode")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public async Task<IActionResult> StockTransferDetail_GetAll([FromQuery] string stCode)
+        {
+            var rs = await _StockTransferProvider.GetDetailByStockTransferID(stCode);
+            return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
+        }
+
+
+        [HttpDelete("/StockTransferDetail/DeleteMultiLine")]
         [Consumes("application/json")]
         [Produces("application/json")]
 
-        #endregion
-
-        #region GoodsReceiptNoteLine
-
-        public async Task<IActionResult> GoodsReceiptNoteLine_GetAll([FromQuery]string GRNCode)
+        public async Task<IActionResult> StockTransferDetail_Delete_Multi([FromBody] List<StockTransferDetail> param)
         {
-            var rs = await _GoodsReceiptNoteProvider.GetLineByRefCode(GRNCode);
+            var rs = await _StockTransferProvider.DeleteDetail(param);
             return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
         }
-
-
-        [HttpDelete("/GoodsReceiptNoteLine/DeleteMultiLine")]
-        [Consumes("application/json")]
-        [Produces("application/json")]
-
-        public async Task<IActionResult> GoodsReceiptNoteLine_Delete_Multi([FromBody] List<GoodsReceiptNoteLine> param)
-        {
-            var rs = await _GoodsReceiptNoteProvider.DeleteLine(param);
-            return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
-        }
-        #endregion
-
-        #region GoodsReceiptNoteHeaderAndLine
 
         [HttpPost("/HeaderLine/CreateBoth")]
         [Consumes("application/json")]
         [Produces("application/json")]
 
-        public async Task<IActionResult> GoodsReceiptNote_Create_HeaderAndLine([FromBody] GoodsReceiptNote_Param param)
+        public async Task<IActionResult> StockTransfer_Create_HeaderAndLine([FromBody] StockTransfer_Param param)
         {
-            var rs = await _GoodsReceiptNoteProvider.Save(param);
+            var rs = await _StockTransferProvider.CreateHeaderAndDetail(param);
             return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
         }
 
@@ -133,13 +121,10 @@ namespace API_Application.Controllers.WarehouseManagement
         [Consumes("application/json")]
         [Produces("application/json")]
 
-        public async Task<IActionResult> Delete_HeaderAndDetail([FromQuery]int grnID)
+        public async Task<IActionResult> Delete_HeaderAndDetail([FromQuery] int stID)
         {
-            var rs = await _GoodsReceiptNoteProvider.Delete_HeaderAndDetail(grnID);
+            var rs = await _StockTransferProvider.Delete_HeaderAndDetail(stID);
             return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
         }
-
-        #endregion
-
     }
 }

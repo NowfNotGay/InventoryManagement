@@ -7,12 +7,12 @@ namespace API_Application.Controllers.ProductManagement
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductVarientController : ControllerBase
+    public class ProductVariantController : ControllerBase
     {
         private readonly IProductVariantProvider _productVariantProvider;
         private readonly ICRUD_Service<ProductVariant, int> _ICRUD_Service;
 
-        public ProductVarientController(IProductVariantProvider productVariantProvider, ICRUD_Service<ProductVariant, int> iCRUD_Service)
+        public ProductVariantController(IProductVariantProvider productVariantProvider, ICRUD_Service<ProductVariant, int> iCRUD_Service)
         {
             _productVariantProvider = productVariantProvider;
             _ICRUD_Service = iCRUD_Service;
