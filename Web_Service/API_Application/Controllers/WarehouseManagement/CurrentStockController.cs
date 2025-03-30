@@ -24,16 +24,16 @@ namespace API_Application.Controllers.WarehouseManagement
         public async Task<IActionResult> GetAll()
         {
             var rs = await _ICRUD_Service.GetAll();
-            return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs.Message);
         }
 
-        [HttpGet("ID")]
+        [HttpGet("{id}")]
         [Consumes("application/json")]
         [Produces("application/json")]
-        public async Task<IActionResult> GetByID([FromQuery] int ID)
+        public async Task<IActionResult> GetByID( int ID)
         {
             var rs = await _ICRUD_Service.Get(ID);
-            return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs.Message);
 
         }
         [HttpPost]
@@ -62,8 +62,18 @@ namespace API_Application.Controllers.WarehouseManagement
         public async Task<IActionResult> Delete(int id)
         {
             var rs = await _ICRUD_Service.Delete(id);
-            return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
         }
+        [HttpPost("Save")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public async Task<IActionResult> SaveBy([FromBody] CurrentStock currentStock)
+        {
+            var rs = await _CurrentStockProvider.Save(currentStock);            
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs.Message);
+
+        }
+
 
     }
 }

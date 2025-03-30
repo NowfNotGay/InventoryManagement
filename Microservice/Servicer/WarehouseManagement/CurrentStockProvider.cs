@@ -23,9 +23,11 @@ namespace Servicer.WarehouseManagement
 		private readonly IConfiguration _configuration;
 		private string _moduleDapper = "DB_Inventory_DAPPER";
 		private const int TimeoutInSeconds = 240;
+        private string currentStockType = "UDTT_CurrentStock";
 
 
-		public CurrentStockProvider(DB_WarehouseManagement_Context context, IConfiguration configuration)
+
+        public CurrentStockProvider(DB_WarehouseManagement_Context context, IConfiguration configuration)
 		{
 			_Context = context;
 			_configuration = configuration;
@@ -98,69 +100,11 @@ namespace Servicer.WarehouseManagement
         }
 
         public async Task<ResultService<string>> Delete(int id)
-		{
-            ResultService<string> resultService = new ResultService<string>();
-            var entity = await this.Get(id);
-            if (entity.Code == "-1")
-            {
-                resultService.Code = entity.Code;
-                resultService.Message = "Entity not found";
-                return resultService;
-            }
-            try
-            {
-                _Context.CurrentStocks.Remove(entity.Data);
-                await _Context.SaveChangesAsync();
-                resultService.Code = "0";
-                resultService.Message = "Entity deleted successfully";
-                return resultService;
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                return new ResultService<string>()
-                {
-                    Code = "2",
-                    Data = null,
-                    Message = $"{ex.GetType()}, {ex.Message}"
-                };
-
-            }
-            catch (DbUpdateException ex)
-            {
-                return new ResultService<string>()
-                {
-                    Code = "3",
-                    Data = null,
-                    Message = $"{ex.GetType()}, {ex.Message}"
-                };
-            }
-            catch (OperationCanceledException ex)
-            {
-                return new ResultService<string>()
-                {
-                    Code = "4",
-                    Data = null,
-                    Message = $"{ex.GetType()}, {ex.Message}"
-                };
-            }
-            catch (SqlException ex)
-            {
-                return new ResultService<string>()
-                {
-                    Code = "5",
-                    Data = null,
-                    Message = $"{ex.GetType()}, {ex.Message}"
-                };
-            }
-            catch (Exception ex)
-            {
-                return new ResultService<string>()
-                {
-                    Code = "6",
-                    Data = null,
-                    Message = $"{ex.GetType()}, {ex.Message}"
-                };
-            }
+        {
+            var param = new DynamicParameters();
+            param.Add("@ID", id);
+            var result = await this.CallStoreSingle<String>("Delete_CurrentStock", param);
+            return result;
         }
         public async Task<ResultService<CurrentStock>> Get(int id)
         {
@@ -375,6 +319,29 @@ namespace Servicer.WarehouseManagement
                 response.Message = $"An error occurred while executing store Procedure. Details: {ex.GetType()} - {ex.Message}";
                 return response;
             }
+        }
+
+        public async Task<ResultService<CurrentStock>> Save(CurrentStock entity)
+        {
+            var param = new DynamicParameters();
+            
+
+            // Thêm parameter @SaveBy
+            param.Add("@SaveBy", "Thangh", DbType.String);
+
+            // Thêm parameter dạng table-valued (@currentStock)
+            var datatableList = new List<CurrentStock>();
+            datatableList.Add(entity);
+            var dataTable = General.ConvertToDataTable(datatableList); // Chuyển entity thành DataTable
+            param.Add("@currentStock", dataTable.AsTableValuedParameter(this.currentStockType));
+
+            // Thêm output parameters
+            param.Add("@Status", dbType: DbType.Byte, direction: ParameterDirection.Output);
+            param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 50);
+
+            var result = await CallStoreSingle<CurrentStock>("Save_CurrentStock", param);
+          
+            return result;
         }
     }
 }

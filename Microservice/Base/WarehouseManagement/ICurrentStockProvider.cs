@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Core.BaseClass;
+using Core.ProductClassification;
+using Core.WarehouseManagement;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +11,6 @@ namespace Base.WarehouseManagement
 {
     public interface ICurrentStockProvider
     {
+        Task<ResultService<CurrentStock>> Save(CurrentStock entity);
     }
 }
