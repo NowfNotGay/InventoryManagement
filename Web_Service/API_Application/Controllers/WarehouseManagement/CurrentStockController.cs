@@ -67,7 +67,7 @@ namespace API_Application.Controllers.WarehouseManagement
         [HttpPost("Save")]
         [Consumes("application/json")]
         [Produces("application/json")]
-        public async Task<IActionResult> SaveBy([FromBody] CurrentStock currentStock)
+        public async Task<IActionResult> SaveBy([FromBody] UDTT_CurrentStock currentStock)
         {
             var rs = await _CurrentStockProvider.Save(currentStock);            
             return rs.Code == "0" ? Ok(rs) : BadRequest(rs.Message);

@@ -321,7 +321,7 @@ namespace Servicer.WarehouseManagement
             }
         }
 
-        public async Task<ResultService<CurrentStock>> Save(CurrentStock entity)
+        public async Task<ResultService<CurrentStock>> Save(UDTT_CurrentStock entity)
         {
             var param = new DynamicParameters();
             
@@ -330,7 +330,7 @@ namespace Servicer.WarehouseManagement
             param.Add("@SaveBy", "Thangh", DbType.String);
 
             // Thêm parameter dạng table-valued (@currentStock)
-            var datatableList = new List<CurrentStock>();
+            var datatableList = new List<UDTT_CurrentStock>();
             datatableList.Add(entity);
             var dataTable = General.ConvertToDataTable(datatableList); // Chuyển entity thành DataTable
             param.Add("@currentStock", dataTable.AsTableValuedParameter(this.currentStockType));

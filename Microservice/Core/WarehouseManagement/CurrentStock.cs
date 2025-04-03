@@ -22,4 +22,19 @@ namespace Core.WarehouseManagement
         public int? StorageBinID { get; set; }
 
     }
+    public class UDTT_CurrentStock
+    {
+        public string CreatedBy { get; set; } = "";
+        public string CreatedDate { get; set; } = "";
+        public int ID { get; set; }
+        public int ProductID { get; set; }
+        public int ProductVariantID { get; set; }
+        public decimal Quantity { get; set; }
+        public string RowPointer { get; set; } = "";
+        public int StorageBinID { get; set; }
+        public int UoMID { get; set; }
+        public string UpdatedBy { get; set; } = "";
+        public string UpdatedDate { get; set; } = "";
+        public int WarehouseID { get; set; }
+    }
 }

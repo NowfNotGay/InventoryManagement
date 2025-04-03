@@ -11,6 +11,6 @@ namespace Base.WarehouseManagement
 {
     public interface ICurrentStockProvider
     {
-        Task<ResultService<CurrentStock>> Save(CurrentStock entity);
+        Task<ResultService<CurrentStock>> Save(UDTT_CurrentStock entity);
     }
 }
