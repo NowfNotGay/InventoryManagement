@@ -9,6 +9,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using System.Text.RegularExpressions;
 using static Dapper.SqlMapper;
 
 namespace Servicer.WarehouseManagement
@@ -41,7 +42,7 @@ namespace Servicer.WarehouseManagement
                         commandType: CommandType.StoredProcedure,
                            commandTimeout: TimeoutInSeconds);
 
-                    response.Code = "0";// Success
+                    response.Code = ResponseCode.Success.ToString();// Success
                     response.Message = "Success";
                     response.Data = result;
                     return response;
@@ -49,20 +50,20 @@ namespace Servicer.WarehouseManagement
             }
             catch (SqlException sqlEx)
             {
-                response.Code = "1";
-                response.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                response.Code = ResponseCode.FailWhileExecutingStoredProcedure.ToString();
+                response.Message = $"SQL Exception: {sqlEx.GetType()} - {sqlEx.Message}";
                 return response;
             }
             catch (ArgumentException ex)
             {
-                response.Code = "2";
-                response.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                response.Code = ResponseCode.InvalidInput.ToString();
+                response.Message = $"Configuration error: {ex.GetType()} - {ex.Message}";
                 return response;
             }
             catch (Exception ex)
             {
-                response.Code = "999";
-                response.Message = $"An error occurred while executing store Procedure. Details: {ex.GetType()} - {ex.Message}";
+                response.Code = ResponseCode.UnhandledError.ToString();
+                response.Message = $"Unexpected error: {ex.GetType()} - {ex.Message}";
                 return response;
             }
         }
@@ -85,12 +86,12 @@ namespace Servicer.WarehouseManagement
                     {
                         return new ResultService<GoodsReceiptNote>()
                         {
-                            Code = "-1",
+                            Code = ResponseCode.NotFound.ToString(),
                             Message = "Entity not found",
                             Data = null
                         };
                     }
-                    response.Code = "0";// Success
+                    response.Code = ResponseCode.Success.ToString();// Success
                     response.Message = "Success";
                     response.Data = result;
                     return response;
@@ -98,20 +99,20 @@ namespace Servicer.WarehouseManagement
             }
             catch (SqlException sqlEx)
             {
-                response.Code = "1";
-                response.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                response.Code = ResponseCode.FailWhileExecutingStoredProcedure.ToString();
+                response.Message = $"SQL Exception: {sqlEx.GetType()} - {sqlEx.Message}";
                 return response;
             }
             catch (ArgumentException ex)
             {
-                response.Code = "2";
-                response.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                response.Code = ResponseCode.InvalidInput.ToString();
+                response.Message = $"Configuration error: {ex.GetType()} - {ex.Message}";
                 return response;
             }
             catch (Exception ex)
             {
-                response.Code = "999";
-                response.Message = $"An error occurred while executing store Procedure. Details: {ex.GetType()} - {ex.Message}";
+                response.Code = ResponseCode.UnhandledError.ToString();
+                response.Message = $"Unexpected error: {ex.GetType()} - {ex.Message}";
                 return response;
             }
         }
@@ -122,10 +123,9 @@ namespace Servicer.WarehouseManagement
             {
                 return new ResultService<GoodsReceiptNote>()
                 {
-                    Code = "1",
-                    Message = "Entity is not valid"
-
+                    Code = ResponseCode.InvalidInput.ToString()
                 };
+                throw new Exception("Entity is not valid");
             }
 
             using (var connection = _Context.Database.BeginTransaction())
@@ -138,7 +138,7 @@ namespace Servicer.WarehouseManagement
                     await _Context.SaveChangesAsync();
                     await connection.CommitAsync();
 
-                    response.Code = "0";// Success
+                    response.Code = ResponseCode.Success.ToString();// Success
                     response.Message = "Create new Instance Successfully";
                     response.Data = entity;
                     return response;
@@ -147,7 +147,7 @@ namespace Servicer.WarehouseManagement
                 {
                     await connection.RollbackAsync();
                     //lỗi xảy ra khi có sự xung đột giữa các bản ghi trong cơ sở dữ liệu khi cố gắng cập nhật.
-                    response.Code = "2";
+                    response.Code = ResponseCode.FailWhileExecutingStoredProcedure.ToString();
                     response.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
                     return response;
                 }
@@ -337,85 +337,66 @@ namespace Servicer.WarehouseManagement
         public async Task<ResultService<GoodsReceiptNote>> CreateByDapper(GoodsReceiptNote entity)
         {
             var response = new ResultService<GoodsReceiptNote>();
+
             if (entity == null)
             {
-                return new ResultService<GoodsReceiptNote>()
-                {
-                    Code = "1",
-                    Message = "Entity is not valid"
-                };
+                response.Code = ResponseCode.InvalidInput.ToString();
+                response.Message = "Entity is not valid";
+                return response;
             }
+
             try
             {
-                string Message = string.Empty;
+                string message = string.Empty;
                 entity.GRNCode = !entity.GRNCode.Contains("GRN") ? string.Empty : entity.GRNCode;
-                List<GoodsReceiptNote> lst = new List<GoodsReceiptNote>();
-                lst.Add(entity);
+
+                List<GoodsReceiptNote> lst = new List<GoodsReceiptNote> { entity };
                 DataTable dtHeader = General.ConvertToDataTable(lst);
+
                 string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+
                 using (var connection = new SqlConnection(conn))
                 {
-
                     await connection.OpenAsync();
+
                     var param = new DynamicParameters();
                     param.Add("@CreatedBy", entity.CreatedBy);
-
                     param.Add("@udtt_Header", dtHeader.AsTableValuedParameter("UDTT_GoodsReceiptNoteHeader"));
-                    param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
-                    await connection.QueryAsync<GoodsReceiptNote>("GoodsReceiptNote_Create",
-                       param,
-                       commandType: CommandType.StoredProcedure,
-                          commandTimeout: TimeoutInSeconds);
+                    param.Add("@Message", message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+
+                    await connection.QueryAsync<GoodsReceiptNote>(
+                        "GoodsReceiptNote_Create",
+                        param,
+                        commandType: CommandType.StoredProcedure,
+                        commandTimeout: TimeoutInSeconds
+                    );
+
                     var resultMessage = param.Get<string>("@Message");
 
-                    if (resultMessage.Contains("OK"))
+                    if (resultMessage.Contains("OK", StringComparison.OrdinalIgnoreCase))
                     {
-                        response.Code = "0"; // Success
+                        response.Code = ResponseCode.Success.ToString();
                         response.Message = "Save Successfully";
                     }
                     else
                     {
-                        response.Code = "-999"; // Success
-                        response.Message = "Failed";
+                        response.Code = ResponseCode.NotFound.ToString(); // hoặc FailWhileExecutingStoredProcedure
+                        response.Message = $"Save Failed: {resultMessage}";
                     }
 
                     return response;
-
                 }
             }
             catch (SqlException sqlex)
             {
-
-                response.Code = "2";
-                response.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
-                return response;
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-
-                response.Code = "3";
-                response.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
-                return response;
-            }
-            catch (DbUpdateException ex)
-            {
-
-                response.Code = "4";
-                response.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
-                return response;
-            }
-            catch (OperationCanceledException ex)
-            {
-
-                response.Code = "5";
-                response.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
+                response.Code = ResponseCode.FailWhileExecutingStoredProcedure.ToString();
+                response.Message = $"Something went wrong with the database: {sqlex.GetType()} - {sqlex.Message}";
                 return response;
             }
             catch (Exception ex)
             {
-
-                response.Code = "6";
-                response.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
+                response.Code = ResponseCode.UnhandledError.ToString();
+                response.Message = $"Unexpected error: {ex.GetType()} - {ex.Message}";
                 return response;
             }
         }
@@ -441,51 +422,23 @@ namespace Servicer.WarehouseManagement
 
                     if (resultMessage.Contains("OK"))
                     {
-                        resultService.Code = "0"; // Success
+                        resultService.Code = ResponseCode.Success.ToString(); // Success
                         resultService.Message = "Deleted Successfully";
                     }
                     else
                     {
-                        resultService.Code = "-999";
-                        resultService.Message = "Failed";
+                        resultService.Code = ResponseCode.NotFound.ToString();
+                        resultService.Message = "Not Found";
                     }
 
                     return resultService;
                 }
             }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                return new ResultService<string>()
-                {
-                    Code = "2",
-                    Data = null,
-                    Message = $"{ex.GetType()}, {ex.Message}"
-                };
-
-            }
-            catch (DbUpdateException ex)
-            {
-                return new ResultService<string>()
-                {
-                    Code = "3",
-                    Data = null,
-                    Message = $"{ex.GetType()}, {ex.Message}"
-                };
-            }
-            catch (OperationCanceledException ex)
-            {
-                return new ResultService<string>()
-                {
-                    Code = "4",
-                    Data = null,
-                    Message = $"{ex.GetType()}, {ex.Message}"
-                };
-            }
             catch (SqlException ex)
             {
                 return new ResultService<string>()
                 {
-                    Code = "5",
+                    Code = ResponseCode.FailWhileExecutingStoredProcedure.ToString(),
                     Data = null,
                     Message = $"{ex.GetType()}, {ex.Message}"
                 };
@@ -494,7 +447,7 @@ namespace Servicer.WarehouseManagement
             {
                 return new ResultService<string>()
                 {
-                    Code = "6",
+                    Code = ResponseCode.UnhandledError.ToString(),
                     Data = null,
                     Message = $"{ex.GetType()}, {ex.Message}"
                 };
@@ -519,7 +472,7 @@ namespace Servicer.WarehouseManagement
                         commandType: CommandType.StoredProcedure,
                            commandTimeout: TimeoutInSeconds);
 
-                    response.Code = "0";// Success
+                    response.Code = ResponseCode.Success.ToString();// Success
                     response.Message = "Success";
                     response.Data = result;
                     return response;
@@ -527,19 +480,19 @@ namespace Servicer.WarehouseManagement
             }
             catch (SqlException sqlEx)
             {
-                response.Code = "1";
+                response.Code = ResponseCode.FailWhileExecutingStoredProcedure.ToString();
                 response.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
                 return response;
             }
             catch (ArgumentException ex)
             {
-                response.Code = "2";
-                response.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                response.Code = ResponseCode.FailToConnectDB.ToString();
+                response.Message = $"An error occurred while trying to connect to your database Server \n {ex.GetType()} - {ex.Message}";
                 return response;
             }
             catch (Exception ex)
             {
-                response.Code = "999";
+                response.Code = ResponseCode.FailWhileExecutingStoredProcedure.ToString();
                 response.Message = $"An error occurred while executing store Procedure. Details: {ex.GetType()} - {ex.Message}";
                 return response;
             }
@@ -566,51 +519,23 @@ namespace Servicer.WarehouseManagement
 
                     if (resultMessage.Contains("OK"))
                     {
-                        resultService.Code = "0"; // Success
+                        resultService.Code = ResponseCode.Success.ToString(); // Success
                         resultService.Message = "Deleted Successfully";
                     }
                     else
                     {
-                        resultService.Code = "-999";
+                        resultService.Code = ResponseCode.UnhandledError.ToString();
                         resultService.Message = "Failed";
                     }
 
                     return resultService;
                 }
             }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                return new ResultService<string>()
-                {
-                    Code = "2",
-                    Data = null,
-                    Message = $"{ex.GetType()}, {ex.Message}"
-                };
-
-            }
-            catch (DbUpdateException ex)
-            {
-                return new ResultService<string>()
-                {
-                    Code = "3",
-                    Data = null,
-                    Message = $"{ex.GetType()}, {ex.Message}"
-                };
-            }
-            catch (OperationCanceledException ex)
-            {
-                return new ResultService<string>()
-                {
-                    Code = "4",
-                    Data = null,
-                    Message = $"{ex.GetType()}, {ex.Message}"
-                };
-            }
             catch (SqlException ex)
             {
                 return new ResultService<string>()
                 {
-                    Code = "5",
+                    Code = ResponseCode.FailWhileExecutingStoredProcedure.ToString(),
                     Data = null,
                     Message = $"{ex.GetType()}, {ex.Message}"
                 };
@@ -619,7 +544,7 @@ namespace Servicer.WarehouseManagement
             {
                 return new ResultService<string>()
                 {
-                    Code = "6",
+                    Code = ResponseCode.UnhandledError.ToString(),
                     Data = null,
                     Message = $"{ex.GetType()}, {ex.Message}"
                 };
@@ -650,51 +575,23 @@ namespace Servicer.WarehouseManagement
 
                     if (resultMessage.Contains("OK"))
                     {
-                        resultService.Code = "0"; // Success
+                        resultService.Code = ResponseCode.Success.ToString(); // Success
                         resultService.Message = "Deleted Successfully";
                     }
                     else
                     {
-                        resultService.Code = "-999";
+                        resultService.Code = ResponseCode.UnhandledError.ToString();
                         resultService.Message = "Failed";
                     }
 
                     return resultService;
                 }
             }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                return new ResultService<string>()
-                {
-                    Code = "2",
-                    Data = null,
-                    Message = $"{ex.GetType()}, {ex.Message}"
-                };
-
-            }
-            catch (DbUpdateException ex)
-            {
-                return new ResultService<string>()
-                {
-                    Code = "3",
-                    Data = null,
-                    Message = $"{ex.GetType()}, {ex.Message}"
-                };
-            }
-            catch (OperationCanceledException ex)
-            {
-                return new ResultService<string>()
-                {
-                    Code = "4",
-                    Data = null,
-                    Message = $"{ex.GetType()}, {ex.Message}"
-                };
-            }
             catch (SqlException ex)
             {
                 return new ResultService<string>()
                 {
-                    Code = "5",
+                    Code = ResponseCode.FailWhileExecutingStoredProcedure.ToString(),
                     Data = null,
                     Message = $"{ex.GetType()}, {ex.Message}"
                 };
@@ -703,7 +600,7 @@ namespace Servicer.WarehouseManagement
             {
                 return new ResultService<string>()
                 {
-                    Code = "6",
+                    Code = ResponseCode.UnhandledError.ToString(),
                     Data = null,
                     Message = $"{ex.GetType()}, {ex.Message}"
                 };
@@ -717,7 +614,7 @@ namespace Servicer.WarehouseManagement
             {
                 return new ResultService<GoodsReceiptNote_Param>()
                 {
-                    Code = "1",
+                    Code = ResponseCode.InvalidInput.ToString(),
                     Message = "Entity is not valid"
                 };
             }
@@ -742,12 +639,12 @@ namespace Servicer.WarehouseManagement
 
                     if (resultMessage.Contains("OK"))
                     {
-                        response.Code = "0"; // Success
+                        response.Code = ResponseCode.Success.ToString(); // Success
                         response.Message = "Save Successfully";
                     }
                     else
                     {
-                        response.Code = "-999"; // Success
+                        response.Code = ResponseCode.UnhandledError.ToString(); // Success
                         response.Message = "Failed";
                     }
 
@@ -758,35 +655,14 @@ namespace Servicer.WarehouseManagement
             catch (SqlException sqlex)
             {
 
-                response.Code = "2";
+                response.Code = ResponseCode.FailWhileExecutingStoredProcedure.ToString();
                 response.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
-                return response;
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-
-                response.Code = "3";
-                response.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
-                return response;
-            }
-            catch (DbUpdateException ex)
-            {
-
-                response.Code = "4";
-                response.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
-                return response;
-            }
-            catch (OperationCanceledException ex)
-            {
-
-                response.Code = "5";
-                response.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
                 return response;
             }
             catch (Exception ex)
             {
 
-                response.Code = "6";
+                response.Code = ResponseCode.UnhandledError.ToString();
                 response.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
                 return response;
             }
