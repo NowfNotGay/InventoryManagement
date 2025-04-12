@@ -17,24 +17,24 @@ using System.Threading.Tasks;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 namespace Servicer.WarehouseManagement
 {
-	public class CurrentStockProvider : ICRUD_Service<CurrentStock, int>, ICurrentStockProvider
-	{
-		private readonly DB_WarehouseManagement_Context _Context;
-		private readonly IConfiguration _configuration;
-		private string _moduleDapper = "DB_Inventory_DAPPER";
-		private const int TimeoutInSeconds = 240;
+    public class CurrentStockProvider : ICRUD_Service<CurrentStock, int>, ICurrentStockProvider
+    {
+        private readonly DB_WarehouseManagement_Context _Context;
+        private readonly IConfiguration _configuration;
+        private string _moduleDapper = "DB_Inventory_DAPPER";
+        private const int TimeoutInSeconds = 240;
         private string currentStockType = "UDTT_CurrentStock";
 
 
 
         public CurrentStockProvider(DB_WarehouseManagement_Context context, IConfiguration configuration)
-		{
-			_Context = context;
-			_configuration = configuration;
-		}
+        {
+            _Context = context;
+            _configuration = configuration;
+        }
         #region ICRUD
         public async Task<ResultService<CurrentStock>> Create(CurrentStock entity)
-		{
+        {
             var response = new ResultService<CurrentStock>();
             if (entity == null)
             {
@@ -110,8 +110,8 @@ namespace Servicer.WarehouseManagement
         {
             var param = new DynamicParameters();
             param.Add("@ID", id);
-            var result = await this.CallStoreSingle<CurrentStock>("CurrentStock_GetByID",param);
-            if(result.Data == null)
+            var result = await this.CallStoreSingle<CurrentStock>("CurrentStock_GetByID", param);
+            if (result.Data == null)
             {
                 return new ResultService<CurrentStock>()
                 {
@@ -123,12 +123,12 @@ namespace Servicer.WarehouseManagement
             return result;
         }
         public async Task<ResultService<IEnumerable<CurrentStock>>> GetAll()
-		{
+        {
             return await this.CallStoreArray<CurrentStock>("CurrentStock_GetAll");
-		}
+        }
 
-		public async Task<ResultService<CurrentStock>> Update(CurrentStock entity)
-		{
+        public async Task<ResultService<CurrentStock>> Update(CurrentStock entity)
+        {
             var response = new ResultService<CurrentStock>();
 
             var getEntityID = await this.Get(entity.ID);
@@ -211,7 +211,7 @@ namespace Servicer.WarehouseManagement
 
 
         #endregion
-        private async Task<ResultService<IEnumerable<T>>> CallStoreArray<T>(String nameStore, DynamicParameters? param = null )
+        private async Task<ResultService<IEnumerable<T>>> CallStoreArray<T>(String nameStore, DynamicParameters? param = null)
         {
             var response = new ResultService<IEnumerable<T>>();
             string connectionString = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
@@ -220,9 +220,9 @@ namespace Servicer.WarehouseManagement
                 using (SqlConnection sqlConnection = new SqlConnection(connectionString))
                 {
                     await sqlConnection.OpenAsync();
-                     var result = param != null 
-                        ? await sqlConnection.QueryAsync<T>(nameStore, param, commandType: CommandType.StoredProcedure, commandTimeout: TimeoutInSeconds) 
-                        : await sqlConnection.QueryAsync<T>(nameStore, commandType: CommandType.StoredProcedure, commandTimeout: TimeoutInSeconds);
+                    var result = param != null
+                       ? await sqlConnection.QueryAsync<T>(nameStore, param, commandType: CommandType.StoredProcedure, commandTimeout: TimeoutInSeconds)
+                       : await sqlConnection.QueryAsync<T>(nameStore, commandType: CommandType.StoredProcedure, commandTimeout: TimeoutInSeconds);
                     response.Code = "0";
                     response.Message = "Success";
                     response.Data = result;
@@ -266,11 +266,11 @@ namespace Servicer.WarehouseManagement
                 using (SqlConnection sqlConnection = new SqlConnection(connectionString))
                 {
                     await sqlConnection.OpenAsync();
-                    var result = param != null 
+                    var result = param != null
                         ? await sqlConnection.QuerySingleOrDefaultAsync<T>(nameStore,
                             param,
                             commandType: CommandType.StoredProcedure,
-                               commandTimeout: TimeoutInSeconds) 
+                               commandTimeout: TimeoutInSeconds)
                         : await sqlConnection.QuerySingleOrDefaultAsync<T>(nameStore,
                             commandType: CommandType.StoredProcedure,
                                commandTimeout: TimeoutInSeconds);
@@ -324,24 +324,30 @@ namespace Servicer.WarehouseManagement
         public async Task<ResultService<CurrentStock>> Save(UDTT_CurrentStock entity)
         {
             var param = new DynamicParameters();
-            
 
+
+            /*       CREATE PROCEDURE CurrentStock_Save
+                 @currentStock UDTT_CurrentStock READONLY,
+                 @SaveBy NVARCHar(50),
+                 @HaveReturn TINYINT,
+                 @Message NVARCHAR(50) OUTPUT
+             AS
+             */
             // Thêm parameter @SaveBy
-            param.Add("@SaveBy", "Thangh", DbType.String);
-
+            param.Add("@SaveBy", "admin", DbType.String);
+            param.Add("@HaveReturn", 1, DbType.Int32);
             // Thêm parameter dạng table-valued (@currentStock)
-            var datatableList = new List<UDTT_CurrentStock>();
-            datatableList.Add(entity);
-            var dataTable = General.ConvertToDataTable(datatableList); // Chuyển entity thành DataTable
-            param.Add("@currentStock", dataTable.AsTableValuedParameter(this.currentStockType));
+                var datatableList = new List<UDTT_CurrentStock>();
+                datatableList.Add(entity);
+                var dataTable = General.ConvertToDataTable(datatableList); // Chuyển entity thành DataTable
+                param.Add("@currentStock", dataTable.AsTableValuedParameter(this.currentStockType));
 
-            // Thêm output parameters
-            param.Add("@Status", dbType: DbType.Byte, direction: ParameterDirection.Output);
-            param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 50);
+                // Thêm output parameters
+                param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 50);
 
-            var result = await CallStoreSingle<CurrentStock>("Save_CurrentStock", param);
-          
-            return result;
+                var result = await CallStoreSingle<CurrentStock>("CurrentStock_Save", param);
+
+                return result;
+            }
         }
     }
-}

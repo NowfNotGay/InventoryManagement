@@ -24,6 +24,7 @@ namespace API_Application.Controllers.WarehouseManagement
         public async Task<IActionResult> GetAll()
         {
             var rs = await _ICRUD_Service.GetAll();
+             
             return rs.Code == "0" ? Ok(rs) : BadRequest(rs.Message);
         }
 

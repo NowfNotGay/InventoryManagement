@@ -10,6 +10,7 @@ namespace Core.WarehouseManagement
 {
     public class CurrentStock : BaseClass.BaseClass
     {
+        public string CurrentStockCode = "";
         public int ProductID { get; set; } = 0;
         public int? ProductVariantID { get; set; }
 
@@ -22,19 +23,33 @@ namespace Core.WarehouseManagement
         public int? StorageBinID { get; set; }
 
     }
-    public class UDTT_CurrentStock
+
+public class UDTT_CurrentStock
     {
-        public string CreatedBy { get; set; } = "";
-        public string CreatedDate { get; set; } = "";
-        public int ID { get; set; }
+        public string CurrentStockCode { get; set; } = string.Empty;
+
         public int ProductID { get; set; }
-        public int ProductVariantID { get; set; }
-        public decimal Quantity { get; set; }
-        public string RowPointer { get; set; } = "";
-        public int StorageBinID { get; set; }
-        public int UoMID { get; set; }
-        public string UpdatedBy { get; set; } = "";
-        public string UpdatedDate { get; set; } = "";
-        public int WarehouseID { get; set; }
+
+        public int? ProductVariantID { get; set; }
+
+        public int? UoMID { get; set; }
+
+        public decimal? Quantity { get; set; }
+
+        public int? WarehouseID { get; set; }
+
+        public int? StorageBinID { get; set; }
+
+        public int ID { get; set; }
+
+        public Guid RowPointer { get; set; } = Guid.Empty;
+
+        public string CreatedBy { get; set; } = string.Empty;
+
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+        public string UpdatedBy { get; set; } = string.Empty;
+
+        public DateTime? UpdatedDate { get; set; } = DateTime.Now;
     }
 }
