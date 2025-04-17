@@ -12,6 +12,6 @@ public class VehicleModel : BaseClass.BaseClass
 {
     public string ModelCode { get; set; } = string.Empty;
     public string ModelName { get; set; } = string.Empty;
-    public int BrandID { get; set; }  
+    public string BrandCode { get; set; }  
 }
 

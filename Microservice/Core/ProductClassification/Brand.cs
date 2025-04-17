@@ -13,9 +13,5 @@ public class Brand : BaseClass.BaseClass
     public string BrandCode { get; set; }
     public string BrandName { get; set; }
 }
-public class Brand_Param
-{
-    public string CreatedBy { get; set; }
-    public List<Brand> Brands { get; set; }
-}
+
 
