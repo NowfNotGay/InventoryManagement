@@ -78,7 +78,7 @@ public class DB_ProductClassification_Context : DbContext
             .HasMaxLength(100);
 
         modelBuilder.Entity<VehicleModel>()
-            .Property(vm => vm.BrandID)
+            .Property(vm => vm.BrandCode)
             .IsRequired();
 
         base.OnModelCreating(modelBuilder);
