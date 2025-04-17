@@ -205,4 +205,16 @@ namespace Helper.Method
 
         #endregion Encryption Decryption Using AES algorithm
     }
+
+    public enum ResponseCode
+    {
+        Success = 0,
+        NotFound = 1,
+        InvalidInput = 2,
+        Unauthorized = 3,
+        InternalError = 4,
+        FailToConnectDB = 5,
+        FailWhileExecutingStoredProcedure = 6,
+        UnhandledError=999
+    }
 }
