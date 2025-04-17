@@ -1,11 +1,8 @@
-﻿using Azure;
-using Base.BaseService;
-using Base.ProductProperties;
-using Context.ProductProperties;
+﻿using Base.BaseService;
+using Base.WarehouseManagement;
+using Context.WarehouseManagement;
 using Core.BaseClass;
-using Core.MasterData;
-using Core.ProductClassification;
-using Core.ProductProperties;
+using Core.WarehouseManagement;
 using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;
@@ -14,35 +11,34 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Transactions;
-using static Dapper.SqlMapper;
 
-namespace Servicer.ProductProperties;
-public class UnitOfMeasureProvider : ICRUD_Service<UnitOfMeasure, int>, IUnitOfMeasureProvider
+namespace Servicer.WarehouseManagement;
+
+public class InventoryTransactionProvider : ICRUD_Service<InventoryTransaction, int>, IInventoryTransactionProvider
 {
-    private readonly DB_ProductProperties_Context _dB;
+    private readonly DB_WarehouseManagement_Context _dB;
     private readonly IConfiguration _configuration;
     private readonly string _dapperConnectionString;
     private const int TimeoutInSeconds = 240;
 
-    public UnitOfMeasureProvider(DB_ProductProperties_Context dB, IConfiguration configuration)
+    public InventoryTransactionProvider(DB_WarehouseManagement_Context dB, IConfiguration configuration)
     {
         _dB = dB;
         _configuration = configuration;
         _dapperConnectionString = General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER")!);
     }
 
-    public async Task<ResultService<UnitOfMeasure>> Create(UnitOfMeasure entity)
+    #region Normal CRUD
+
+    public async Task<ResultService<InventoryTransaction>> Create(InventoryTransaction entity)
     {
         using (var transaction = _dB.Database.BeginTransaction())
         {
-            ResultService<UnitOfMeasure> result = new();
+            ResultService<InventoryTransaction> result = new();
             try
             {
-                await _dB.UnitOfMeasures.AddAsync(entity);
+                await _dB.InventoryTransactions.AddAsync(entity);
 
                 if (_dB.SaveChanges() <= 0)
                 {
@@ -66,7 +62,7 @@ public class UnitOfMeasureProvider : ICRUD_Service<UnitOfMeasure, int>, IUnitOfM
             {
                 await transaction.RollbackAsync();
                 result.Code = "2";
-                result.Message = ex.Message;
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration. Details: {ex.GetType()} - {ex.Message}";
                 return result;
             }
             catch (Exception ex)
@@ -93,10 +89,8 @@ public class UnitOfMeasureProvider : ICRUD_Service<UnitOfMeasure, int>, IUnitOfM
                     result.Code = obj.Code;
                     result.Data = "false";
                     return result;
-
                 }
-
-                _dB.UnitOfMeasures.Remove(obj.Data);
+                _dB.InventoryTransactions.Remove(obj.Data);
                 if (_dB.SaveChanges() <= 0)
                 {
                     result.Message = "Failed to delete data";
@@ -121,7 +115,7 @@ public class UnitOfMeasureProvider : ICRUD_Service<UnitOfMeasure, int>, IUnitOfM
             {
                 await transaction.RollbackAsync();
                 result.Code = "2";
-                result.Message = ex.Message;
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration. Details: {ex.GetType()} - {ex.Message}";
                 return result;
             }
             catch (Exception ex)
@@ -134,15 +128,14 @@ public class UnitOfMeasureProvider : ICRUD_Service<UnitOfMeasure, int>, IUnitOfM
         }
     }
 
-    public async Task<ResultService<UnitOfMeasure>> Update(UnitOfMeasure entity)
+    public async Task<ResultService<InventoryTransaction>> Update(InventoryTransaction entity)
     {
-        ResultService<UnitOfMeasure> result = new();
-
+        ResultService<InventoryTransaction> result = new();
         using (var transaction = _dB.Database.BeginTransaction())
         {
             try
             {
-                var obj = await _dB.UnitOfMeasures.FindAsync(entity.RowPointer);
+                var obj = await _dB.InventoryTransactions.FindAsync(entity.RowPointer);
                 if (obj == null)
                 {
                     result.Message = "Data not found!";
@@ -151,12 +144,21 @@ public class UnitOfMeasureProvider : ICRUD_Service<UnitOfMeasure, int>, IUnitOfM
                     return result;
                 }
 
-                // Update properties
-                obj.UoMCode = entity.UoMCode;
-                obj.UoMName = entity.UoMName;
-                obj.UoMDescription = entity.UoMDescription;
-                obj.UpdatedBy = entity.UpdatedBy;
+                obj.InventoryTransactionCode = entity.InventoryTransactionCode;
+                obj.ProductID = entity.ProductID;
+                obj.ProductVariantID = entity.ProductVariantID;
+                obj.UoMID = entity.UoMID;
+                obj.Quantity = entity.Quantity;
+                obj.WarehouseID = entity.WarehouseID;
+                obj.StorageBinID = entity.StorageBinID;
+                obj.TransactionTypeID = entity.TransactionTypeID;
+                obj.TransactionDate = entity.TransactionDate;
+                obj.ReferenceID = entity.ReferenceID;
+                obj.ReferenceType = entity.ReferenceType;
+                obj.Notes = entity.Notes;
                 obj.UpdatedDate = DateTime.Now;
+                obj.UpdatedBy = entity.UpdatedBy;
+
                 if (_dB.SaveChanges() <= 0)
                 {
                     result.Message = "Failed to update data";
@@ -181,7 +183,7 @@ public class UnitOfMeasureProvider : ICRUD_Service<UnitOfMeasure, int>, IUnitOfM
             {
                 await transaction.RollbackAsync();
                 result.Code = "2";
-                result.Message = ex.Message;
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration. Details: {ex.GetType()} - {ex.Message}";
                 return result;
             }
             catch (Exception ex)
@@ -193,27 +195,28 @@ public class UnitOfMeasureProvider : ICRUD_Service<UnitOfMeasure, int>, IUnitOfM
             }
         }
     }
+
+    #endregion
+
     #region Dapper CRUD
 
-    public async Task<ResultService<UnitOfMeasure>> Get(int id)
+    public async Task<ResultService<InventoryTransaction>> Get(int id)
     {
-        ResultService<UnitOfMeasure> result = new();
+        ResultService<InventoryTransaction> result = new();
         using (var sqlconnect = new SqlConnection(_dapperConnectionString))
+        {
             try
             {
                 await sqlconnect.OpenAsync();
-                var rs = await sqlconnect.QuerySingleOrDefaultAsync<UnitOfMeasure>("UoM_GetByID",
-                    new
-                    {
-                        ID = id
-                    },
-                     commandType: CommandType.StoredProcedure,
-                     commandTimeout: 240);
+                var rs = await sqlconnect.QuerySingleOrDefaultAsync<InventoryTransaction>(
+                    "InventoryTransaction_GetByID",
+                    new { ID = id },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: TimeoutInSeconds);
                 if (rs == null)
                 {
                     result.Message = "Failed to get data";
                     result.Code = "1";
-
                 }
                 else
                 {
@@ -229,19 +232,22 @@ public class UnitOfMeasureProvider : ICRUD_Service<UnitOfMeasure, int>, IUnitOfM
                 result.Code = "999";
                 return result;
             }
+        }
     }
 
-    public async Task<ResultService<IEnumerable<UnitOfMeasure>>> GetAll()
+    public async Task<ResultService<IEnumerable<InventoryTransaction>>> GetAll()
     {
-        ResultService<IEnumerable<UnitOfMeasure>> result = new();
+        ResultService<IEnumerable<InventoryTransaction>> result = new();
         using (var sqlconnect = new SqlConnection(_dapperConnectionString))
-            try
         {
+            try
+            {
                 await sqlconnect.OpenAsync();
-                result.Data = await sqlconnect.QueryAsync<UnitOfMeasure>("UoM_GetAll",
-                    
-                         commandType: CommandType.StoredProcedure,
-                         commandTimeout: 240);
+                result.Data = await sqlconnect.QueryAsync<InventoryTransaction>(
+                    "InventoryTransaction_GetAll",
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: TimeoutInSeconds);
+
                 if (result.Data == null)
                 {
                     result.Message = "Failed to get data";
@@ -260,109 +266,22 @@ public class UnitOfMeasureProvider : ICRUD_Service<UnitOfMeasure, int>, IUnitOfM
                 result.Code = "999";
                 return result;
             }
-    }
-
-    public async Task<ResultService<UnitOfMeasure>> SaveByDapper(UnitOfMeasure entity)
-    {
-        var response = new ResultService<UnitOfMeasure>();
-
-        if (entity == null)
-        {
-            return new ResultService<UnitOfMeasure>()
-            {
-                Code = "1",
-                Message = "Entity is not valid(BE)"
-            };
-        }
-        try
-        {
-            string Message = string.Empty;
-            entity.UoMCode = !entity.UoMCode.Contains("UOM") ? string.Empty : entity.UoMCode;
-            List<UnitOfMeasure> lst = new List<UnitOfMeasure>();
-            entity.RowPointer = Guid.Empty;
-            lst.Add(entity);
-
-            DataTable dtHeader = General.ConvertToDataTable(lst);
-            using (var connection = new SqlConnection(_dapperConnectionString))
-            {
-                await connection.OpenAsync();
-                var param = new DynamicParameters();
-
-                param.Add("@CreatedBy", entity.CreatedBy);
-                param.Add("@udtt_UnitOfMeasure", dtHeader.AsTableValuedParameter("UDTT_UnitOfMeasure"));
-
-                param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
-                await connection.QueryAsync<UnitOfMeasure>("UnitOfMeasure_Save",
-                   param,
-                        commandType: CommandType.StoredProcedure,
-                      commandTimeout: TimeoutInSeconds);
-                var resultMessage = param.Get<string>("@Message");
-
-                if (resultMessage.Contains("successfully"))
-                {
-                    response.Code = "0"; // Success
-                    response.Message = "Save Successfully(BE)";
-                }
-                else
-                {
-                    response.Code = "-999"; // Fail
-                    response.Message = "Failed(BE)";
-                }
-                return response;
-            }
-        }
-        catch (SqlException sqlex)
-        {
-
-            response.Code = "2";
-            response.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
-            return response;
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-
-            response.Code = "3";
-            response.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
-            return response;
-        }
-        catch (DbUpdateException ex)
-        {
-
-            response.Code = "4";
-            response.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
-            return response;
-        }
-        catch (OperationCanceledException ex)
-        {
-
-            response.Code = "5";
-            response.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
-            return response;
-        }
-        catch (Exception ex)
-        {
-
-            response.Code = "6";
-            response.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
-            return response;
         }
     }
 
-    public async Task<ResultService<UnitOfMeasure>> GetByCode(string uomCode)
+    public async Task<ResultService<InventoryTransaction>> GetByCode(string inventoryTransactionCode)
     {
-        ResultService<UnitOfMeasure> result = new();
+        ResultService<InventoryTransaction> result = new();
         using (var sqlconnect = new SqlConnection(_dapperConnectionString))
         {
             try
             {
                 await sqlconnect.OpenAsync();
-                var rs = await sqlconnect.QuerySingleOrDefaultAsync<UnitOfMeasure>("UoM_GetByCode",
-                    new
-                    {
-                        UoMCode = uomCode
-                    },
-                     commandType: CommandType.StoredProcedure,
-                     commandTimeout: 240);
+                var rs = await sqlconnect.QuerySingleOrDefaultAsync<InventoryTransaction>(
+                    "InventoryTransaction_GetByCode",
+                    new { InventoryTransactionCode = inventoryTransactionCode },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: TimeoutInSeconds);
                 if (rs == null)
                 {
                     result.Message = "Failed to get data";
@@ -385,7 +304,92 @@ public class UnitOfMeasureProvider : ICRUD_Service<UnitOfMeasure, int>, IUnitOfM
         }
     }
 
-    public async Task<ResultService<string>> DeleteByDapper(string uomCode)
+    public async Task<ResultService<InventoryTransaction>> SaveByDapper(InventoryTransaction entity)
+    {
+        var response = new ResultService<InventoryTransaction>();
+
+        if (entity == null)
+        {
+            return new ResultService<InventoryTransaction>()
+            {
+                Code = "1",
+                Message = "Entity is not valid(BE)"
+            };
+        }
+        try
+        {
+            string Message = string.Empty;
+            // Kiểm tra tiền tố của InventoryTransactionCode (giả sử tiền tố là "ITRN")
+            entity.InventoryTransactionCode = !entity.InventoryTransactionCode.Contains("ITRN") ? string.Empty : entity.InventoryTransactionCode;
+            List<InventoryTransaction> lst = new List<InventoryTransaction>();
+            entity.RowPointer = Guid.Empty;
+            lst.Add(entity);
+
+            DataTable dtHeader = General.ConvertToDataTable(lst);
+            using (var connection = new SqlConnection(_dapperConnectionString))
+            {
+                await connection.OpenAsync();
+                var param = new DynamicParameters();
+
+                param.Add("@CreatedBy", entity.CreatedBy);
+                param.Add("@udtt_InventoryTransaction", dtHeader.AsTableValuedParameter("UDTT_InventoryTransaction"));
+                param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+
+                await connection.QueryAsync<InventoryTransaction>(
+                    "InventoryTransaction_Save",
+                    param,
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: TimeoutInSeconds);
+
+                var resultMessage = param.Get<string>("@Message");
+
+                if (resultMessage.Contains("successfully"))
+                {
+                    response.Code = "0"; // Success
+                    response.Message = "Save Successfully(BE)";
+                }
+                else
+                {
+                    response.Code = "-999"; // Fail
+                    response.Message = resultMessage != null ? $"Failed: {resultMessage}" : "Failed(BE)";
+                }
+
+                return response;
+            }
+        }
+        catch (SqlException sqlex)
+        {
+            response.Code = "2";
+            response.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
+            return response;
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            response.Code = "3";
+            response.Message = $"Concurrency error or Conflict happened: {ex.GetType()} - {ex.Message}";
+            return response;
+        }
+        catch (DbUpdateException ex)
+        {
+            response.Code = "4";
+            response.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
+            return response;
+        }
+        catch (OperationCanceledException ex)
+        {
+            response.Code = "5";
+            response.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
+            return response;
+        }
+        catch (Exception ex)
+        {
+            response.Code = "6";
+            response.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
+            return response;
+        }
+    }
+
+    public async Task<ResultService<string>> DeleteByDapper(string inventoryTransactionCode)
     {
         ResultService<string> resultService = new();
         try
@@ -393,28 +397,28 @@ public class UnitOfMeasureProvider : ICRUD_Service<UnitOfMeasure, int>, IUnitOfM
             string Message = string.Empty;
             using (var connection = new SqlConnection(_dapperConnectionString))
             {
-
                 await connection.OpenAsync();
                 var param = new DynamicParameters();
-                param.Add("@UoMCode", uomCode);
+                param.Add("@InventoryTransactionCode", inventoryTransactionCode);
                 param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
-                await connection.QueryAsync<VehicleModel>("UoM_Delete",
-                   param,
-                   commandType: CommandType.StoredProcedure,
-                      commandTimeout: TimeoutInSeconds);
+
+                await connection.QueryAsync<InventoryTransaction>(
+                    "InventoryTransaction_Delete",
+                    param,
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: TimeoutInSeconds);
+
                 var resultMessage = param.Get<string>("@Message");
 
                 if (resultMessage.Contains("OK"))
                 {
                     resultService.Code = "0"; // Success
-                    resultService.Message = "Deleted Successfully";
+                    resultService.Message = "Deleted Successfully(BE)";
                 }
                 else
                 {
                     resultService.Code = "-999";
-                    resultService.Message = "Failed";
-                    resultService.Message = resultMessage ?? "Failed"; // Sử dụng message từ stored procedure nếu có
-
+                    resultService.Message = resultMessage != null ? $"Failed: {resultMessage}" : "Failed(BE)";
                 }
 
                 return resultService;
@@ -428,7 +432,6 @@ public class UnitOfMeasureProvider : ICRUD_Service<UnitOfMeasure, int>, IUnitOfM
                 Data = null,
                 Message = $"{ex.GetType()}, {ex.Message}"
             };
-
         }
         catch (DbUpdateException ex)
         {
@@ -467,9 +470,6 @@ public class UnitOfMeasureProvider : ICRUD_Service<UnitOfMeasure, int>, IUnitOfM
             };
         }
     }
+
     #endregion
 }
-
-
-
-

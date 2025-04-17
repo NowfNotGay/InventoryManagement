@@ -1,26 +1,28 @@
 ﻿using Base.BaseService;
-using Base.MasterData;
-using Core.MasterData;
-using Core.ProductClassification;
+using Base.WarehouseManagement;
+using Core.BaseClass;
+using Core.WarehouseManagement;
 using Microsoft.AspNetCore.Mvc;
+using Servicer.WarehouseManagement;
 using System.Threading.Tasks;
 
-namespace API_Application.Controllers.MasterData;
+namespace API_Application.Controllers.WarehouseManagement;
 
 [ApiController]
 [Route("api/[controller]")]
-public class WarehouseController : ControllerBase
+public class InventoryTransactionController : ControllerBase
 {
-    private readonly ICRUD_Service<Warehouse, int> _ICRUD_Service;
-    private readonly IWarehouseProvider _warehouseProvider;
+    private readonly ICRUD_Service<InventoryTransaction, int> _ICRUD_Service;
+    private readonly IInventoryTransactionProvider _inventoryTransactionProvider;
 
-
-    public WarehouseController(ICRUD_Service<Warehouse, int> iCRUD_Service, IWarehouseProvider warehouseProvider)
+    public InventoryTransactionController(
+        ICRUD_Service<InventoryTransaction, int> iCRUD_Service,
+        IInventoryTransactionProvider inventoryTransactionProvider)
     {
-        _warehouseProvider = warehouseProvider;
         _ICRUD_Service = iCRUD_Service;
-
+        _inventoryTransactionProvider = inventoryTransactionProvider;
     }
+
     #region Normal CRUD
 
     [HttpGet]
@@ -42,18 +44,18 @@ public class WarehouseController : ControllerBase
     [HttpPost]
     [Consumes("application/json")]
     [Produces("application/json")]
-    public async Task<IActionResult> Create([FromBody] Warehouse warehouse)
+    public async Task<IActionResult> Create([FromBody] InventoryTransaction inventoryTransaction)
     {
-        var rs = await _ICRUD_Service.Create(warehouse);
+        var rs = await _ICRUD_Service.Create(inventoryTransaction);
         return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
     }
 
     [HttpPut]
     [Consumes("application/json")]
     [Produces("application/json")]
-    public async Task<IActionResult> Update([FromBody] Warehouse warehouse)
+    public async Task<IActionResult> Update([FromBody] InventoryTransaction inventoryTransaction)
     {
-        var rs = await _ICRUD_Service.Update(warehouse);
+        var rs = await _ICRUD_Service.Update(inventoryTransaction);
         return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
     }
 
@@ -65,37 +67,37 @@ public class WarehouseController : ControllerBase
         var rs = await _ICRUD_Service.Delete(id);
         return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
     }
+
     #endregion
+
     #region Dapper CRUD
 
-    [HttpGet("warehouseCode/{warehouseCode}")]
+    [HttpGet("inventoryTransactionCode/{inventoryTransactionCode}")]
     [Consumes("application/json")]
     [Produces("application/json")]
-    public async Task<IActionResult> GetByCode(string warehouseCode)
+    public async Task<IActionResult> GetByCode(string inventoryTransactionCode)
     {
-        var rs = await _warehouseProvider.GetByCode(warehouseCode);
-        return rs.Code == "0" ? Ok(rs) : NotFound($"Brand with Code {warehouseCode} not found");
+        var rs = await _inventoryTransactionProvider.GetByCode(inventoryTransactionCode);
+        return rs.Code == "0" ? Ok(rs) : NotFound($"InventoryTransaction with Code {inventoryTransactionCode} not found");
     }
 
     [HttpPost("SaveByDapper")]
     [Consumes("application/json")]
     [Produces("application/json")]
-
-    public async Task<IActionResult> SaveByDapper([FromBody] Warehouse warehouse)
+    public async Task<IActionResult> SaveByDapper([FromBody] InventoryTransaction inventoryTransaction)
     {
-        var rs = await _warehouseProvider.SaveByDapper(warehouse);
+        var rs = await _inventoryTransactionProvider.SaveByDapper(inventoryTransaction);
         return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
     }
+
     [HttpDelete("DeleteByDapper")]
     [Consumes("application/json")]
     [Produces("application/json")]
-
-    public async Task<IActionResult> DeleteByDapper(string warehouseCode)
+    public async Task<IActionResult> DeleteByDapper(string inventoryTransactionCode)
     {
-        var rs = await _warehouseProvider.DeleteByDapper(warehouseCode);
+        var rs = await _inventoryTransactionProvider.DeleteByDapper(inventoryTransactionCode);
         return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
     }
 
     #endregion
-
 }

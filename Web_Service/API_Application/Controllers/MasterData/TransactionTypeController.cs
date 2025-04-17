@@ -39,15 +39,15 @@ namespace API_Application.Controllers.MasterData
         }
 
 
-        [HttpPost]
-        [Consumes("application/json")]
-        [Produces("application/json")]
+        //[HttpPost]
+        //[Consumes("application/json")]
+        //[Produces("application/json")]
 
-        public async Task<IActionResult> Save([FromBody] TransactionType TransactionType)
-        {
-            var rs = await _ICRUD_Service.Save(TransactionType);
-            return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
-        }
+        //public async Task<IActionResult> Save([FromBody] TransactionType TransactionType)
+        //{
+        //    //var rs = await _ICRUD_Service.Save(TransactionType);
+        //    //return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+        //}
 
         [HttpPut]
         [Consumes("application/json")]

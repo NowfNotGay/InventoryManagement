@@ -119,7 +119,7 @@ namespace API_Application.Controllers.WarehouseManagement
 
         #region GoodsReceiptNoteHeaderAndLine
 
-        [HttpPost("/HeaderLine/CreateBoth")]
+        [HttpPost("HeaderLine/CreateBoth")]
         [Consumes("application/json")]
         [Produces("application/json")]
 
@@ -129,7 +129,7 @@ namespace API_Application.Controllers.WarehouseManagement
             return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
         }
 
-        [HttpDelete("/HeaderLine/DeleteHeaderAndLine/ID")]
+        [HttpDelete("HeaderLine/DeleteHeaderAndLine/ID")]
         [Consumes("application/json")]
         [Produces("application/json")]
 

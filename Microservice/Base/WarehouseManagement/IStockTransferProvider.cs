@@ -12,6 +12,5 @@ namespace Base.WarehouseManagement
         Task<ResultService<IEnumerable<StockTransferDetail>>> GetDetailByStockTransferID(string stCode);
         Task<ResultService<string>> Delete_HeaderAndDetail(int stID);
         Task<ResultService<StockTransfer_Param>> Save(StockTransfer_Param entity);
-
     }
 }

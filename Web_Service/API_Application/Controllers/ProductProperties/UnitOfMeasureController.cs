@@ -1,7 +1,9 @@
 ﻿using Base.BaseService;
 using Base.ProductProperties;
+using Core.ProductClassification;
 using Core.ProductProperties;
 using Microsoft.AspNetCore.Mvc;
+using Servicer.ProductClassification;
 using System.Threading.Tasks;
 
 namespace API_Application.Controllers.ProductProperties;
@@ -9,38 +11,21 @@ namespace API_Application.Controllers.ProductProperties;
 [ApiController]
 public class UnitOfMeasureController : ControllerBase
 {
-    private readonly ICRUD_Service<UnitOfMeasure, int> _unitOfMeasureService;
+    private readonly ICRUD_Service<UnitOfMeasure, int> _ICRUD_Service;
     private readonly IUnitOfMeasureProvider _unitOfMeasureProvider;
 
-    public UnitOfMeasureController(ICRUD_Service<UnitOfMeasure, int> unitOfMeasureService, IUnitOfMeasureProvider unitOfMeasureProvider)
+    public UnitOfMeasureController(ICRUD_Service<UnitOfMeasure, int> iCRUD_Service, IUnitOfMeasureProvider unitOfMeasureProvider)
     {
-        _unitOfMeasureService = unitOfMeasureService;
+        _ICRUD_Service = iCRUD_Service;
         _unitOfMeasureProvider = unitOfMeasureProvider;
     }
-
-    [HttpGet]
-    [Consumes("application/json")]
-    [Produces("application/json")]
-    public async Task<IActionResult> GetAll()
-    {
-        var rs = await _unitOfMeasureService.GetAll();
-        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
-    }
-
-    [HttpGet("{id}")]
-    [Produces("application/json")]
-    public async Task<IActionResult> GetById(int id)
-    {
-        var rs = await _unitOfMeasureService.Get(id);
-        return !rs.Code.Equals("0") ? NotFound(rs) : Ok(rs);
-    }
-
+    #region CRUD
     [HttpPost]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> Create([FromBody] UnitOfMeasure unitOfMeasure)
     {
-        var rs = await _unitOfMeasureService.Create(unitOfMeasure);
+        var rs = await _ICRUD_Service.Create(unitOfMeasure);
         return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
     }
 
@@ -49,8 +34,8 @@ public class UnitOfMeasureController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> Update([FromBody] UnitOfMeasure unitOfMeasure)
     {
-    
-        var rs = await _unitOfMeasureService.Update(unitOfMeasure);
+
+        var rs = await _ICRUD_Service.Update(unitOfMeasure);
         return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
     }
 
@@ -59,7 +44,58 @@ public class UnitOfMeasureController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> Delete(int id)
     {
-        var rs = await _unitOfMeasureService.Delete(id);
+        var rs = await _ICRUD_Service.Delete(id);
         return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
     }
+
+    #endregion
+    #region Dapper CRUD
+
+    [HttpGet]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    public async Task<IActionResult> GetAll()
+    {
+        var rs = await _ICRUD_Service.GetAll();
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+    }
+
+    [HttpGet("{id}")]
+    [Produces("application/json")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var rs = await _ICRUD_Service.Get(id);
+        return !rs.Code.Equals("0") ? NotFound(rs) : Ok(rs);
+    }
+    [HttpGet("uomCode/{uomCode}")] // Sửa thành đúng cú pháp cho route parameter
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    public async Task<IActionResult> GetByCode(string uomCode)
+    {
+        var rs = await _unitOfMeasureProvider.GetByCode(uomCode);
+        // Sửa lại kiểm tra dựa trên property Code của ResultService
+        return rs.Code == "0" ? Ok(rs) : NotFound($"Model with Code {uomCode} not found");
+    }
+
+    [HttpPost("SaveByDapper")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+
+    public async Task<IActionResult> SaveByDapper([FromBody] UnitOfMeasure unitOfMeasure)
+    {
+        var rs = await _unitOfMeasureProvider.SaveByDapper(unitOfMeasure);
+        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+    }
+    [HttpDelete("DeleteByDapper")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+
+    public async Task<IActionResult> DeleteByDapper(string uomCode)
+    {
+        var rs = await _unitOfMeasureProvider.DeleteByDapper(uomCode);
+        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+    }
+    #endregion
+
+
 }

@@ -7,6 +7,7 @@ using Core.ProductProperties;
 using Core.WarehouseManagement;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Servicer.ProductClassification;
 
 namespace API_Application.Controllers.ProductClassification;
 [Route("api/[controller]")]
@@ -18,8 +19,8 @@ public class BrandController : ControllerBase
 
     public BrandController(ICRUD_Service<Brand, int> iCRUD_Service, IBrandProvider brandProvider)
     {
-        _ICRUD_Service = iCRUD_Service;
         _brandProvider = brandProvider;
+        _ICRUD_Service = iCRUD_Service;
     }
     #region Normal CRUD
 
@@ -71,6 +72,15 @@ public class BrandController : ControllerBase
 
     #region Dapper CRUD
 
+    [HttpGet("brandCode/{brandCode}")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    public async Task<IActionResult> GetByCode(string brandCode)
+    {
+        var rs = await _brandProvider.GetByCode(brandCode);
+        return rs.Code == "0" ? Ok(rs) : NotFound($"Brand with Code {brandCode} not found");
+    }
+
     [HttpPost("SaveByDapper")]
     [Consumes("application/json")]
     [Produces("application/json")]
@@ -78,7 +88,7 @@ public class BrandController : ControllerBase
     public async Task<IActionResult> SaveByDapper([FromBody] Brand brand)
     {
         var rs = await _brandProvider.SaveByDapper(brand);
-        return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
+        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
     }
     [HttpDelete("DeleteByDapper")]
     [Consumes("application/json")]

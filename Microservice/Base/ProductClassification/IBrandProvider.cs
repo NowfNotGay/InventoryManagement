@@ -10,6 +10,7 @@ namespace Base.ProductClassification;
 public interface IBrandProvider
 {
     Task<ResultService<Brand>> SaveByDapper(Brand entity);
+    Task<ResultService<Brand>> GetByCode(string brandCode);
     Task<ResultService<string>> DeleteByDapper(string brandCode);
     
 

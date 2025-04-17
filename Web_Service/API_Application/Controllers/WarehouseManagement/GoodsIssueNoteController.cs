@@ -10,11 +10,11 @@ namespace API_Application.Controllers.WarehouseManagement;
 [ApiController]
 public class GoodsIssueNoteController : ControllerBase
 {
-    private readonly IGoodsIssueNoteProvider _GoodsIssueNoteProvider;
+    private readonly IGoodsIssueNoteProvider _goodsIssueNoteProvider;
     private readonly ICRUD_Service<GoodsIssueNote, int> _ICRUD_Service;
     public GoodsIssueNoteController(IGoodsIssueNoteProvider goodsIssueNoteProvider, ICRUD_Service<GoodsIssueNote, int> iCRUD_Service)
     {
-        _GoodsIssueNoteProvider = goodsIssueNoteProvider;
+        _goodsIssueNoteProvider = goodsIssueNoteProvider;
         _ICRUD_Service = iCRUD_Service;
     }
     #region GoodsIssueNote
@@ -29,9 +29,9 @@ public class GoodsIssueNoteController : ControllerBase
     [HttpGet("ID")]
     [Consumes("application/json")]
     [Produces("application/json")]
-    public async Task<IActionResult> GetByID([FromQuery] int ID) //done
+    public async Task<IActionResult> GetByID([FromQuery] int id) //done
     {
-        var rs = await _ICRUD_Service.Get(ID);
+        var rs = await _ICRUD_Service.Get(id);
         return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
     }
     [HttpPost]
@@ -68,7 +68,7 @@ public class GoodsIssueNoteController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> DeleteByDapper(string ginCode) //done
     {
-        var rs = await _GoodsIssueNoteProvider.DeleteByDapper(ginCode);
+        var rs = await _goodsIssueNoteProvider.DeleteByDapper(ginCode);
         return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
     }
 
@@ -78,13 +78,13 @@ public class GoodsIssueNoteController : ControllerBase
 
     public async Task<IActionResult> SaveByDapper([FromBody] GoodsIssueNote GoodsIssueNote)
     {
-        var rs = await _GoodsIssueNoteProvider.SaveByDapper(GoodsIssueNote);
+        var rs = await _goodsIssueNoteProvider.SaveByDapper(GoodsIssueNote);
         return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
     }
     #endregion
 
     #region GoodsIssueNoteLine
-    [HttpGet("/GoodsIssueNoteLine/GINCode")]
+    [HttpGet("GoodsIssueNoteLine/GINCode")]
     [Consumes("application/json")]
     [Produces("application/json")]
 
@@ -94,39 +94,39 @@ public class GoodsIssueNoteController : ControllerBase
 
     public async Task<IActionResult> GoodsIssueNoteLine_GetAll([FromQuery] string GINCode)
     {
-        var rs = await _GoodsIssueNoteProvider.GetLineByRefCode(GINCode);
+        var rs = await _goodsIssueNoteProvider.GetLineByRefCode(GINCode);
         return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
     }
 
-    [HttpDelete("/GoodsIssueNoteLine/DeleteMultiLine")]
+    [HttpDelete("GoodsIssueNoteLine/DeleteMultiLine")]
     [Consumes("application/json")]
     [Produces("application/json")]
 
     public async Task<IActionResult> GoodsIssueNoteLine_Delete_Multi([FromBody] List<GoodsIssueNoteLine> param)
     {
-        var rs = await _GoodsIssueNoteProvider.DeleteLine(param);
+        var rs = await _goodsIssueNoteProvider.DeleteLine(param);
         return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
     }
     #endregion
 
     #region GoodsIssueNoteHeaderAndLine
-    [HttpPost("/HeaderLine/CreateBothIssue")]
+    [HttpPost("HeaderLine/CreateBothIssue")]
     [Consumes("application/json")]
     [Produces("application/json")]
 
     public async Task<IActionResult> GoodsIssueNote_Create_HeaderAndLine([FromBody] GoodsIssueNote_Param param)
     {
-        var rs = await _GoodsIssueNoteProvider.SaveHeaderAndLine(param);
+        var rs = await _goodsIssueNoteProvider.SaveHeaderAndLine(param);
         return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
     }
 
-    [HttpDelete("/HeaderLine/DeleteIssueHeaderAndLine/ID")]
+    [HttpDelete("HeaderLine/DeleteIssueHeaderAndLine/ginID")]
     [Consumes("application/json")]
     [Produces("application/json")]
 
     public async Task<IActionResult> Delete_HeaderAndDetail([FromQuery] int ginID)
     {
-        var rs = await _GoodsIssueNoteProvider.Delete_HeaderAndDetail(ginID);
+        var rs = await _goodsIssueNoteProvider.Delete_HeaderAndDetail(ginID);
         return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
     }
 

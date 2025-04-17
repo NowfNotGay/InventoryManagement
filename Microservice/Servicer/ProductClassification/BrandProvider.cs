@@ -33,6 +33,7 @@ public class BrandProvider : ICRUD_Service<Brand, int>, IBrandProvider
         _dB = dB;
         _configuration = configuration;
         _dapperConnectionString = General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER")!);
+    
     }
 
 
@@ -80,6 +81,66 @@ public class BrandProvider : ICRUD_Service<Brand, int>, IBrandProvider
             }
         }
     }
+
+    public async Task<ResultService<Brand>> Update(Brand entity)
+    {
+        ResultService<Brand> result = new();
+
+        using (var transaction = _dB.Database.BeginTransaction())
+        {
+            try
+            {
+                var obj = await _dB.Brands.FindAsync(entity.RowPointer);
+                if (obj == null)
+                {
+                    result.Message = "Data not found!";
+                    result.Code = "-1";
+                    result.Data = null;
+                    return result;
+                }
+                obj.BrandCode = entity.BrandCode;
+                obj.BrandName = entity.BrandName;
+                obj.UpdatedBy = entity.UpdatedBy;
+                obj.UpdatedDate = DateTime.Now;
+
+                if (_dB.SaveChanges() <= 0)
+                {
+                    result.Message = "Failed to update data";
+                    result.Code = "1";
+                    result.Data = null;
+                    return result;
+                }
+                await transaction.CommitAsync();
+                result.Message = "Success";
+                result.Code = "0";
+                result.Data = entity;
+                return result;
+            }
+            catch (SqlException sqlEx)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "1";
+                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return result;
+            }
+            catch (ArgumentException ex)
+            {
+                await transaction.RollbackAsync();
+                result.Code = "2";
+                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
+            }
+        }
+    }
+
+
     public async Task<ResultService<string>> Delete(int id)
     {
         ResultService<string> result = new();
@@ -134,6 +195,9 @@ public class BrandProvider : ICRUD_Service<Brand, int>, IBrandProvider
 
         }
     }
+    #endregion
+    #region Dapper CRUD
+
     public async Task<ResultService<Brand>> Get(int id)
     {
         ResultService<Brand> result = new();
@@ -207,76 +271,52 @@ public class BrandProvider : ICRUD_Service<Brand, int>, IBrandProvider
             }
         }
     }
-    public async Task<ResultService<Brand>> Update(Brand entity)
+    public async Task< ResultService<Brand>> GetByCode(string brandCode)
     {
         ResultService<Brand> result = new();
-
-        using (var transaction = _dB.Database.BeginTransaction())
+        using (var sqlconnect = new SqlConnection(_dapperConnectionString))
         {
             try
             {
-                var obj = await _dB.Brands.FindAsync(entity.RowPointer);
-                if (obj == null)
+                await sqlconnect.OpenAsync();
+                var rs = await sqlconnect.QuerySingleOrDefaultAsync<Brand>("Brand_GetByCode",
+                    new
+                    {
+                        BrandCode = brandCode
+                    },
+                     commandType: CommandType.StoredProcedure,
+                     commandTimeout: 240);
+                if (rs == null)
                 {
-                    result.Message = "Data not found!";
-                    result.Code = "-1";
-                    result.Data = null;
-                    return result;
-                }
-                obj.BrandCode = entity.BrandCode;
-                obj.BrandName = entity.BrandName;
-                obj.UpdatedBy = entity.UpdatedBy;
-                obj.UpdatedDate = DateTime.Now;
-
-                if (_dB.SaveChanges() <= 0)
-                {
-                    result.Message = "Failed to update data";
+                    result.Message = "Failed to get data";
                     result.Code = "1";
-                    result.Data = null;
-                    return result;
                 }
-                await transaction.CommitAsync();
-                result.Message = "Success";
-                result.Code = "0";
-                result.Data = entity;
-                return result;
-            }
-            catch (SqlException sqlEx)
-            {
-                await transaction.RollbackAsync();
-                result.Code = "1";
-                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
-                return result;
-            }
-            catch (ArgumentException ex)
-            {
-                await transaction.RollbackAsync();
-                result.Code = "2";
-                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration .Details: {ex.GetType()} - {ex.Message}";
+                else
+                {
+                    result.Message = "Success";
+                    result.Code = "0";
+                }
+                result.Data = rs;
                 return result;
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
                 result.Message = ex.Message;
                 result.Code = "999";
                 return result;
             }
         }
     }
-
-    #endregion
-    #region Dapper CRUD
     public async Task<ResultService<Brand>> SaveByDapper(Brand entity)
     {
         var response = new ResultService<Brand>();
-    
+
         if (entity == null)
         {
             return new ResultService<Brand>()
             {
                 Code = "1",
-                Message = "Entity is not valid"
+                Message = "Entity is not valid(BE)"
             };
         }
         try
@@ -295,7 +335,7 @@ public class BrandProvider : ICRUD_Service<Brand, int>, IBrandProvider
 
                 param.Add("@CreatedBy", entity.CreatedBy);
                 param.Add("@udtt_Brand", dtHeader.AsTableValuedParameter("UDTT_Brand"));
-               
+
                 param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
                 await connection.QueryAsync<Brand>("Brand_Save",
                    param,
@@ -303,15 +343,15 @@ public class BrandProvider : ICRUD_Service<Brand, int>, IBrandProvider
                       commandTimeout: TimeoutInSeconds);
                 var resultMessage = param.Get<string>("@Message");
 
-                if (resultMessage.Contains("successfully"))
+                if (resultMessage.Contains("OK"))
                 {
                     response.Code = "0"; // Success
-                    response.Message = "Save Successfully";
+                    response.Message = "Save Successfully(BE)";
                 }
                 else
                 {
                     response.Code = "-999"; // Fail
-                    response.Message = "Failed";
+                    response.Message = "Failed(BE)";
                 }
 
                 return response;
@@ -376,12 +416,14 @@ public class BrandProvider : ICRUD_Service<Brand, int>, IBrandProvider
                 if (resultMessage.Contains("OK"))
                 {
                     resultService.Code = "0"; // Success
-                    resultService.Message = "Deleted Successfully";
+                    resultService.Message = "Deleted Successfully(BE)";
                 }
                 else
                 {
                     resultService.Code = "-999";
-                    resultService.Message = "Failed";
+                    resultService.Message = "Failed(BE)";
+                    resultService.Message = resultMessage ?? "Failed(BE)"; // Sử dụng message từ stored procedure nếu có
+
                 }
 
                 return resultService;
@@ -434,10 +476,9 @@ public class BrandProvider : ICRUD_Service<Brand, int>, IBrandProvider
             };
         }               
     }
-    public Task<ResultService<Brand>> UpdateByDapper(Brand entity)
-    {
-        throw new NotImplementedException();
-    }
+
+
+
     #endregion
 
 
