@@ -553,32 +553,32 @@ public class GoodsIssueNoteProvider : ICRUD_Service<GoodsIssueNote, int>, IGoods
         {
             string Message = string.Empty;
            
-            using (var connection = new SqlConnection(_dapperConnectionString))
-            {
+              using (var connection = new SqlConnection(_dapperConnectionString))
+              {
 
-                await connection.OpenAsync();
-                var param = new DynamicParameters();
-                param.Add("@udtt_Detail", General.ConvertToDataTable(entity).AsTableValuedParameter("UDTT_GoodsIssueNoteDetail"));
-                param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
-                await connection.QueryAsync<GoodsIssueNote>("GoodsIssueNoteDetail_Delete_Multi",
-                   param,
-                   commandType: CommandType.StoredProcedure,
-                      commandTimeout: TimeoutInSeconds);
-                var resultMessage = param.Get<string>("@Message");
+                    await connection.OpenAsync();
+                    var param = new DynamicParameters();
+                    param.Add("@udtt_Detail", General.ConvertToDataTable(entity).AsTableValuedParameter("UDTT_GoodsIssueNoteDetail"));
+                    param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                    await connection.QueryAsync<GoodsIssueNote>("GoodsIssueNoteDetail_Delete_Multi",
+                       param,
+                       commandType: CommandType.StoredProcedure,
+                          commandTimeout: TimeoutInSeconds);
+                    var resultMessage = param.Get<string>("@Message");
 
-                if (resultMessage.Contains("OK"))
-                {
-                    resultService.Code = "0"; // Success
-                    resultService.Message = "Deleted Successfully";
-                }
-                else
-                {
-                    resultService.Code = "-999";
-                    resultService.Message = "Failed";
-                }
+                    if (resultMessage.Contains("OK"))
+                    {
+                        resultService.Code = "0"; // Success
+                        resultService.Message = "Deleted Successfully";
+                    }
+                    else
+                    {
+                        resultService.Code = "-999";
+                        resultService.Message = "Failed";
+                    }
 
-                return resultService;
-            }
+                    return resultService;
+              }
         }
         catch (DbUpdateConcurrencyException ex)
         {

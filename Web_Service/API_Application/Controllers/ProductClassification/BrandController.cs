@@ -24,14 +24,7 @@ public class BrandController : ControllerBase
     }
     #region Normal CRUD
 
-    [HttpGet]
-    [Consumes("application/json")]
-    [Produces("application/json")]
-    public async Task<IActionResult> GetAll()
-    {
-        var rs = await _ICRUD_Service.GetAll();
-        return rs == null ? BadRequest("No brands found") : Ok(rs);
-    }
+
 
     [HttpGet("{id}")]
     [Consumes("application/json")]
@@ -71,6 +64,14 @@ public class BrandController : ControllerBase
     #endregion
 
     #region Dapper CRUD
+    [HttpGet]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    public async Task<IActionResult> GetAll()
+    {
+        var rs = await _ICRUD_Service.GetAll();
+        return rs == null ? BadRequest("No brands found") : Ok(rs);
+    }
 
     [HttpGet("brandCode/{brandCode}")]
     [Consumes("application/json")]
@@ -88,7 +89,7 @@ public class BrandController : ControllerBase
     public async Task<IActionResult> SaveByDapper([FromBody] Brand brand)
     {
         var rs = await _brandProvider.SaveByDapper(brand);
-        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+        return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
     }
     [HttpDelete("DeleteByDapper")]
     [Consumes("application/json")]
@@ -97,7 +98,7 @@ public class BrandController : ControllerBase
     public async Task<IActionResult> DeleteByDapper(string brandCode)
     {
         var rs = await _brandProvider.DeleteByDapper(brandCode);
-        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+        return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
     }
 
 

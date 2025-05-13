@@ -42,7 +42,7 @@ public class ProductParam : BaseClass.BaseClass
     public string BrandCode { get; set; }
     public string BrandName { get; set; }
 
-    //Denmension
+    //Dimension
     public decimal? Height { get; set; }
     public decimal? Length { get; set; }
     public decimal? Width { get; set; }

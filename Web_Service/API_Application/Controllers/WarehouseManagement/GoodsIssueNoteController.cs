@@ -95,7 +95,7 @@ public class GoodsIssueNoteController : ControllerBase
     public async Task<IActionResult> GoodsIssueNoteLine_GetAll([FromQuery] string GINCode)
     {
         var rs = await _goodsIssueNoteProvider.GetLineByRefCode(GINCode);
-        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+        return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
     }
 
     [HttpDelete("GoodsIssueNoteLine/DeleteMultiLine")]
@@ -105,7 +105,7 @@ public class GoodsIssueNoteController : ControllerBase
     public async Task<IActionResult> GoodsIssueNoteLine_Delete_Multi([FromBody] List<GoodsIssueNoteLine> param)
     {
         var rs = await _goodsIssueNoteProvider.DeleteLine(param);
-        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+        return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
     }
     #endregion
 
@@ -117,7 +117,7 @@ public class GoodsIssueNoteController : ControllerBase
     public async Task<IActionResult> GoodsIssueNote_Create_HeaderAndLine([FromBody] GoodsIssueNote_Param param)
     {
         var rs = await _goodsIssueNoteProvider.SaveHeaderAndLine(param);
-        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+        return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
     }
 
     [HttpDelete("HeaderLine/DeleteIssueHeaderAndLine/ginID")]
@@ -127,7 +127,7 @@ public class GoodsIssueNoteController : ControllerBase
     public async Task<IActionResult> Delete_HeaderAndDetail([FromQuery] int ginID)
     {
         var rs = await _goodsIssueNoteProvider.Delete_HeaderAndDetail(ginID);
-        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+        return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
     }
 
     #endregion

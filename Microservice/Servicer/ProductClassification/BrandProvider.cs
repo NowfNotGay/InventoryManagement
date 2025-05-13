@@ -335,23 +335,29 @@ public class BrandProvider : ICRUD_Service<Brand, int>, IBrandProvider
 
                 param.Add("@CreatedBy", entity.CreatedBy);
                 param.Add("@udtt_Brand", dtHeader.AsTableValuedParameter("UDTT_Brand"));
-
                 param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
-                await connection.QueryAsync<Brand>("Brand_Save",
+
+                var result = await connection.QueryAsync<Brand>("Brand_Save",
                    param,
                    commandType: CommandType.StoredProcedure,
-                      commandTimeout: TimeoutInSeconds);
+                   commandTimeout: TimeoutInSeconds);
+
                 var resultMessage = param.Get<string>("@Message");
 
-                if (resultMessage.Contains("OK"))
+                if (resultMessage.Contains("successfully"))
                 {
                     response.Code = "0"; // Success
-                    response.Message = "Save Successfully(BE)";
+                    response.Message = "Save Successfully(BE) - " + resultMessage;
+                    response.Data = result.FirstOrDefault();
+                    if (response.Data == null)
+                    {
+                        response.Message += " (Warning: Could not retrieve saved data(BE))";
+                    }
                 }
                 else
                 {
                     response.Code = "-999"; // Fail
-                    response.Message = "Failed(BE)";
+                    response.Message = "Failed(BE) - " + resultMessage;
                 }
 
                 return response;

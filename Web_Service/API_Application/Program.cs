@@ -31,7 +31,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 string chuỗi = General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!);
-string xâu = General.EncryptString(builder.Configuration.GetConnectionString("DB_Inventory_DAPPER")!);
+string xâu = General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory_DAPPER")!);
 builder.Services.AddDbContext<DB_Testing_Context>(options =>
           options.UseLazyLoadingProxies().UseSqlServer(
                       "Server = 104.197.108.88; Database = Testing; User Id = sqlserver; Password = codingforever@3003; Encrypt = False; TrustServerCertificate = False; MultipleActiveResultSets = true; MultiSubnetFailover = True;",
@@ -158,10 +158,12 @@ builder.Services.AddTransient<IGoodsReceiptNoteProvider, GoodsReceiptNoteProvide
 //Good Issue Note - Hai
 builder.Services.AddTransient<ICRUD_Service<GoodsIssueNote, int>, GoodsIssueNoteProvider>();
 builder.Services.AddTransient<IGoodsIssueNoteProvider, GoodsIssueNoteProvider>();
-#endregion
+builder.Services.AddTransient<ICRUD_Service<InventoryTransaction, int>, InventoryTransactionProvider>();
+builder.Services.AddTransient<IInventoryTransactionProvider, InventoryTransactionProvider>();
 //Stock Transfer - Duy
 builder.Services.AddTransient<ICRUD_Service<StockTransfer, int>, StockTransferProvider>();
 builder.Services.AddTransient<IStockTransferProvider, StockTransferProvider>();
+#endregion
 
 
 #endregion
@@ -171,7 +173,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
+#region add cor
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials()
+              .SetIsOriginAllowed(_ => true);
+    });
+});
+#endregion
 
 
 var app = builder.Build();
@@ -182,6 +195,7 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseCors("CorsPolicy");
 
 app.MapControllers();
 
