@@ -19,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ProductClassification\" />
-    <Folder Include="ProductProperties\" />
+    <Folder Include="MasterData\ProductClassification\" />
+    <Folder Include="MasterData\ProductProperties\" />
   </ItemGroup>
 
 </Project>

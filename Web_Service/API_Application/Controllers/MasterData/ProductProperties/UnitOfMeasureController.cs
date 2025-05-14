@@ -1,9 +1,7 @@
 ﻿using Base.BaseService;
 using Base.MasterData.ProductProperties;
 using Core.MasterData.ProductProperties;
-using Core.ProductClassification;
 using Microsoft.AspNetCore.Mvc;
-using Servicer.ProductClassification;
 using System.Threading.Tasks;
 
 namespace API_Application.Controllers.MasterData.ProductProperties;

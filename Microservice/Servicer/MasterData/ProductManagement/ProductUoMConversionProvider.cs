@@ -1,7 +1,6 @@
 ﻿using Base.BaseService;
 using Base.ProductManagement;
 using Context.MasterData.ProductManagement;
-using Context.ProductProperties;
 using Core.BaseClass;
 using Core.ProductManagement;
 using Dapper;

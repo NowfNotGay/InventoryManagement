@@ -3,7 +3,6 @@ using Base.MasterData.ProductProperties;
 using Context.MasterData.ProductProperties;
 using Core.BaseClass;
 using Core.MasterData.ProductProperties;
-using Core.ProductClassification;
 using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;

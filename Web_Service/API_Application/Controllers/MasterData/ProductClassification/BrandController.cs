@@ -1,13 +1,10 @@
 ﻿using Base.BaseService;
 using Base.MasterData.ProductClassification;
-using Base.ProductProperties;
 using Core.MasterData;
 using Core.MasterData.ProductClassification;
-using Core.ProductProperties;
 using Core.WarehouseManagement;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Servicer.ProductClassification;
 
 namespace API_Application.Controllers.MasterData.ProductClassification;
 [Route("api/[controller]")]

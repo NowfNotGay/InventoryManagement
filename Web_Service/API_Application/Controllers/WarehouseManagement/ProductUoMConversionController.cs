@@ -1,11 +1,9 @@
 ﻿using Base.BaseService;
 using Base.ProductManagement;
-using Base.ProductProperties;
 using Core.BaseClass;
 using Core.ProductManagement;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Servicer.ProductManagement;
 
 namespace API_Application.Controllers.WarehouseManagement;
 

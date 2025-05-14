@@ -1,9 +1,7 @@
 ﻿using Base.BaseService;
 using Base.MasterData.ProductClassification;
-using Base.ProductProperties;
 using Core.MasterData;
 using Core.MasterData.ProductClassification;
-using Core.ProductProperties;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

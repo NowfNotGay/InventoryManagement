@@ -3,7 +3,6 @@ using Base.MasterData.ProductProperties;
 using Core.MasterData.ProductProperties;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Servicer.ProductProperties;
 
 namespace API_Application.Controllers.MasterData.ProductProperties;
 [Route("api/[controller]")]

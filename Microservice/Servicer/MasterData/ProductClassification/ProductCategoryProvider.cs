@@ -2,7 +2,6 @@
 using Base.BaseService;
 using Base.MasterData.ProductClassification;
 using Context.MasterData.ProductClassification;
-using Context.ProductProperties;
 using Core.BaseClass;
 using Core.MasterData.ProductClassification;
 using Dapper;

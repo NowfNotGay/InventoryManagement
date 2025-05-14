@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ProductClassification\" />
+    <Folder Include="MasterData\ProductClassification\" />
   </ItemGroup>
 
 </Project>
