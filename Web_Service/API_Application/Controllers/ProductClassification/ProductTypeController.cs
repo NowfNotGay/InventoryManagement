@@ -34,6 +34,17 @@ public class ProductTypeController : ControllerBase
 
     }
 
+    [HttpGet("getByCode/{code}")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+
+    public async Task<IActionResult> GetByCode(string code)
+    {
+        var rs = await _productTypeProvider.GetByCode(code);
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
+    }
+
     [HttpPost]
     [Consumes("application/json")]
     [Produces("application/json")]

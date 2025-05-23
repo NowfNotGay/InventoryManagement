@@ -414,6 +414,69 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
 
     }
 
+    public async Task<ResultService<ProductType>> GetByCode(string productTypeCode)
+    {
+        ResultService<ProductType> result = new();
+        if (string.IsNullOrEmpty(productTypeCode))
+        {
+            result.Code = "-1";
+            result.Message = "ProductType Code is null";
+            return result;
+        }
+        try
+        {
+            string message = string.Empty;
+            using (var connection = new SqlConnection(_dapperConnectionString))
+            {
+                await connection.OpenAsync();
+                var param = new DynamicParameters();
+                param.Add("@ProductTypeCode", productTypeCode);
+                param.Add("@Message", message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+
+                var queryResult = await connection.QuerySingleOrDefaultAsync<ProductType>("ProductType_GetByCode", param, commandType: CommandType.StoredProcedure, commandTimeout: TimeoutInSeconds);
+                result.Message = param.Get<string>("@Message");
+                if(queryResult != null)
+                {
+                    result.Data = queryResult;
+                }
+                result.Code = result.Data == null ? "-1" : "0";
+            }
+        }
+        catch (SqlException sqlex)
+        {
+            result.Code = "2";
+            result.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
+            return result;
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            result.Code = "3";
+            result.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (DbUpdateException ex)
+        {
+            result.Code = "4";
+            result.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (OperationCanceledException ex)
+        {
+            result.Code = "5";
+            result.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (Exception ex)
+        {
+            result.Code = "6";
+            result.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+
+
+        return result;
+    }
+
 
     #endregion
 }
