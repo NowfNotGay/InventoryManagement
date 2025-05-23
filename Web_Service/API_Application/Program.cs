@@ -28,6 +28,20 @@ using Servicer.WarehouseManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+// Thêm dịch vụ CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod() 
+               .AllowAnyHeader();
+    });
+});
+
+
+
 // Add services to the container.
 
 string chuỗi = General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!);
@@ -178,6 +192,9 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+
+// Sử dụng CORS
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 

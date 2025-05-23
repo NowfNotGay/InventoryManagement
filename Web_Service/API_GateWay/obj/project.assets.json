@@ -1414,23 +1414,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\luong\\.nuget\\packages\\": {},
+    "C:\\Users\\User\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Web_Service\\API_GateWay\\API_GateWay.csproj",
+      "projectUniqueName": "C:\\Users\\User\\source\\repos\\InventoryManagement\\Web_Service\\API_GateWay\\API_GateWay.csproj",
       "projectName": "API_GateWay",
-      "projectPath": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Web_Service\\API_GateWay\\API_GateWay.csproj",
-      "packagesPath": "C:\\Users\\luong\\.nuget\\packages\\",
-      "outputPath": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Web_Service\\API_GateWay\\obj\\",
+      "projectPath": "C:\\Users\\User\\source\\repos\\InventoryManagement\\Web_Service\\API_GateWay\\API_GateWay.csproj",
+      "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\User\\source\\repos\\InventoryManagement\\Web_Service\\API_GateWay\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\luong\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -1503,7 +1503,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

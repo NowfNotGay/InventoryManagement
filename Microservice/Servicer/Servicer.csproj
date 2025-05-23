@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <Folder Include="ProductClassification\" />
-    <Folder Include="ProductProperties\" />
   </ItemGroup>
 
 </Project>

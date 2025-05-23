@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "WgQzJOmNdffdi3JfXCesQnO5P7+GEyXhfah6qCn9CWo=",
+  "Hash": "vPgfgj5cd2CqkhQGG/K+NZUsHeA7gyaNwJ6F6Uy/wt8=",
   "Source": "API_Application",
   "BasePath": "_content/API_Application",
   "Mode": "Default",
@@ -9,10 +9,10 @@
   "DiscoveryPatterns": [],
   "Assets": [
     {
-      "Identity": "C:\\Users\\luong\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.3\\staticwebassets\\Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css",
+      "Identity": "C:\\Users\\User\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.3\\staticwebassets\\Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css",
       "SourceId": "Microsoft.AspNetCore.Components.QuickGrid",
       "SourceType": "Package",
-      "ContentRoot": "C:\\Users\\luong\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.3\\staticwebassets\\",
+      "ContentRoot": "C:\\Users\\User\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.3\\staticwebassets\\",
       "BasePath": "_content/Microsoft.AspNetCore.Components.QuickGrid",
       "RelativePath": "Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css",
       "AssetKind": "All",
@@ -27,13 +27,13 @@
       "Integrity": "Nuu0BHvGBlwN6c5FSVjV9yxX0YPfwg3ufdOucRJCOz0=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "C:\\Users\\luong\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.3\\staticwebassets\\Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css"
+      "OriginalItemSpec": "C:\\Users\\User\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.3\\staticwebassets\\Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css"
     },
     {
-      "Identity": "C:\\Users\\luong\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.3\\staticwebassets\\QuickGrid.razor.js",
+      "Identity": "C:\\Users\\User\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.3\\staticwebassets\\QuickGrid.razor.js",
       "SourceId": "Microsoft.AspNetCore.Components.QuickGrid",
       "SourceType": "Package",
-      "ContentRoot": "C:\\Users\\luong\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.3\\staticwebassets\\",
+      "ContentRoot": "C:\\Users\\User\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.3\\staticwebassets\\",
       "BasePath": "_content/Microsoft.AspNetCore.Components.QuickGrid",
       "RelativePath": "QuickGrid.razor.js",
       "AssetKind": "All",
@@ -48,13 +48,13 @@
       "Integrity": "tnamWuQ2F5I2J8hbtBt4/9i8Mb2y2o+9Tepj5tUrSdU=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "C:\\Users\\luong\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.3\\staticwebassets\\QuickGrid.razor.js"
+      "OriginalItemSpec": "C:\\Users\\User\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.3\\staticwebassets\\QuickGrid.razor.js"
     },
     {
-      "Identity": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Web_Service\\API_Application\\obj\\Debug\\net8.0\\scopedcss\\bundle\\API_Application.styles.css",
+      "Identity": "C:\\Users\\User\\source\\repos\\InventoryManagement\\Web_Service\\API_Application\\obj\\Debug\\net8.0\\scopedcss\\bundle\\API_Application.styles.css",
       "SourceId": "API_Application",
       "SourceType": "Computed",
-      "ContentRoot": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Web_Service\\API_Application\\obj\\Debug\\net8.0\\scopedcss\\bundle\\",
+      "ContentRoot": "C:\\Users\\User\\source\\repos\\InventoryManagement\\Web_Service\\API_Application\\obj\\Debug\\net8.0\\scopedcss\\bundle\\",
       "BasePath": "_content/API_Application",
       "RelativePath": "API_Application#[.{fingerprint}]?.styles.css",
       "AssetKind": "All",
@@ -69,13 +69,13 @@
       "Integrity": "yJzMRujk3CbSbBe5hogvoEpcGbz0ThnTl058XcI1svI=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Web_Service\\API_Application\\obj\\Debug\\net8.0\\scopedcss\\bundle\\API_Application.styles.css"
+      "OriginalItemSpec": "C:\\Users\\User\\source\\repos\\InventoryManagement\\Web_Service\\API_Application\\obj\\Debug\\net8.0\\scopedcss\\bundle\\API_Application.styles.css"
     }
   ],
   "Endpoints": [
     {
       "Route": "_content/Microsoft.AspNetCore.Components.QuickGrid/Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css",
-      "AssetFile": "C:\\Users\\luong\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.3\\staticwebassets\\Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css",
+      "AssetFile": "C:\\Users\\User\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.3\\staticwebassets\\Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -112,7 +112,7 @@
     },
     {
       "Route": "_content/Microsoft.AspNetCore.Components.QuickGrid/QuickGrid.razor.js",
-      "AssetFile": "C:\\Users\\luong\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.3\\staticwebassets\\QuickGrid.razor.js",
+      "AssetFile": "C:\\Users\\User\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.3\\staticwebassets\\QuickGrid.razor.js",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -149,7 +149,7 @@
     },
     {
       "Route": "API_Application.02jfxhbwsz.styles.css",
-      "AssetFile": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Web_Service\\API_Application\\obj\\Debug\\net8.0\\scopedcss\\bundle\\API_Application.styles.css",
+      "AssetFile": "C:\\Users\\User\\source\\repos\\InventoryManagement\\Web_Service\\API_Application\\obj\\Debug\\net8.0\\scopedcss\\bundle\\API_Application.styles.css",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -174,7 +174,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 26 Feb 2025 15:51:08 GMT"
+          "Value": "Fri, 28 Mar 2025 11:01:00 GMT"
         },
         {
           "Name": "Link",
@@ -198,7 +198,7 @@
     },
     {
       "Route": "API_Application.styles.css",
-      "AssetFile": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Web_Service\\API_Application\\obj\\Debug\\net8.0\\scopedcss\\bundle\\API_Application.styles.css",
+      "AssetFile": "C:\\Users\\User\\source\\repos\\InventoryManagement\\Web_Service\\API_Application\\obj\\Debug\\net8.0\\scopedcss\\bundle\\API_Application.styles.css",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -223,7 +223,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 26 Feb 2025 15:51:08 GMT"
+          "Value": "Fri, 28 Mar 2025 11:01:00 GMT"
         },
         {
           "Name": "Link",

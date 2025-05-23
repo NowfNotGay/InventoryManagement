@@ -3323,23 +3323,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\luong\\.nuget\\packages\\": {},
+    "C:\\Users\\User\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Microservice\\Servicer\\Servicer.csproj",
+      "projectUniqueName": "C:\\Users\\User\\source\\repos\\InventoryManagement\\Microservice\\Servicer\\Servicer.csproj",
       "projectName": "Servicer",
-      "projectPath": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Microservice\\Servicer\\Servicer.csproj",
-      "packagesPath": "C:\\Users\\luong\\.nuget\\packages\\",
-      "outputPath": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Microservice\\Servicer\\obj\\",
+      "projectPath": "C:\\Users\\User\\source\\repos\\InventoryManagement\\Microservice\\Servicer\\Servicer.csproj",
+      "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\User\\source\\repos\\InventoryManagement\\Microservice\\Servicer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\luong\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -3354,14 +3354,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\workspace\\InventoryManagement\\InventoryManagement\\Microservice\\Base\\Base.csproj": {
-              "projectPath": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Microservice\\Base\\Base.csproj"
+            "C:\\Users\\User\\source\\repos\\InventoryManagement\\Microservice\\Base\\Base.csproj": {
+              "projectPath": "C:\\Users\\User\\source\\repos\\InventoryManagement\\Microservice\\Base\\Base.csproj"
             },
-            "D:\\workspace\\InventoryManagement\\InventoryManagement\\Microservice\\Context\\Context.csproj": {
-              "projectPath": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Microservice\\Context\\Context.csproj"
+            "C:\\Users\\User\\source\\repos\\InventoryManagement\\Microservice\\Context\\Context.csproj": {
+              "projectPath": "C:\\Users\\User\\source\\repos\\InventoryManagement\\Microservice\\Context\\Context.csproj"
             },
-            "D:\\workspace\\InventoryManagement\\InventoryManagement\\Microservice\\Helper\\Helper.csproj": {
-              "projectPath": "D:\\workspace\\InventoryManagement\\InventoryManagement\\Microservice\\Helper\\Helper.csproj"
+            "C:\\Users\\User\\source\\repos\\InventoryManagement\\Microservice\\Helper\\Helper.csproj": {
+              "projectPath": "C:\\Users\\User\\source\\repos\\InventoryManagement\\Microservice\\Helper\\Helper.csproj"
             }
           }
         }
@@ -3397,7 +3397,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
