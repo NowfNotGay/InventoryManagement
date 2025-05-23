@@ -119,9 +119,9 @@ namespace API_Application.Controllers.WarehouseManagement
 
         //#region GoodsReceiptNoteHeaderAndLine
 
-        //[HttpPost("/HeaderLine/CreateBoth")]
-        //[Consumes("application/json")]
-        //[Produces("application/json")]
+        [HttpPost("HeaderLine/CreateBoth")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
 
         //public async Task<IActionResult> GoodsReceiptNote_Create_HeaderAndLine([FromBody] GoodsReceiptNote_Param param)
         //{
@@ -129,9 +129,9 @@ namespace API_Application.Controllers.WarehouseManagement
         //    return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
         //}
 
-        //[HttpDelete("/HeaderLine/DeleteHeaderAndLine/ID")]
-        //[Consumes("application/json")]
-        //[Produces("application/json")]
+        [HttpDelete("HeaderLine/DeleteHeaderAndLine/ID")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
 
         //public async Task<IActionResult> Delete_HeaderAndDetail([FromQuery]int grnID)
         //{

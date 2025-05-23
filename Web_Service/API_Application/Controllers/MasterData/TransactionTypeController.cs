@@ -45,8 +45,8 @@ namespace API_Application.Controllers.MasterData
 
         //public async Task<IActionResult> Save([FromBody] TransactionType TransactionType)
         //{
-        //    var rs = await _ICRUD_Service.Save(TransactionType);
-        //    return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+        //    //var rs = await _ICRUD_Service.Save(TransactionType);
+        //    //return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
         //}
 
         [HttpPut]

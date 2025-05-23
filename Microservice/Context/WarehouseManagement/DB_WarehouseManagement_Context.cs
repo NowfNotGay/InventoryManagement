@@ -12,6 +12,7 @@ namespace Context.WarehouseManagement
         public DbSet<GoodsReceiptNoteLine> GoodsReceiptNoteLines { get; set; }
         public DbSet<GoodsIssueNote> GoodsIssueNotes { get; set; }
         public DbSet<GoodsIssueNoteLine> GoodsIssueNoteLines { get; set; }
+        public DbSet<InventoryTransaction> InventoryTransactions { get; set; }
         public DbSet<StockTransfer> StockTransfers { get; set; }
         public DbSet<StockTransferDetail> StockTransferDetails { get; set; }
 
@@ -41,6 +42,14 @@ namespace Context.WarehouseManagement
                 .ToTable("GoodsIssueNoteLine")
                 .HasKey(c => c.RowPointer);
 
+            modelBuilder.Entity<InventoryTransaction>()
+                .ToTable("InventoryTransaction")
+                .HasKey(c => c.RowPointer);
+            modelBuilder.Entity<InventoryTransaction>()
+                .Property(c => c.RowPointer)
+                .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<StockTransfer>()
@@ -50,12 +59,12 @@ namespace Context.WarehouseManagement
                 .Property(c => c.RowPointer)
                 .HasDefaultValueSql("NEWSEQUENTIALID()");
 
-            modelBuilder.Entity<StockTransfer>()
-                .ToTable("GoodsReceiptNoteLine")
-                .HasKey(c => c.RowPointer);
-            modelBuilder.Entity<StockTransferDetail>()
-                .Property(c => c.RowPointer)
-                .HasDefaultValueSql("NEWSEQUENTIALID()");
+            //modelBuilder.Entity<StockTransfer>()
+            //    .ToTable("GoodsReceiptNoteLine")
+            //    .HasKey(c => c.RowPointer);
+            //modelBuilder.Entity<StockTransferDetail>()
+            //    .Property(c => c.RowPointer)
+            //    .HasDefaultValueSql("NEWSEQUENTIALID()");
             base.OnModelCreating(modelBuilder);
         }
     }

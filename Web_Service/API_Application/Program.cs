@@ -1,29 +1,29 @@
 ﻿using Base.BaseService;
 using Base.Example;
 using Base.MasterData;
-using Base.ProductClassification;
+using Base.MasterData.ProductClassification;
+using Base.MasterData.ProductProperties;
 using Base.ProductManagement;
-using Base.ProductProperties;
 using Base.WarehouseManagement;
 using Context.Example;
 using Context.MasterData;
-using Context.ProductClassification;
-using Context.ProductManagement;
-using Context.ProductProperties;
+using Context.MasterData.ProductClassification;
+using Context.MasterData.ProductManagement;
+using Context.MasterData.ProductProperties;
 using Context.WarehouseManagement;
 using Core.ExampleClass;
 using Core.MasterData;
-using Core.ProductClassification;
+using Core.MasterData.ProductClassification;
+using Core.MasterData.ProductProperties;
 using Core.ProductManagement;
-using Core.ProductProperties;
 using Core.WarehouseManagement;
 using Helper.Method;
 using Microsoft.EntityFrameworkCore;
 using Servicer.Example;
 using Servicer.MasterData;
-using Servicer.ProductClassification;
-using Servicer.ProductManagement;
-using Servicer.ProductProperties;
+using Servicer.MasterData.ProductClassification;
+using Servicer.MasterData.ProductManagement;
+using Servicer.MasterData.ProductProperties;
 using Servicer.WarehouseManagement;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,7 +45,7 @@ builder.Services.AddCors(options =>
 // Add services to the container.
 
 string chuỗi = General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!);
-string xâu = General.EncryptString(builder.Configuration.GetConnectionString("DB_Inventory_DAPPER")!);
+string xâu = General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory_DAPPER")!);
 builder.Services.AddDbContext<DB_Testing_Context>(options =>
           options.UseLazyLoadingProxies().UseSqlServer(
                       "Server = 104.197.108.88; Database = Testing; User Id = sqlserver; Password = codingforever@3003; Encrypt = False; TrustServerCertificate = False; MultipleActiveResultSets = true; MultiSubnetFailover = True;",
@@ -172,10 +172,12 @@ builder.Services.AddTransient<IGoodsReceiptNoteProvider, GoodsReceiptNoteProvide
 //Good Issue Note - Hai
 builder.Services.AddTransient<ICRUD_Service<GoodsIssueNote, int>, GoodsIssueNoteProvider>();
 builder.Services.AddTransient<IGoodsIssueNoteProvider, GoodsIssueNoteProvider>();
-#endregion
+builder.Services.AddTransient<ICRUD_Service<InventoryTransaction, int>, InventoryTransactionProvider>();
+builder.Services.AddTransient<IInventoryTransactionProvider, InventoryTransactionProvider>();
 //Stock Transfer - Duy
 builder.Services.AddTransient<ICRUD_Service<StockTransfer, int>, StockTransferProvider>();
 builder.Services.AddTransient<IStockTransferProvider, StockTransferProvider>();
+#endregion
 
 
 #endregion
@@ -185,7 +187,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
+#region add cor
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials()
+              .SetIsOriginAllowed(_ => true);
+    });
+});
+#endregion
 
 
 var app = builder.Build();
@@ -199,6 +212,7 @@ app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseCors("CorsPolicy");
 
 app.MapControllers();
 
