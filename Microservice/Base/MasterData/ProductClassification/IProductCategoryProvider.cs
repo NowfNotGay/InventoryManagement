@@ -13,4 +13,6 @@ public interface IProductCategoryProvider
     public Task<ResultService<ProductCategory>> SaveByDapper(ProductCategory entity);
 
     public Task<ResultService<string>> DeleteByDapper(string code);
+
+    public Task<ResultService<ProductCategory>> GetByCode(string code);
 }

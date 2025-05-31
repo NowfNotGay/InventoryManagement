@@ -4,6 +4,7 @@ using Core.MasterData;
 using Core.MasterData.ProductClassification;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Servicer.MasterData.ProductClassification;
 
 namespace API_Application.Controllers.MasterData.ProductClassification;
 [Route("api/[controller]")]
@@ -27,6 +28,17 @@ public class ProductCategoryController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var rs = await _productCategoryService.GetAll();
+        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
+    }
+
+    [HttpGet("getByCode/{code}")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+
+    public async Task<IActionResult> GetByCode(string code)
+    {
+        var rs = await _productCategoryProvider.GetByCode(code);
         return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
 
     }

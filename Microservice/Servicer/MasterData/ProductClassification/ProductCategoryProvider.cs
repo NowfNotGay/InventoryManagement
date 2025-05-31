@@ -8,6 +8,7 @@ using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -413,6 +414,70 @@ public class ProductCategoryProvider : ICRUD_Service<ProductCategory, int>, IPro
             result.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
             return result;
         }
+
+    }
+
+    public async Task<ResultService<ProductCategory>> GetByCode(string code)
+    {
+        ResultService<ProductCategory> result = new();
+        if(code == null)
+        {
+            result.Code = "-1";
+            result.Message = "Category Code Not Found!";
+            return result;
+        }
+        try
+        {
+            var message = string.Empty;
+            using(var connection = new SqlConnection(_dapperConnectionString))
+            {
+               
+                var param = new DynamicParameters();
+                param.Add("@CategoryCode", code);
+                param.Add("@Message", message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                await connection.OpenAsync();
+                var queryResult = await connection.QuerySingleOrDefaultAsync<ProductCategory>("ProductCategory_GetByCode", param, commandType: CommandType.StoredProcedure, commandTimeout: TimeoutInSeconds);
+                result.Message = param.Get<string>("@Message");
+                if (queryResult != null)
+                {
+                    result.Data = queryResult;
+                }
+                result.Code = result.Data == null ? "-1" : "0";
+
+                return result;
+            }
+        }
+        catch (SqlException sqlex)
+        {
+            result.Code = "2";
+            result.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
+            return result;
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            result.Code = "3";
+            result.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (DbUpdateException ex)
+        {
+            result.Code = "4";
+            result.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (OperationCanceledException ex)
+        {
+            result.Code = "5";
+            result.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+        catch (Exception ex)
+        {
+            result.Code = "6";
+            result.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
+            return result;
+        }
+
 
     }
 
