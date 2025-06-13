@@ -271,7 +271,7 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
         {
             string Message = string.Empty;
             entity.RowPointer = Guid.Empty;
-            entity.ColorCode = !entity.ColorCode.Contains("CL") ? string.Empty : entity.ColorCode;
+            entity.ColorCode = !entity.ColorCode.Contains("#") ? string.Empty : entity.ColorCode;
             List<Color> list = new();
             list.Add(entity);
             DataTable data = General.ConvertToDataTable(list);
@@ -284,15 +284,16 @@ public class ColorProvider : ICRUD_Service<Color, int>, IColorProvider
                 param.Add("@udtt_Color", data.AsTableValuedParameter("UDTT_Color"));
                 param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
 
-                await connection.QueryAsync<Color>("Color_Save",
+                var resultData = (await connection.QueryAsync<Color>("Color_Save",
                     param,
                     commandType: CommandType.StoredProcedure,
-                    commandTimeout: TimeoutInSeconds);
+                    commandTimeout: TimeoutInSeconds)).FirstOrDefault();
                 var resultMessage = param.Get<string>("@Message");
                 if (resultMessage.Contains("successfully"))
                 {
                     result.Code = "0";
                     result.Message = "Save Successfully";
+                    result.Data = resultData;
                 }
                 else
                 {

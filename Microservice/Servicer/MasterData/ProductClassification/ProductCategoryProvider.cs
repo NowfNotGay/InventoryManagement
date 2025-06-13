@@ -16,6 +16,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Servicer.MasterData.ProductClassification;
 public class ProductCategoryProvider : ICRUD_Service<ProductCategory, int>, IProductCategoryProvider
@@ -293,15 +294,17 @@ public class ProductCategoryProvider : ICRUD_Service<ProductCategory, int>, IPro
                 param.Add("@udtt_ProductCategory", data.AsTableValuedParameter("UDTT_ProductCategory"));
                 param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
 
-                await connection.QueryAsync<ProductCategory>("ProductCategory_Save",
-                    param,
-                    commandType: CommandType.StoredProcedure,
-                    commandTimeout: TimeoutInSeconds);
+                var resultData = (await connection.QueryAsync<ProductCategory>(
+                            "ProductCategory_Save",
+                            param,
+                            commandType: CommandType.StoredProcedure
+                        )).FirstOrDefault();
                 var resultMessage = param.Get<string>("@Message");
                 if (resultMessage.Contains("successfully"))
                 {
                     result.Code = "0";
                     result.Message = "Save Successfully";
+                    result.Data = (ProductCategory)resultData!;
                 }
                 else
                 {
@@ -420,7 +423,7 @@ public class ProductCategoryProvider : ICRUD_Service<ProductCategory, int>, IPro
     public async Task<ResultService<ProductCategory>> GetByCode(string code)
     {
         ResultService<ProductCategory> result = new();
-        if(code == null)
+        if (code == null)
         {
             result.Code = "-1";
             result.Message = "Category Code Not Found!";
@@ -429,9 +432,9 @@ public class ProductCategoryProvider : ICRUD_Service<ProductCategory, int>, IPro
         try
         {
             var message = string.Empty;
-            using(var connection = new SqlConnection(_dapperConnectionString))
+            using (var connection = new SqlConnection(_dapperConnectionString))
             {
-               
+
                 var param = new DynamicParameters();
                 param.Add("@CategoryCode", code);
                 param.Add("@Message", message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);

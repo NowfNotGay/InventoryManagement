@@ -14,6 +14,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Servicer.MasterData.ProductClassification;
 public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductTypeProvider
@@ -290,15 +291,18 @@ public class ProductTypeProvider : ICRUD_Service<ProductType, int>, IProductType
                 param.Add("@udtt_ProductType", data.AsTableValuedParameter("UDTT_ProductType"));
                 param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
 
-                await connection.QueryAsync<ProductType>("ProductType_Save",
+                var resulData = (await connection.QueryAsync<ProductType>("ProductType_Save",
                     param,
                     commandType: CommandType.StoredProcedure,
-                    commandTimeout: TimeoutInSeconds);
+                    commandTimeout: TimeoutInSeconds)).FirstOrDefault();
                 var resultMessage = param.Get<string>("@Message");
                 if (resultMessage.Contains("successfully"))
                 {
                     result.Code = "0";
                     result.Message = "Save Successfully";
+
+
+                    result.Data = (ProductType)resulData!;
                 }
                 else
                 {

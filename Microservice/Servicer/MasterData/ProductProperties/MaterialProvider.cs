@@ -289,15 +289,17 @@ public class MaterialProvider : ICRUD_Service<Material, int>, IMaterialProvider
                 param.Add("@udtt_Material", data.AsTableValuedParameter("UDTT_Material"));
                 param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
 
-                await connection.QueryAsync<Material>("Material_Save",
+                var resultData =  (await connection.QueryAsync<Material>("Material_Save",
                     param,
                     commandType: CommandType.StoredProcedure,
-                    commandTimeout: TimeoutInSeconds);
+                    commandTimeout: TimeoutInSeconds)).FirstOrDefault();
                 var resultMessage = param.Get<string>("@Message");
                 if (resultMessage.Contains("successfully"))
                 {
                     result.Code = "0";
                     result.Message = "Save Successfully";
+
+                    result.Data = (Material) resultData!;
                 }
                 else
                 {
