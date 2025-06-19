@@ -10,10 +10,11 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Servicer.MasterData
 {
-    public class TransactionTypeProvider : ICRUD_Service<TransactionType, int>, ITransactionTypeProvider
+    public class TransactionTypeProvider : ICRUD_Service<TransactionType, string>, ITransactionTypeProvider
     {
         private readonly DB_MasterData_Context _Context;
         private readonly IConfiguration _configuration;
@@ -40,24 +41,42 @@ namespace Servicer.MasterData
                 };
             }
 
-            using (var connection = _Context.Database.BeginTransaction())
+            string message = string.Empty;
+            string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+            using (var connection = new SqlConnection(conn))
             {
                 try
                 {
-                    entity.RowPointer = Guid.Empty;
-                    entity.ID = 0;
-                    await _Context.TransactionTypes.AddAsync(entity);
-                    await _Context.SaveChangesAsync();
-                    await connection.CommitAsync();
+                    await connection.OpenAsync();
+                    var param = new DynamicParameters();
+                    param.Add("@ActionBy", entity.CreatedBy);
+                    param.Add("@udtt_Header", General.ConvertToDataTable(new List<TransactionType> { entity }).AsTableValuedParameter("UDTT_TransactionType"));
+                    param.Add("@Message", message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
 
-                    response.Code = "0";// Success
-                    response.Message = "Create new Instance Successfully";
-                    response.Data = entity;
+                    await connection.QueryAsync<GoodsReceiptNote>(
+                        "Transactiontype_Create",
+                        param,
+                        commandType: CommandType.StoredProcedure,
+                        commandTimeout: TimeoutInSeconds
+                    );
+                    var resultMessage = param.Get<string>("@Message");
+
+                    if (resultMessage.Contains("OK", StringComparison.OrdinalIgnoreCase))
+                    {
+                        response.Code = ResponseCode.Success.ToString();
+                        response.Message = resultMessage.Split("OK_")[1];
+                    }
+                    else
+                    {
+                        response.Code = ResponseCode.NotFound.ToString(); // hoặc FailWhileExecutingStoredProcedure
+                        response.Message = $"Save Failed: {resultMessage}";
+                    }
+
                     return response;
                 }
                 catch (SqlException sqlex)
                 {
-                    await connection.RollbackAsync();
+
                     //lỗi xảy ra khi có sự xung đột giữa các bản ghi trong cơ sở dữ liệu khi cố gắng cập nhật.
                     response.Code = "2";
                     response.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
@@ -65,7 +84,6 @@ namespace Servicer.MasterData
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
-                    await connection.RollbackAsync();
                     //lỗi xảy ra khi có sự xung đột giữa các bản ghi trong cơ sở dữ liệu khi cố gắng cập nhật.
                     response.Code = "3";
                     response.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
@@ -73,7 +91,6 @@ namespace Servicer.MasterData
                 }
                 catch (DbUpdateException ex)
                 {
-                    await connection.RollbackAsync();
                     //lỗi xảy ra khi không thể cập nhật cơ sở dữ liệu, có thể do các vấn đề về dữ liệu hoặc các ràng buộc.
                     response.Code = "4";
                     response.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
@@ -81,7 +98,6 @@ namespace Servicer.MasterData
                 }
                 catch (OperationCanceledException ex)
                 {
-                    await connection.RollbackAsync();
                     //Lỗi xuất hiện do timeout hoặc yêu cầu dừng quá trình.
                     response.Code = "5";
                     response.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
@@ -89,7 +105,6 @@ namespace Servicer.MasterData
                 }
                 catch (Exception ex)
                 {
-                    await connection.RollbackAsync();
                     response.Code = "6";
                     response.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
                     return response;
@@ -101,7 +116,7 @@ namespace Servicer.MasterData
         {
             var response = new ResultService<TransactionType>();
 
-            var getEntityID = await this.Get(entity.ID);
+            var getEntityID = await this.Get(entity.TransactionTypeCode);
             if (getEntityID.Code == "-1")
             {
                 return new ResultService<TransactionType>()
@@ -178,12 +193,12 @@ namespace Servicer.MasterData
             }
         }
 
-        public async Task<ResultService<string>> Delete(int id)
+        public async Task<ResultService<string>> Delete(string TransactionTypeCode)
         {
             ResultService<string> resultService = new ResultService<string>();
             try
             {
-                var entity = await this.Get(id);
+                var entity = await this.Get(TransactionTypeCode);
                 if (entity.Code == "-1")
                 {
                     return new ResultService<string>()
@@ -248,7 +263,7 @@ namespace Servicer.MasterData
             }
         }
 
-        public async Task<ResultService<TransactionType>> Get(int id)
+        public async Task<ResultService<TransactionType>> Get(string TransactionTypeCode)
         {
             var response = new ResultService<TransactionType>();
             string connectionString = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
@@ -258,8 +273,8 @@ namespace Servicer.MasterData
                 {
                     await sqlConnection.OpenAsync();
                     var param = new DynamicParameters();
-                    param.Add("@ID", id);
-                    var result = await sqlConnection.QuerySingleOrDefaultAsync<TransactionType>("TransactionType_GetByID",
+                    param.Add("@TransactionTypeCode", TransactionTypeCode);
+                    var result = await sqlConnection.QueryFirstOrDefaultAsync<TransactionType>("TransactionType_GetByCode",
                         param,
                         commandType: CommandType.StoredProcedure,
                            commandTimeout: TimeoutInSeconds);
