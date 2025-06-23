@@ -10,9 +10,13 @@ namespace API_Application.Controllers.MasterData
     public class TransactionTypeController : ControllerBase
     {
         private readonly ITransactionTypeProvider _transactionTypeProvider;
-        private readonly ICRUD_Service<TransactionType, int> _ICRUD_Service;
+        private readonly ICRUD_Service<TransactionType, string> _ICRUD_Service;
 
-        public TransactionTypeController(ITransactionTypeProvider transactionTypeProvider, ICRUD_Service<TransactionType, int> iCRUD_Service)
+        //Tạo thêm 1 hàm GetByCode
+        //Tạo thêm 1 hàm DeleteByCode
+        //Chỉnh sửa hàm Save bao gồm update và create
+
+        public TransactionTypeController(ITransactionTypeProvider transactionTypeProvider, ICRUD_Service<TransactionType, string> iCRUD_Service)
         {
             _transactionTypeProvider = transactionTypeProvider;
             _ICRUD_Service = iCRUD_Service;
@@ -24,18 +28,17 @@ namespace API_Application.Controllers.MasterData
         public async Task<IActionResult> GetAll()
         {
             var rs = await _ICRUD_Service.GetAll();
-            return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs.Message);
 
         }
 
         [HttpGet("ID")]
         [Consumes("application/json")]
         [Produces("application/json")]
-        public async Task<IActionResult> GetByID([FromQuery] int ID)
+        public async Task<IActionResult> GetByID([FromQuery] string TransactionTypeCode)
         {
-            var rs = await _ICRUD_Service.Get(ID);
+            var rs = await _ICRUD_Service.Get(TransactionTypeCode);
             return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
-
         }
 
 
@@ -46,7 +49,7 @@ namespace API_Application.Controllers.MasterData
         public async Task<IActionResult> Save([FromBody] TransactionType TransactionType)
         {
             var rs = await _ICRUD_Service.Create(TransactionType);
-            return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs.Message);
         }
 
         [HttpPut]
@@ -59,13 +62,13 @@ namespace API_Application.Controllers.MasterData
             return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
 
         }
-        [HttpDelete]
+        [HttpDelete("Delete")]
         [Consumes("application/json")]
         [Produces("application/json")]
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete([FromQuery] string TransactionTypeCode)
         {
-            var rs = await _ICRUD_Service.Delete(id);
+            var rs = await _ICRUD_Service.Delete(TransactionTypeCode);
             return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
         }
 
