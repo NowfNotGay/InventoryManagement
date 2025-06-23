@@ -1,4 +1,5 @@
-﻿using Core.ProductManagement;
+﻿using Core.MasterData.ProductManagement;
+using Core.ProductManagement;
 using Microsoft.EntityFrameworkCore;
 
 namespace Context.MasterData.ProductManagement;
@@ -11,6 +12,7 @@ public class DB_ProductManagement_Context : DbContext
     public DbSet<ProductVariant> ProductVariants { get; set; }
     public DbSet<ProductAttribute> ProductAttributes { get; set; }
     public DbSet<ProductUoMConversion> ProductUoMConversions { get; set; }
+    public DbSet<ProductImages> ProductImages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -53,6 +55,14 @@ public class DB_ProductManagement_Context : DbContext
             .ToTable("ProductUoMConversion")
             .HasKey(c => c.RowPointer);
         modelBuilder.Entity<ProductUoMConversion>()
+            .Property(c => c.RowPointer)
+            .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+        //ProductImages
+        modelBuilder.Entity<ProductImages>()
+            .ToTable("ProductImages")
+            .HasKey(c => c.RowPointer);
+        modelBuilder.Entity<ProductImages>()
             .Property(c => c.RowPointer)
             .HasDefaultValueSql("NEWSEQUENTIALID()");
 

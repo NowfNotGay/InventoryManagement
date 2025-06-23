@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.MasterData.ProductManagement;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -61,4 +62,27 @@ public class ProductParam : BaseClass.BaseClass
     public string ImagePath { get; set; }
     public double PurchasePrice { get; set; }
     public double SalePrice { get; set; }
+
+    List<ProductVariant> ProductVariants { get; set; }
+}
+
+public class ProductSave
+{
+    public Product Product {  get; set; }
+
+    List<VariantParam> VariantParams { get; set; }
+}
+
+public class VariantParam
+{
+
+    public string ImageCode { get; set; }
+    public string AttributeCode { get; set; }
+    public string RefProductCode { get; set; }
+    public int Position { get; set; }
+    public string ImagePath { get; set; }
+    public bool IsPrimary { get; set; }
+
+    public int ColorID { get; set; }
+    public int MaterialID { get; set; }
 }
