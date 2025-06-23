@@ -9,10 +9,10 @@ namespace Base.BaseService
         Task<ResultService<string>> Delete(U id);
         Task<ResultService<T>> Get(U id);
         Task<ResultService<IEnumerable<T>>> GetAll();
-        Task<ResultService<string>> Save(T entity)
+        Task<ResultService<T>> Save(T entity)
         {
             // Triển khai mặc định tại đây, ví dụ:
-            return Task.FromResult(new ResultService<string>());
+            return Task.FromResult(new ResultService<T>());
         }
     }
 
