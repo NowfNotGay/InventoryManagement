@@ -352,88 +352,87 @@ namespace Servicer.MasterData
             }
         }
 
-        //public async Task<ResultService<string>> Save(TransactionType entity)
-        //{
-        //    var response = new ResultService<string>();
-        //    if (entity == null)
-        //    {
-        //        return new ResultService<string>()
-        //        {
-        //            Code = "1",
-        //            Message = "Entity is not valid"
-        //        };
-        //    }
-        //    try
-        //    {
-        //        string Message = string.Empty;
-        //        List<TransactionType> listentity = new List<TransactionType>();
-        //        listentity.Add(entity);
-        //        DataTable dt = General.ConvertToDataTable(listentity);
+        public async Task<ResultService<TransactionType>> Save(TransactionType entity)
+        {
+            var response = new ResultService<TransactionType>();
+            if (entity == null)
+            {
+                return new ResultService<TransactionType>()
+                {
+                    Code = "1",
+                    Message = "Entity is not valid"
+                };
+            }
 
-        //        string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
-        //        using (var connection = new SqlConnection(conn))
-        //        {
-        //            await connection.OpenAsync();
-        //            var param = new DynamicParameters();
-        //            param.Add("@ActionBy", entity.CreatedBy);
-        //            param.Add("@udtt_Header", dt.AsTableValuedParameter("UDTT_TransactionType"));
-        //            param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
-        //            await connection.QueryAsync<GoodsReceiptNote>("Transactiontype_Create",
-        //               param,
-        //               commandType: CommandType.StoredProcedure,
-        //                  commandTimeout: TimeoutInSeconds);
-        //            var resultMessage = param.Get<string>("@Message");
+            string message = string.Empty;
+            string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+            using (var connection = new SqlConnection(conn))
+            {
+                try
+                {
+                    await connection.OpenAsync();
+                    var param = new DynamicParameters();
+                    param.Add("@ActionBy", entity.CreatedBy);
+                    param.Add("@udtt_Header", General.ConvertToDataTable(new List<TransactionType> { entity }).AsTableValuedParameter("UDTT_TransactionType"));
+                    param.Add("@Message", message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
 
-        //            if (resultMessage.Contains("OK"))
-        //            {
-        //                response.Code = "0"; // Success
-        //                response.Message = "Save Successfully";
-        //            }
-        //            else
-        //            {
-        //                response.Code = "-999"; // Success
-        //                response.Message = "Failed";
-        //            }
+                    await connection.QueryAsync<GoodsReceiptNote>(
+                        "Transactiontype_Create",
+                        param,
+                        commandType: CommandType.StoredProcedure,
+                        commandTimeout: TimeoutInSeconds
+                    );
+                    var resultMessage = param.Get<string>("@Message");
 
-        //            return response;
+                    if (resultMessage.Contains("OK", StringComparison.OrdinalIgnoreCase))
+                    {
+                        response.Code = ResponseCode.Success.ToString();
+                        response.Message = resultMessage.Split("OK_")[1];
+                    }
+                    else
+                    {
+                        response.Code = ResponseCode.NotFound.ToString(); // hoặc FailWhileExecutingStoredProcedure
+                        response.Message = $"Save Failed: {resultMessage}";
+                    }
 
-        //        }
-        //    }
-        //    catch (SqlException sqlex)
-        //    {
+                    return response;
+                }
+                catch (SqlException sqlex)
+                {
 
-        //        response.Code = "2";
-        //        response.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
-        //        return response;
-        //    }
-        //    catch (DbUpdateConcurrencyException ex)
-        //    {
-
-        //        response.Code = "3";
-        //        response.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
-        //        return response;
-        //    }
-        //    catch (DbUpdateException ex)
-        //    {
-
-        //        response.Code = "4";
-        //        response.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
-        //        return response;
-        //    }
-        //    catch (OperationCanceledException ex)
-        //    {
-
-        //        response.Code = "5";
-        //        response.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
-        //        return response;
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //        response.Code = "6";
-        //        response.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
-        //        return response;
-        //    }
-        //}
-    }
+                    //lỗi xảy ra khi có sự xung đột giữa các bản ghi trong cơ sở dữ liệu khi cố gắng cập nhật.
+                    response.Code = "2";
+                    response.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
+                    return response;
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    //lỗi xảy ra khi có sự xung đột giữa các bản ghi trong cơ sở dữ liệu khi cố gắng cập nhật.
+                    response.Code = "3";
+                    response.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
+                    return response;
+                }
+                catch (DbUpdateException ex)
+                {
+                    //lỗi xảy ra khi không thể cập nhật cơ sở dữ liệu, có thể do các vấn đề về dữ liệu hoặc các ràng buộc.
+                    response.Code = "4";
+                    response.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
+                    return response;
+                }
+                catch (OperationCanceledException ex)
+                {
+                    //Lỗi xuất hiện do timeout hoặc yêu cầu dừng quá trình.
+                    response.Code = "5";
+                    response.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    response.Code = "6";
+                    response.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
+                    return response;
+                }
+            }
+        }
+        }
 }

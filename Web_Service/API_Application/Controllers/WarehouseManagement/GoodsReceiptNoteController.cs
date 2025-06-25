@@ -48,8 +48,8 @@ namespace API_Application.Controllers.WarehouseManagement
 
         public async Task<IActionResult> Save([FromBody] GoodsReceiptNote GoodsReceiptNote)
         {
-            var rs = await _ICRUD_Service.Create(GoodsReceiptNote);
-            return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
+            var rs = await _ICRUD_Service.Save(GoodsReceiptNote);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
         }
         [HttpPut]
         [Consumes("application/json")]
