@@ -88,16 +88,16 @@ public class VehicleModelController : ControllerBase
     public async Task<IActionResult> SaveByDapper([FromBody] VehicleModel vehicleModel)
     {
         var rs = await _vehicleModelProvider.SaveByDapper(vehicleModel);
-        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+        return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
     }
-    [HttpDelete("DeleteByDapper")]
+    [HttpDelete("DeleteByDapper/{modelCode}")]
     [Consumes("application/json")]
     [Produces("application/json")]
 
     public async Task<IActionResult> DeleteByDapper(string modelCode)
     {
         var rs = await _vehicleModelProvider.DeleteByDapper(modelCode);
-        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+        return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
     }
 
     #endregion

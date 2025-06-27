@@ -88,7 +88,7 @@ public class BrandController : ControllerBase
         var rs = await _brandProvider.SaveByDapper(brand);
         return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
     }
-    [HttpDelete("DeleteByDapper")]
+    [HttpDelete("DeleteByDapper/{brandCode}")]
     [Consumes("application/json")]
     [Produces("application/json")]
 
