@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.MasterData;
+namespace Core.WarehouseManagement;
 [Table("Warehouse")]
-public class Warehouse:BaseClass.BaseClass
+public class Warehouse : BaseClass.BaseClass
 {
     public string WarehouseCode { get; set; } = string.Empty;
     public string WarehouseName { get; set; } = string.Empty;
