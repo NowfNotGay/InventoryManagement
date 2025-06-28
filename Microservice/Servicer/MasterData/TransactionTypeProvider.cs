@@ -53,7 +53,7 @@ namespace Servicer.MasterData
                     param.Add("@udtt_Header", General.ConvertToDataTable(new List<TransactionType> { entity }).AsTableValuedParameter("UDTT_TransactionType"));
                     param.Add("@Message", message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
 
-                    await connection.QueryAsync<GoodsReceiptNote>(
+                    await connection.QueryAsync<TransactionType>(
                         "Transactiontype_Create",
                         param,
                         commandType: CommandType.StoredProcedure,
