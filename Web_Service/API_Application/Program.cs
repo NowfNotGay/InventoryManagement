@@ -5,12 +5,14 @@ using Base.MasterData.ProductClassification;
 using Base.MasterData.ProductProperties;
 using Base.ProductManagement;
 using Base.WarehouseManagement;
+using CloudinaryDotNet;
 using Context.Example;
 using Context.MasterData;
 using Context.MasterData.ProductClassification;
 using Context.MasterData.ProductManagement;
 using Context.MasterData.ProductProperties;
 using Context.WarehouseManagement;
+using Core.BaseClass;
 using Core.ExampleClass;
 using Core.MasterData;
 using Core.MasterData.ProductClassification;
@@ -40,6 +42,10 @@ builder.Services.AddCors(options =>
     });
 });
 
+
+#region CloudDinary
+builder.Services.AddSingleton<CloudDinaryHelper>();
+#endregion
 
 
 // Add services to the container.
