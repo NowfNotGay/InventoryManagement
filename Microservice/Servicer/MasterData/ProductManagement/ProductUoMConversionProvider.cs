@@ -145,7 +145,7 @@ public class ProductUoMConversionProvider : ICRUD_Service<ProductUoMConversion, 
                 }
 
                 obj.ProductUoMConversionCode = entity.ProductUoMConversionCode;
-                obj.ProductID = entity.ProductID;
+                obj.ProductCode = entity.ProductCode;
                 obj.FromUoMID = entity.FromUoMID;
                 obj.ToUoMID = entity.ToUoMID;
                 obj.ConversionRate = entity.ConversionRate;

@@ -197,7 +197,7 @@ namespace Servicer.MasterData.ProductManagement
                         result.Data = null;
                         return result;
                     }
-                    newObj.ProductID = entity.ProductID;
+                    newObj.ProductCode = entity.ProductCode;
                     newObj.ColorID = entity.ColorID;
                     newObj.MaterialID = entity.MaterialID;
                     newObj.UpdatedDate = DateTime.Now;

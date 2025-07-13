@@ -192,7 +192,7 @@ namespace Servicer.MasterData.ProductManagement
                         result.Data = null;
                         return result;
                     }
-                    newObj.ProductID = entity.ProductID;
+                    newObj.ProductCode = entity.ProductCode;
                     newObj.Attributes = entity.Attributes;
                     newObj.ProductVariantCode = entity.ProductVariantCode;
                     newObj.UpdatedDate = DateTime.Now;

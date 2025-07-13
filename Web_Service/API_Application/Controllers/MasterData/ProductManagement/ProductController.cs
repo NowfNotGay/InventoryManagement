@@ -19,23 +19,23 @@ namespace API_Application.Controllers.ProductManagement
             _productService = productService;
         }
 
-        [HttpGet]
-        [Consumes("application/json")]
-        [Produces("application/json")]
-        public async Task<IActionResult> GetAll()
-        {
-            var rs = await _productService.GetAll();
-            return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
-        }
+        //[HttpGet]
+        //[Consumes("application/json")]
+        //[Produces("application/json")]
+        //public async Task<IActionResult> GetAll()
+        //{
+        //    var rs = await _productService.GetAll();
+        //    return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
+        //}
 
-        [HttpGet("GetByID/{ID}")]
-        [Consumes("application/json")]
-        [Produces("application/json")]
-        public async Task<IActionResult> GetByID(int ID)
-        {
-            var rs = await _productService.Get(ID);
-            return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
-        }
+        //[HttpGet("GetByID/{ID}")]
+        //[Consumes("application/json")]
+        //[Produces("application/json")]
+        //public async Task<IActionResult> GetByID(int ID)
+        //{
+        //    var rs = await _productService.Get(ID);
+        //    return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
+        //}
 
         [HttpGet]
         [Consumes("application/json")]
@@ -47,22 +47,22 @@ namespace API_Application.Controllers.ProductManagement
             return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
         }
 
-        [HttpGet("GetByIDParam/{ID}")]
+        [HttpGet("GetByIDParam/{code}")]
         [Consumes("application/json")]
         [Produces("application/json")]
         
-        public async Task<IActionResult> GetByIDParam(int ID)
+        public async Task<IActionResult> GetByCodeParam(string code)
         {
-            var rs = await _productProvider.GetByIDParam(ID);
+            var rs = await _productProvider.GetByCodeParam(code);
             return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
         }
 
         [HttpPost("Save")]
         [Consumes("application/json")]
         [Produces("application/json")]
-        public async Task<IActionResult> Save([FromBody] Product product)
+        public async Task<IActionResult> Save([FromBody] ProductSave product)
         {
-            var rs = await _productProvider.SaveByDapper(product);
+            var rs = await _productProvider.Save(product);
             return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
         }
 

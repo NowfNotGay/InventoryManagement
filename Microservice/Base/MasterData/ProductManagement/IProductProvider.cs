@@ -10,7 +10,9 @@ namespace Base.ProductManagement;
 public interface IProductProvider
 {
     Task<ResultService<IEnumerable<ProductParam>>> GetAllProductParam();
-    Task<ResultService<ProductParam>> GetByIDParam(int id);
-    Task<ResultService<Product>> SaveByDapper(Product entity);
+    Task<ResultService<ProductParam>> GetByCodeParam(string code);
+   
     Task<ResultService<string>> DeleteByDapper(string code);
+
+    Task<ResultService<ProductParam>> Save(ProductSave entity);
 }
