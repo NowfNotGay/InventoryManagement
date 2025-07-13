@@ -667,12 +667,6 @@ namespace Servicer.WarehouseManagement
                 return response;
             }
         }
-
-        public Task<ResultService<string>> Save(GoodsReceiptNote entity)
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
 
     }

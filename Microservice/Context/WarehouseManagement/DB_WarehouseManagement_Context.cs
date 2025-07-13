@@ -8,6 +8,8 @@ namespace Context.WarehouseManagement
         public DB_WarehouseManagement_Context(DbContextOptions<DB_WarehouseManagement_Context> options) : base(options)
         {
         }
+        public DbSet<Warehouse> Warehouses { get; set; }
+
         public DbSet<GoodsReceiptNote> GoodsReceiptNotes { get; set; }
         public DbSet<GoodsReceiptNoteLine> GoodsReceiptNoteLines { get; set; }
         public DbSet<GoodsIssueNote> GoodsIssueNotes { get; set; }
@@ -18,6 +20,36 @@ namespace Context.WarehouseManagement
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //Hai - Warehouse
+            modelBuilder.Entity<Warehouse>()
+                .ToTable("Warehouse")
+                .HasKey(w => w.RowPointer);
+
+            modelBuilder.Entity<Warehouse>()
+                .Property(w => w.RowPointer)
+                .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+            modelBuilder.Entity<Warehouse>()
+                .Property(w => w.WarehouseCode)
+                .HasMaxLength(100)
+                .IsRequired(); // Make WarehouseCode a required field
+
+            modelBuilder.Entity<Warehouse>()
+                .Property(w => w.WarehouseName)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<Warehouse>()
+                .Property(w => w.Address)
+                .HasMaxLength(200);
+
+            modelBuilder.Entity<Warehouse>()
+                .Property(w => w.BinLocationCount)
+                .HasDefaultValue(0)// Default value for BinLocationCount if not provided
+                .HasMaxLength(500);
+
+            modelBuilder.Entity<Warehouse>()
+                .Property(w => w.AllowNegativeStock)
+                .HasDefaultValue(false);
             modelBuilder.Entity<GoodsReceiptNote>()
                 .ToTable("GoodsReceiptNote")
                 .HasKey(c => c.RowPointer);
@@ -58,6 +90,8 @@ namespace Context.WarehouseManagement
             modelBuilder.Entity<StockTransferDetail>()
                 .Property(c => c.RowPointer)
                 .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+         
 
             //modelBuilder.Entity<StockTransfer>()
             //    .ToTable("GoodsReceiptNoteLine")

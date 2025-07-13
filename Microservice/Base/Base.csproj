@@ -7,13 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ProductClassification\**" />
+    <EmbeddedResource Remove="ProductClassification\**" />
+    <None Remove="ProductClassification\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="MasterData\ProductClassification\" />
     <Folder Include="MasterData\ProductProperties\" />
-    <Folder Include="ProductClassification\" />
   </ItemGroup>
 
 </Project>

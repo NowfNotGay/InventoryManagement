@@ -1,10 +1,10 @@
 ﻿using Base.BaseService;
-using Base.MasterData;
-using Core.MasterData;
+using Base.WarehouseManagement;
+using Core.WarehouseManagement;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace API_Application.Controllers.MasterData;
+namespace API_Application.Controllers.WarehouseManagement;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -83,16 +83,16 @@ public class WarehouseController : ControllerBase
     public async Task<IActionResult> SaveByDapper([FromBody] Warehouse warehouse)
     {
         var rs = await _warehouseProvider.SaveByDapper(warehouse);
-        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+        return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
     }
-    [HttpDelete("DeleteByDapper")]
+    [HttpDelete("DeleteByDapper/{warehouseCode}")]
     [Consumes("application/json")]
     [Produces("application/json")]
 
     public async Task<IActionResult> DeleteByDapper(string warehouseCode)
     {
         var rs = await _warehouseProvider.DeleteByDapper(warehouseCode);
-        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+        return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
     }
 
     #endregion

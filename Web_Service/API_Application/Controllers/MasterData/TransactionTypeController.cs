@@ -1,6 +1,7 @@
 ﻿using Base.BaseService;
 using Base.MasterData;
 using Core.MasterData;
+using Helper.Method;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Application.Controllers.MasterData
@@ -28,7 +29,7 @@ namespace API_Application.Controllers.MasterData
         public async Task<IActionResult> GetAll()
         {
             var rs = await _ICRUD_Service.GetAll();
-            return rs.Code == "0" ? Ok(rs) : BadRequest(rs.Message);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
 
         }
 
@@ -38,7 +39,7 @@ namespace API_Application.Controllers.MasterData
         public async Task<IActionResult> GetByID([FromQuery] string TransactionTypeCode)
         {
             var rs = await _ICRUD_Service.Get(TransactionTypeCode);
-            return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
         }
 
 
@@ -48,8 +49,8 @@ namespace API_Application.Controllers.MasterData
 
         public async Task<IActionResult> Save([FromBody] TransactionType TransactionType)
         {
-            var rs = await _ICRUD_Service.Create(TransactionType);
-            return rs.Code == "0" ? Ok(rs) : BadRequest(rs.Message);
+            var rs = await _ICRUD_Service.Save(TransactionType);
+            return rs.Code == ResponseCode.Success.ToString() ? Ok(rs) : BadRequest(rs);
         }
 
         [HttpPut]
@@ -59,7 +60,7 @@ namespace API_Application.Controllers.MasterData
         public async Task<IActionResult> Update([FromBody] TransactionType TransactionType)
         {
             var rs = await _ICRUD_Service.Update(TransactionType);
-            return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
 
         }
         [HttpDelete("Delete")]
@@ -69,7 +70,7 @@ namespace API_Application.Controllers.MasterData
         public async Task<IActionResult> Delete([FromQuery] string TransactionTypeCode)
         {
             var rs = await _ICRUD_Service.Delete(TransactionTypeCode);
-            return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
         }
 
     }

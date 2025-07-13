@@ -1,4 +1,5 @@
 ﻿using Core.MasterData;
+using Core.WarehouseManagement;
 using Microsoft.EntityFrameworkCore;
 
 namespace Context.MasterData;
@@ -10,7 +11,6 @@ public class DB_MasterData_Context : DbContext
     public DbSet<BusinessPartner> BusinessPartners { get; set; }
     public DbSet<TransactionType> TransactionTypes { get; set; }
     public DbSet<StatusMaster> StatusMasters { get; set; }
-    public DbSet<Warehouse> Warehouses { get; set; }
     public DbSet<StorageBin> StorageBins { get; set; }
 
 
@@ -75,36 +75,6 @@ public class DB_MasterData_Context : DbContext
             .Property(sm => sm.Description)
             .HasMaxLength(500);
 
-        //Hai - Warehouse
-        modelBuilder.Entity<Warehouse>()
-            .ToTable("Warehouse")
-            .HasKey(w => w.RowPointer);
-
-        modelBuilder.Entity<Warehouse>()
-            .Property(w => w.RowPointer)
-            .HasDefaultValueSql("NEWSEQUENTIALID()");
-
-        modelBuilder.Entity<Warehouse>()
-            .Property(w => w.WarehouseCode)
-            .HasMaxLength(100)
-            .IsRequired(); // Make WarehouseCode a required field
-
-        modelBuilder.Entity<Warehouse>()
-            .Property(w => w.WarehouseName)
-            .HasMaxLength(100);
-
-        modelBuilder.Entity<Warehouse>()
-            .Property(w => w.Address)
-            .HasMaxLength(200);
-
-        modelBuilder.Entity<Warehouse>()
-            .Property(w => w.BinLocationCount)
-            .HasDefaultValue(0)// Default value for BinLocationCount if not provided
-            .HasMaxLength(500);
-
-        modelBuilder.Entity<Warehouse>()
-            .Property(w => w.AllowNegativeStock)
-            .HasDefaultValue(false);
 
         //Duy - StorageBin
         modelBuilder.Entity<StorageBin>()

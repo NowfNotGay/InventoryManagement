@@ -270,6 +270,42 @@ public class VehicleModelProvider : ICRUD_Service<VehicleModel, int>, IVehicleMo
         }
     }
 
+    public async Task<ResultService<VehicleModel>> GetByCode(string modelCode)
+    {
+        ResultService<VehicleModel> result = new();
+        using (var sqlconnect = new SqlConnection(_dapperConnectionString))
+        {
+            try
+            {
+                await sqlconnect.OpenAsync();
+                var rs = await sqlconnect.QuerySingleOrDefaultAsync<VehicleModel>("VehicleModel_GetByCode",
+                    new
+                    {
+                        ModelCode = modelCode
+                    },
+                     commandType: CommandType.StoredProcedure,
+                     commandTimeout: 240);
+                if (rs == null)
+                {
+                    result.Message = "Failed to get data";
+                    result.Code = "1";
+                }
+                else
+                {
+                    result.Message = "Success";
+                    result.Code = "0";
+                }
+                result.Data = rs;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
+            }
+        }
+    }
 
     public async Task<ResultService<VehicleModel>> SaveByDapper(VehicleModel entity)
     {
@@ -301,7 +337,7 @@ public class VehicleModelProvider : ICRUD_Service<VehicleModel, int>, IVehicleMo
                 param.Add("@udtt_VehicleModel", dtHeader.AsTableValuedParameter("UDTT_VehicleModel"));
 
                 param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
-                await connection.QueryAsync<VehicleModel>("VehicleModel_Save",
+                var result = await connection.QueryAsync<VehicleModel>("VehicleModel_Save",
                    param,
                    commandType: CommandType.StoredProcedure,
                       commandTimeout: TimeoutInSeconds);
@@ -310,12 +346,17 @@ public class VehicleModelProvider : ICRUD_Service<VehicleModel, int>, IVehicleMo
                 if (resultMessage.Contains("successfully"))
                 {
                     response.Code = "0"; // Success
-                    response.Message = "Save Successfully(BE)";
+                    response.Message = "Save Successfully(BE) - " + resultMessage;
+                    response.Data = result.FirstOrDefault();
+                    if (response.Data == null)
+                    {
+                        response.Message += " (Warning: Could not retrieve saved data(BE))";
+                    }
                 }
                 else
                 {
                     response.Code = "-999"; // Fail
-                    response.Message = "Failed(BE)";
+                    response.Message = "Failed(BE) - " + resultMessage;
                 }
 
                 return response;
@@ -359,42 +400,6 @@ public class VehicleModelProvider : ICRUD_Service<VehicleModel, int>, IVehicleMo
         }
     }
 
-    public async Task<ResultService<VehicleModel>> GetByCode(string modelCode)
-    {
-        ResultService<VehicleModel> result = new();
-        using (var sqlconnect = new SqlConnection(_dapperConnectionString))
-        {
-            try
-            {
-                await sqlconnect.OpenAsync();
-                var rs = await sqlconnect.QuerySingleOrDefaultAsync<VehicleModel>("VehicleModel_GetByCode",
-                    new
-                    {
-                        ModelCode = modelCode
-                    },
-                     commandType: CommandType.StoredProcedure,
-                     commandTimeout: 240);
-                if (rs == null)
-                {
-                    result.Message = "Failed to get data";
-                    result.Code = "1";
-                }
-                else
-                {
-                    result.Message = "Success";
-                    result.Code = "0";
-                }
-                result.Data = rs;
-                return result;
-            }
-            catch (Exception ex)
-            {
-                result.Message = ex.Message;
-                result.Code = "999";
-                return result;
-            }
-        }
-    }
 
     public async Task<ResultService<string>> DeleteByDapper(string modelCode)
     {

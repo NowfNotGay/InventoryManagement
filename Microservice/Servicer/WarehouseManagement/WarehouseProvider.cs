@@ -1,8 +1,9 @@
 ﻿using Base.BaseService;
-using Base.MasterData;
+using Base.WarehouseManagement;
 using Context.MasterData;
+using Context.WarehouseManagement;
 using Core.BaseClass;
-using Core.MasterData;
+using Core.WarehouseManagement;
 using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;
@@ -16,15 +17,15 @@ using System.Text;
 using System.Threading.Tasks;
 using static Dapper.SqlMapper;
 
-namespace Servicer.MasterData;
+namespace Servicer.WarehouseManagement;
 public class WarehouseProvider : ICRUD_Service<Warehouse, int>,
     IWarehouseProvider
 {
-    private readonly DB_MasterData_Context _dB;
+    private readonly DB_WarehouseManagement_Context _dB;
     private readonly IConfiguration _configuration;
     private readonly string _dapperConnectionString;
     private const int TimeoutInSeconds = 240;
-    public WarehouseProvider(DB_MasterData_Context dB, IConfiguration configuration)
+    public WarehouseProvider(DB_WarehouseManagement_Context dB, IConfiguration configuration)
     {
         _dB = dB;
         _configuration = configuration;
@@ -301,21 +302,27 @@ public class WarehouseProvider : ICRUD_Service<Warehouse, int>,
                 param.Add("@udtt_Warehouse", dtHeader.AsTableValuedParameter("UDTT_Warehouse"));
 
                 param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
-                await connection.QueryAsync<Warehouse>("Warehouse_Save",
+                var result = await connection.QueryAsync<Warehouse>("Warehouse_Save",
                    param,
                    commandType: CommandType.StoredProcedure,
                       commandTimeout: TimeoutInSeconds);
+
                 var resultMessage = param.Get<string>("@Message");
 
                 if (resultMessage.Contains("successfully"))
                 {
                     response.Code = "0"; // Success
-                    response.Message = "Save Successfully(BE)";
+                    response.Message = "Save Successfully(BE) - " + resultMessage;
+                    response.Data = result.FirstOrDefault(); // Assuming the first item is the saved entity
+                    if (response.Data != null)
+                    {
+                        response.Data.RowPointer = Guid.NewGuid(); // Assign a new RowPointer if needed
+                    }
                 }
                 else
                 {
                     response.Code = "-999"; // Fail
-                    response.Message = "Failed(BE)";
+                    response.Message = "Failed(BE) - " + resultMessage;
                 }
 
                 return response;

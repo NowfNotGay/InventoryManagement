@@ -1,13 +1,13 @@
 ﻿using Core.BaseClass;
-using Core.MasterData;
+using Core.WarehouseManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Base.MasterData;
-public interface IWarehouseProvider 
+namespace Base.WarehouseManagement;
+public interface IWarehouseProvider
 {
     Task<ResultService<Warehouse>> SaveByDapper(Warehouse entity);
     Task<ResultService<Warehouse>> GetByCode(string warehouseCode);
