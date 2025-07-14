@@ -8,6 +8,7 @@ namespace Core.MasterData.ProductManagement;
 public class ProductImages : BaseClass.BaseClass
 {
     public string ImageCode { get; set; }
+    public string ProductVariantCode { get; set; }
     public string RefProductCode { get; set; }
     public int Position { get; set; }
     public string ImagePath { get; set; }

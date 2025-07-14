@@ -21,6 +21,7 @@ public class Product : BaseClass.BaseClass
     public int UoMID { get; set; }
 
     public string Description { get; set; }
+    public string? PublicImgID { get; set; } = null;
     public string ImagePath { get; set; }
     public double PurchasePrice { get; set; }
     public double SalePrice { get; set; }
@@ -35,21 +36,27 @@ public class ProductSave
     public Dimension Dimension { get; set; }
 
     public List<VariantParam> VariantParams { get; set; }
+
+    [AllowNull]
+    public ImageFileDTO? ProductImg { get; set; }
+
     [AllowNull]
     public List<ImageFileDTO>? ImageFiles { get; set; }
+
+    [AllowNull]
+    public List<ImageFileDTO>? VariantImgs { get; set; }
 }
 
 public class ImageFileDTO
 {
     public IFormFile? ImageFile { get; set; } = null;
     public bool IsPrimary { get; set; }
-
 }
 
 public class VariantParam
 {
     public string? ProductVariantCode { get; set; }
-    public string? ImageCode { get; set; }
+    public string? ImageCode { get; set; } = null;
     public string? AttributeCode { get; set; }
     public string? RefProductCode { get; set; }
     public int? Position { get; set; }
@@ -58,7 +65,6 @@ public class VariantParam
 
     public int? ColorID { get; set; }
     public int? MaterialID { get; set; }
-
 }
 
 
@@ -68,6 +74,7 @@ public class ProductParam : BaseClass.BaseClass
     public string ProductName { get; set; }
 
     public string Description { get; set; }
+    public string PublicImgID { get; set; }
     public string ImagePath { get; set; }
     public double PurchasePrice { get; set; }
     public double SalePrice { get; set; }
