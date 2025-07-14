@@ -204,63 +204,29 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
 
     public async Task<ResultService<ProductParam>> Save(ProductSave entity)
     {
-        ResultService<ProductParam> result = new();
+        var result = new ResultService<ProductParam>();
+
         if (entity == null)
-        {
-            result.Code = "-1";
-            result.Message = "Please fill in all Product's information";
+            return FailResult(result, "Please fill in all Product's information");
+
+        if (entity.ImageFiles.IsNullOrEmpty())
+            return FailResult(result, "Please choose Pictures");
+        if (entity.VariantImgs.IsNullOrEmpty())
+            return FailResult(result, "Please choose Picture for Variant");
+
+        // Upload ảnh cho variant
+        var uploadVariantImgSuccess = await UploadVariantImages(entity, result);
+        if (!uploadVariantImgSuccess)
             return result;
-        }
-        //if (entity.ImageFiles.IsNullOrEmpty())
-        //{
-        //    result.Code = "-1";
-        //    result.Message = "Please choose Pictures";
-        //    return result;
-        //}
 
-        ////Save ảnh lên Cloudinary
+        //Upload ảnh phụ
+        var uploadSubImgSuccess = await UploadSubImages(entity, result);
+        if (!uploadSubImgSuccess)
+            return result;
 
-        //for (int i = 0; i < entity.ImageFiles.Count; i++)
-        //{
-        //    var variant = entity.VariantParams[i];
-        //    var file = entity.ImageFiles[i].ImageFile;
-
-        //    if (string.IsNullOrWhiteSpace(variant.ImageCode))
-        //    {
-        //        var (url, publicId) = await _cloudDinaryHelper.UploadImageAsync(file, null, "Product");
-
-        //        if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(publicId))
-        //        {
-        //            result.Code = "-1";
-        //            result.Message = $"Upload image failed at index {i}";
-        //            return result;
-        //        }
-
-        //        variant.ImageCode = publicId;
-        //        variant.ImagePath = url;
-
-        //        entity.Product.ImagePath = entity.ImageFiles[i].IsPrimary ? url : "";
-        //    }
-
-        //    else if (file != null && file.Length > 0)
-        //    {
-        //        var (url, publicId) = await _cloudDinaryHelper.UploadImageAsync(file, variant.ImageCode, "Product");
-
-        //        if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(publicId))
-        //        {
-        //            result.Code = "-1";
-        //            result.Message = $"Overwrite image failed at index {i}";
-        //            return result;
-        //        }
-
-        //        variant.ImagePath = url;
-
-        //        entity.Product.ImagePath = entity.ImageFiles[i].IsPrimary ? url : "";
-        //    }
-
-
-        //}
-
+        // Upload ảnh chính của sản phẩm
+        if (!await UploadMainProductImage(entity, result))
+            return result;
 
 
         try
@@ -445,6 +411,8 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
                     commandType: CommandType.StoredProcedure
                 )).ToList();
 
+               
+
                 result.Code = "0";
                 result.Message = "Successfull";
             }
@@ -471,5 +439,122 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
     {
         throw new NotImplementedException();
     }
+    #endregion
+
+    #region Helper
+    private ResultService<ProductParam> FailResult(ResultService<ProductParam> result, string message, string code = "-1")
+    {
+        result.Code = code;
+        result.Message = message;
+        return result;
+    }
+
+    private async Task<bool> UploadVariantImages(ProductSave entity, ResultService<ProductParam> result)
+    {
+        for (int i = 0; i < entity.VariantImgs.Count; i++)
+        {
+            var file = entity.VariantImgs[i].ImageFile;
+            var variant = entity.VariantParams[i];
+
+            if (file != null && file.Length > 0)
+            {
+                var (url, publicId) = await _cloudDinaryHelper.UploadImageAsync(file, variant.ImageCode, "Product");
+
+                if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(publicId))
+                {
+                    FailResult(result, $"Upload image failed at index {i}");
+                    return false;
+                }
+
+                variant.ImageCode = publicId;
+                variant.ImagePath = url;
+                variant.IsPrimary = true;
+                variant.Position = i;
+            }
+        }
+
+        return true;
+    }
+
+    private async Task<bool> UploadSubImages(ProductSave entity, ResultService<ProductParam> result)
+    {
+        int primaryCount = entity.VariantImgs?.Count ?? 0;
+        int currentSubImageCount = entity.VariantParams.Count(v => v.IsPrimary == false);
+        int newSubImageCount = entity.ImageFiles?.Count ?? 0;
+
+        // 1. Xóa các ảnh phụ dư
+        if (currentSubImageCount > newSubImageCount)
+        {
+            var subVariants = entity.VariantParams.Where(v => v.IsPrimary == false).ToList();
+
+            for (int i = newSubImageCount +1; i <= currentSubImageCount; i++)
+            {
+                var toDelete = subVariants[i];
+                if (!string.IsNullOrEmpty(toDelete.ImageCode))
+                    await _cloudDinaryHelper.DeleteImageAsync(toDelete.ImageCode);
+
+                entity.VariantParams.Remove(toDelete);
+            }
+        }
+
+        for (int i = 0; i < newSubImageCount; i++)
+        {
+            var file = entity.ImageFiles[i].ImageFile;
+            if (file == null || file.Length == 0) continue;
+
+            VariantParam variant= new();
+            bool isOverwrite = i < currentSubImageCount;
+
+            if (isOverwrite)
+            {
+                variant = entity.VariantParams.Where(v => v.IsPrimary == false).ToList()[i];
+            }
+            else
+            {
+                variant = new VariantParam();
+                entity.VariantParams.Add(variant);
+            }
+
+            var (url, publicId) = await _cloudDinaryHelper.UploadImageAsync(file, variant.ImageCode, "Product");
+
+            if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(publicId))
+            {
+                FailResult(result, $"Upload sub-image failed at index {i}");
+                return false;
+            }
+
+            variant.ImageCode = publicId;
+            variant.ImagePath = url;
+            variant.IsPrimary = false;
+            variant.Position = primaryCount + i;
+        }
+
+    
+
+    
+
+        return true;
+    }
+
+    private async Task<bool> UploadMainProductImage(ProductSave entity, ResultService<ProductParam> result)
+    {
+        if (entity.ProductImg?.ImageFile == null || entity.ProductImg.ImageFile.Length == 0)
+            return true;
+
+        var (url, publicId) = await _cloudDinaryHelper.UploadImageAsync(
+            entity.ProductImg.ImageFile, entity.Product.PublicImgID, "Product");
+
+        if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(publicId))
+        {
+            FailResult(result, "Upload Product image failed");
+            return false;
+        }
+
+        entity.Product.ImagePath = url;
+        entity.Product.PublicImgID = publicId;
+
+        return true;
+    }
+
     #endregion
 }
