@@ -47,7 +47,7 @@ namespace API_Application.Controllers.ProductManagement
             return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
         }
 
-        [HttpGet("GetByIDParam/{code}")]
+        [HttpGet("GetByCodeParam/{code}")]
         [Consumes("application/json")]
         [Produces("application/json")]
         
