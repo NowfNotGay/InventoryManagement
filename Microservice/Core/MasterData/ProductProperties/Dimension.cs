@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Core.MasterData.ProductProperties;
 public class Dimension : BaseClass.BaseClass
 {
-    public string ProductCode { get; set; }
+    public string? ProductCode { get; set; }
     public decimal? Height { get; set; }
     public decimal? Length { get; set; }
     public decimal? Width { get; set; }

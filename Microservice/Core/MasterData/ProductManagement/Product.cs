@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Core.ProductManagement;
 public class Product : BaseClass.BaseClass
 {
-    public string ProductCode { get; set; }
+    public string? ProductCode { get; set; }
     public string ProductName { get; set; }
     public int ModelID { get; set; }
     public int CategoryID { get; set; }
@@ -22,7 +22,7 @@ public class Product : BaseClass.BaseClass
 
     public string Description { get; set; }
     public string? PublicImgID { get; set; } = null;
-    public string ImagePath { get; set; }
+    public string? ImagePath { get; set; }
     public double PurchasePrice { get; set; }
     public double SalePrice { get; set; }
 }
@@ -37,14 +37,13 @@ public class ProductSave
 
     public List<VariantParam> VariantParams { get; set; }
 
-    [AllowNull]
-    public ImageFileDTO? ProductImg { get; set; }
+    public IFormFile? ProductImg { get; set; }
 
-    [AllowNull]
-    public List<ImageFileDTO>? ImageFiles { get; set; }
 
-    [AllowNull]
-    public List<ImageFileDTO>? VariantImgs { get; set; }
+    public List<ImageFileDTO> ImageFiles { get; set; }
+
+ 
+    public List<ImageFileDTO> VariantImgs { get; set; }
 }
 
 public class ImageFileDTO
@@ -63,8 +62,10 @@ public class VariantParam
     public string? ImagePath { get; set; }
     public bool? IsPrimary { get; set; }
 
-    public int? ColorID { get; set; }
-    public int? MaterialID { get; set; }
+    public int ColorID { get; set; }
+    public string? ColorName { get; set; }
+    public int MaterialID { get; set; }
+    public string? MaterialName { get; set; }
 }
 
 

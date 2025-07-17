@@ -58,9 +58,9 @@ namespace API_Application.Controllers.ProductManagement
         }
 
         [HttpPost("Save")]
-        [Consumes("application/json")]
+        [Consumes("multipart/form-data")]
         [Produces("application/json")]
-        public async Task<IActionResult> Save([FromBody] ProductSave product)
+        public async Task<IActionResult> Save([FromForm] ProductSave product)
         {
             var rs = await _productProvider.Save(product);
             return rs.Code == "0" ? Ok(rs) : BadRequest(rs);

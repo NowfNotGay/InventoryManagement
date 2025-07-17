@@ -209,10 +209,6 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
         if (entity == null)
             return FailResult(result, "Please fill in all Product's information");
 
-        if (entity.ImageFiles.IsNullOrEmpty())
-            return FailResult(result, "Please choose Pictures");
-        if (entity.VariantImgs.IsNullOrEmpty())
-            return FailResult(result, "Please choose Picture for Variant");
 
         // Upload ảnh cho variant
         var uploadVariantImgSuccess = await UploadVariantImages(entity, result);
@@ -482,20 +478,20 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
         int currentSubImageCount = entity.VariantParams.Count(v => v.IsPrimary == false);
         int newSubImageCount = entity.ImageFiles?.Count ?? 0;
 
-        // 1. Xóa các ảnh phụ dư
-        if (currentSubImageCount > newSubImageCount)
-        {
-            var subVariants = entity.VariantParams.Where(v => v.IsPrimary == false).ToList();
+        //// 1. Xóa các ảnh phụ dư
+        //if (currentSubImageCount > newSubImageCount)
+        //{
+        //    var subVariants = entity.VariantParams.Where(v => v.IsPrimary == false).ToList();
 
-            for (int i = newSubImageCount +1; i <= currentSubImageCount; i++)
-            {
-                var toDelete = subVariants[i];
-                if (!string.IsNullOrEmpty(toDelete.ImageCode))
-                    await _cloudDinaryHelper.DeleteImageAsync(toDelete.ImageCode);
+        //    for (int i = newSubImageCount +1; i <= currentSubImageCount; i++)
+        //    {
+        //        var toDelete = subVariants[i];
+        //        if (!string.IsNullOrEmpty(toDelete.ImageCode))
+        //            await _cloudDinaryHelper.DeleteImageAsync(toDelete.ImageCode);
 
-                entity.VariantParams.Remove(toDelete);
-            }
-        }
+        //        entity.VariantParams.Remove(toDelete);
+        //    }
+        //}
 
         for (int i = 0; i < newSubImageCount; i++)
         {
@@ -538,11 +534,11 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
 
     private async Task<bool> UploadMainProductImage(ProductSave entity, ResultService<ProductParam> result)
     {
-        if (entity.ProductImg?.ImageFile == null || entity.ProductImg.ImageFile.Length == 0)
+        if (entity.ProductImg == null || entity.ProductImg.Length == 0)
             return true;
 
         var (url, publicId) = await _cloudDinaryHelper.UploadImageAsync(
-            entity.ProductImg.ImageFile, entity.Product.PublicImgID, "Product");
+            entity.ProductImg, entity.Product.PublicImgID, "Product");
 
         if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(publicId))
         {
