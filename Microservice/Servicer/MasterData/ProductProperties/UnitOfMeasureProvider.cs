@@ -292,21 +292,22 @@ public class UnitOfMeasureProvider : ICRUD_Service<UnitOfMeasure, int>, IUnitOfM
                 param.Add("@udtt_UnitOfMeasure", dtHeader.AsTableValuedParameter("UDTT_UnitOfMeasure"));
 
                 param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
-                await connection.QueryAsync<UnitOfMeasure>("UnitOfMeasure_Save",
+                var resultData =  (await connection.QueryAsync<UnitOfMeasure>("UnitOfMeasure_Save",
                    param,
                         commandType: CommandType.StoredProcedure,
-                      commandTimeout: TimeoutInSeconds);
+                      commandTimeout: TimeoutInSeconds)).FirstOrDefault();
                 var resultMessage = param.Get<string>("@Message");
 
                 if (resultMessage.Contains("successfully"))
                 {
                     response.Code = "0"; // Success
+                    response.Data = (UnitOfMeasure) resultData;
                     response.Message = "Save Successfully(BE)";
                 }
                 else
                 {
                     response.Code = "-999"; // Fail
-                    response.Message = "Failed(BE)";
+                    response.Message = "Failed(BE)"  +resultMessage;
                 }
                 return response;
             }
