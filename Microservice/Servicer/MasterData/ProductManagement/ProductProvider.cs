@@ -454,7 +454,7 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
         for (int i = 0; i < entity.VariantImgs.Count; i++)
         {
             var file = entity.VariantImgs[i].ImageFile;
-            var variant = entity.VariantParams.Where(v => v.IsPrimary == true).ToList()[i];
+            var variant = entity.VariantParams[entity.VariantImgs[i].Position];
 
             if (file != null && file.Length > 0)
             {
@@ -519,7 +519,7 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
                 entity.VariantParams.Add(variant);
             }
 
-            var (url, publicId) = await _cloudDinaryHelper.UploadImageAsync(file, variant.ImageCode.Split('/')[1] ??null, "Product");
+            var (url, publicId) = await _cloudDinaryHelper.UploadImageAsync(file, variant.ImageCode, "Product");
 
             if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(publicId))
             {
@@ -546,7 +546,7 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
             return true;
 
         var (url, publicId) = await _cloudDinaryHelper.UploadImageAsync(
-            entity.ProductImg, entity.Product.PublicImgID.Split('/')[1] ?? null, "Product");
+            entity.ProductImg, entity.Product.PublicImgID, "Product");
 
         if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(publicId))
         {

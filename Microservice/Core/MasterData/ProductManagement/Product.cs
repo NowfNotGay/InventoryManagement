@@ -50,6 +50,7 @@ public class ImageFileDTO
 {
     public IFormFile? ImageFile { get; set; } = null;
     public bool IsPrimary { get; set; }
+    public int Position { get; set; }
 }
 
 public class VariantParam
