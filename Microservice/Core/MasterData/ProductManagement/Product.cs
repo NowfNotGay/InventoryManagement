@@ -40,10 +40,10 @@ public class ProductSave
     public IFormFile? ProductImg { get; set; }
 
 
-    public List<ImageFileDTO> ImageFiles { get; set; }
+    public List<ImageFileDTO>? ImageFiles { get; set; }
 
  
-    public List<ImageFileDTO> VariantImgs { get; set; }
+    public List<ImageFileDTO>? VariantImgs { get; set; }
 }
 
 public class ImageFileDTO
