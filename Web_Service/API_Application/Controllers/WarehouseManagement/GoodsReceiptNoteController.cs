@@ -82,13 +82,13 @@ namespace API_Application.Controllers.WarehouseManagement
             return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
         }
 
-        [HttpPost("CreateByDapper")]
+        [HttpPost("SaveByDapper")]
         [Consumes("application/json")]
         [Produces("application/json")]
 
         public async Task<IActionResult> CreateV2([FromBody] GoodsReceiptNote GoodsReceiptNote)
         {
-            var rs = await _GoodsReceiptNoteProvider.CreateByDapper(GoodsReceiptNote);
+            var rs = await _GoodsReceiptNoteProvider.SaveByDapper(GoodsReceiptNote);
             return rs.Code == ResponseCode.Success.ToString() ? Ok(rs) : BadRequest(rs);
         }
 
@@ -134,10 +134,10 @@ namespace API_Application.Controllers.WarehouseManagement
         [Consumes("application/json")]
         [Produces("application/json")]
 
-        public async Task<IActionResult> Delete_HeaderAndDetail([FromQuery] int grnID)
+        public async Task<IActionResult> Delete_HeaderAndDetail([FromQuery] string grnCode)
         {
-            var rs = await _GoodsReceiptNoteProvider.Delete_HeaderAndDetail(grnID);
-            return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+            var rs = await _GoodsReceiptNoteProvider.Delete_HeaderAndDetail(grnCode);
+            return rs.Code == ResponseCode.Success.ToString() ? Ok(rs) : BadRequest(rs);
         }
 
         #endregion

@@ -325,7 +325,7 @@ namespace Servicer.WarehouseManagement
                 };
             }
         }
-        public async Task<ResultService<GoodsReceiptNote>> CreateByDapper(GoodsReceiptNote entity)
+        public async Task<ResultService<GoodsReceiptNote>> SaveByDapper(GoodsReceiptNote entity)
         {
             var response = new ResultService<GoodsReceiptNote>();
 
@@ -547,7 +547,7 @@ namespace Servicer.WarehouseManagement
 
         #region GoodsReceiptNoteHeaderAndDetail
 
-        public async Task<ResultService<string>> Delete_HeaderAndDetail(int grnID)
+        public async Task<ResultService<string>> Delete_HeaderAndDetail(string grnCode)
         {
             ResultService<string> resultService = new ResultService<string>();
             try
@@ -558,7 +558,7 @@ namespace Servicer.WarehouseManagement
                 {
                     await connection.OpenAsync();
                     var param = new DynamicParameters();
-                    param.Add("@grnID", grnID);
+                    param.Add("@GRNCode", grnCode);
                     param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
                     await connection.QueryAsync<GoodsReceiptNote>("GoodsReceiptNote_Delete_HeaderAndDetail",
                        param,
