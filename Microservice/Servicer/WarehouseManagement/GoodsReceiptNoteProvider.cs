@@ -14,7 +14,7 @@ using static Dapper.SqlMapper;
 
 namespace Servicer.WarehouseManagement
 {
-    public class GoodsReceiptNoteProvider : ICRUD_Service<GoodsReceiptNote, int>, IGoodsReceiptNoteProvider
+    public class GoodsReceiptNoteProvider : ICRUD_Service<GoodsReceiptNote, string>, IGoodsReceiptNoteProvider
     {
         private readonly DB_WarehouseManagement_Context _Context;
         private readonly IConfiguration _configuration;
@@ -67,7 +67,7 @@ namespace Servicer.WarehouseManagement
                 return response;
             }
         }
-        public async Task<ResultService<GoodsReceiptNote>> Get(int id)
+        public async Task<ResultService<GoodsReceiptNote>> Get(string grnCode)
         {
             var response = new ResultService<GoodsReceiptNote>();
             string connectionString = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
@@ -77,8 +77,8 @@ namespace Servicer.WarehouseManagement
                 {
                     await sqlConnection.OpenAsync();
                     var param = new DynamicParameters();
-                    param.Add("@ID", id);
-                    var result = await sqlConnection.QuerySingleOrDefaultAsync<GoodsReceiptNote>("GoodsReceiptNote_GetByID",
+                    param.Add("@grnCode", grnCode);
+                    var result = await sqlConnection.QuerySingleOrDefaultAsync<GoodsReceiptNote>("GoodsReceiptNote_GetByCode",
                         param,
                         commandType: CommandType.StoredProcedure,
                            commandTimeout: TimeoutInSeconds);
@@ -188,42 +188,33 @@ namespace Servicer.WarehouseManagement
         {
             var response = new ResultService<GoodsReceiptNote>();
 
-            var getEntityID = await this.Get(entity.ID);
-            if (getEntityID.Code == "-1")
+            var newEntity = await this.Get(entity.GRNCode);
+            if (newEntity.Code == "-1")
             {
                 return new ResultService<GoodsReceiptNote>()
                 {
-                    Code = getEntityID.Code,
+                    Code = newEntity.Code,
                     Message = "Entity not found"
                 };
 
             }
-            var newEntity = await _Context.GoodsReceiptNotes.FindAsync(getEntityID.Data.RowPointer);
-            if (newEntity == null)
-            {
-                return new ResultService<GoodsReceiptNote>()
-                {
-                    Code = "-1",
-                    Message = "Entity not found"
-                };
-
-            }
+           
             using (var connection = await _Context.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    newEntity.WarehouseID = entity.WarehouseID;
-                    newEntity.UpdatedDate = DateTime.UtcNow;
-                    newEntity.UpdatedBy = entity.UpdatedBy;
-                    newEntity.SupplierID = entity.SupplierID;
-                    newEntity.TransactionTypeID = entity.TransactionTypeID;
-                    newEntity.ReceiptDate = entity.ReceiptDate;
-                    newEntity.Notes = entity.Notes;
+                    newEntity.Data.WarehouseID = entity.WarehouseID;
+                    newEntity.Data.UpdatedDate = DateTime.UtcNow;
+                    newEntity.Data.UpdatedBy = entity.UpdatedBy;
+                    newEntity.Data.SupplierID = entity.SupplierID;
+                    newEntity.Data.TransactionTypeID = entity.TransactionTypeID;
+                    newEntity.Data.ReceiptDate = entity.ReceiptDate;
+                    newEntity.Data.Notes = entity.Notes;
 
                     await _Context.SaveChangesAsync();
                     await connection.CommitAsync();
                     response.Code = "0";
-                    response.Data = newEntity;
+                    response.Data = newEntity.Data;
                     response.Message = "Update entity Successfully";
                     return response;
                 }
@@ -265,12 +256,12 @@ namespace Servicer.WarehouseManagement
 
             }
         }
-        public async Task<ResultService<string>> Delete(int id)
+        public async Task<ResultService<string>> Delete(string grnCode)
         {
             ResultService<string> resultService = new ResultService<string>();
             try
             {
-                var entity = await this.Get(id);
+                var entity = await this.Get(grnCode);
                 if (entity.Code == "-1")
                 {
                     return new ResultService<string>()
@@ -375,6 +366,8 @@ namespace Servicer.WarehouseManagement
 
                     if (resultMessage.Contains("OK", StringComparison.OrdinalIgnoreCase))
                     {
+                        string code = resultMessage.Split("OK_")[1];
+                        response.Data = this.Get(code).Result.Data;
                         response.Code = ResponseCode.Success.ToString();
                         response.Message = "Save Successfully";
                     }

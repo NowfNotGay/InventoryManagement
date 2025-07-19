@@ -3,6 +3,7 @@ using Base.MasterData;
 using Base.WarehouseManagement;
 using Core.MasterData;
 using Core.WarehouseManagement;
+using Helper.Method;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,9 +14,9 @@ namespace API_Application.Controllers.WarehouseManagement
     public class GoodsReceiptNoteController : ControllerBase
     {
         private readonly IGoodsReceiptNoteProvider _GoodsReceiptNoteProvider;
-        private readonly ICRUD_Service<GoodsReceiptNote, int> _ICRUD_Service;
+        private readonly ICRUD_Service<GoodsReceiptNote, string> _ICRUD_Service;
 
-        public GoodsReceiptNoteController(IGoodsReceiptNoteProvider goodsReceiptNoteProvider, ICRUD_Service<GoodsReceiptNote, int> iCRUD_Service)
+        public GoodsReceiptNoteController(IGoodsReceiptNoteProvider goodsReceiptNoteProvider, ICRUD_Service<GoodsReceiptNote, string> iCRUD_Service)
         {
             _GoodsReceiptNoteProvider = goodsReceiptNoteProvider;
             _ICRUD_Service = iCRUD_Service;
@@ -29,13 +30,13 @@ namespace API_Application.Controllers.WarehouseManagement
         public async Task<IActionResult> GetAll()
         {
             var rs = await _ICRUD_Service.GetAll();
-            return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
+            return rs.Code == ResponseCode.Success.ToString() ? Ok(rs) : BadRequest(rs);
         }
 
         [HttpGet("ID")]
         [Consumes("application/json")]
         [Produces("application/json")]
-        public async Task<IActionResult> GetByID([FromQuery] int ID)
+        public async Task<IActionResult> GetByID([FromQuery] string ID)
         {
             var rs = await _ICRUD_Service.Get(ID);
             return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
@@ -48,7 +49,7 @@ namespace API_Application.Controllers.WarehouseManagement
 
         public async Task<IActionResult> Save([FromBody] GoodsReceiptNote GoodsReceiptNote)
         {
-            var rs = await _ICRUD_Service.Save(GoodsReceiptNote);
+            var rs = await _ICRUD_Service.Update(GoodsReceiptNote);
             return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
         }
         [HttpPut]
@@ -64,7 +65,7 @@ namespace API_Application.Controllers.WarehouseManagement
         [Consumes("application/json")]
         [Produces("application/json")]
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             var rs = await _ICRUD_Service.Delete(id);
             return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
@@ -88,7 +89,7 @@ namespace API_Application.Controllers.WarehouseManagement
         public async Task<IActionResult> CreateV2([FromBody] GoodsReceiptNote GoodsReceiptNote)
         {
             var rs = await _GoodsReceiptNoteProvider.CreateByDapper(GoodsReceiptNote);
-            return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
+            return rs.Code == ResponseCode.Success.ToString() ? Ok(rs) : BadRequest(rs);
         }
 
         [HttpGet("/GoodsReceiptNoteLine/GRNCode")]
