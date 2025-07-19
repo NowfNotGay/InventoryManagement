@@ -377,6 +377,7 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
                          product.Brand = brand;
                          product.UnitOfMeasure = uom;
                          product.Dimension = dimension;
+                         
                          return product;
                      },
                      splitOn: "ID, ID, ID, ID, ID, ID",

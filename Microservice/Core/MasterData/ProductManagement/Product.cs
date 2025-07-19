@@ -93,6 +93,7 @@ public class ProductParam : BaseClass.BaseClass
     public Brand Brand { get; set; }
     //Dimension
     public Dimension Dimension { get; set; }
+    public string DimensionUoM { get; set; }
 
 
     //UoM
