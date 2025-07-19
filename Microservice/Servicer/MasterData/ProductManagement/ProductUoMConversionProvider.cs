@@ -328,17 +328,18 @@ public class ProductUoMConversionProvider : ICRUD_Service<ProductUoMConversion, 
                 param.Add("@udtt_ProductUoMConversion", dtHeader.AsTableValuedParameter("UDTT_ProductUoMConversion"));
                 param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
 
-                await connection.QueryAsync<ProductUoMConversion>(
+                var result = (await connection.QueryAsync<ProductUoMConversion>(
                     "ProductUoMConversion_Save",
                     param,
                     commandType: CommandType.StoredProcedure,
-                    commandTimeout: TimeoutInSeconds);
+                    commandTimeout: TimeoutInSeconds)).FirstOrDefault();
 
                 var resultMessage = param.Get<string>("@Message");
 
                 if (resultMessage.Contains("successfully"))
                 {
                     response.Code = "0"; // Success
+                    response.Data = (ProductUoMConversion) result;
                     response.Message = "Save Successfully(BE)";
                 }
                 else
