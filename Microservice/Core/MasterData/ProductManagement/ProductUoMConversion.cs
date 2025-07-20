@@ -12,7 +12,25 @@ public class ProductUoMConversion : BaseClass.BaseClass
     public string ProductUoMConversionCode { get; set; } = string.Empty;
     public string ProductCode { get; set; }
     public int FromUoMID { get; set; }
+
+    
     public int ToUoMID { get; set; }
+
+
     public decimal ConversionRate{ get; set; }
+}
+
+public class ProductUoMConversionParam : BaseClass.BaseClass
+{
+    public string ProductUoMConversionCode { get; set; } = string.Empty;
+    public string ProductCode { get; set; }
+    public int FromUoMID { get; set; }
+
+    public string? FromUoMName { get; set; }
+    public int ToUoMID { get; set; }
+
+    public string? ToUoMName { get; set; }
+
+    public decimal ConversionRate { get; set; }
 }
 

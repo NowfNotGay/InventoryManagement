@@ -173,7 +173,7 @@ builder.Services.AddTransient<ICRUD_Service<ProductUoMConversion, int>, ProductU
 
 #region Warehouse_Management
 //
-builder.Services.AddTransient<ICRUD_Service<GoodsReceiptNote, int>, GoodsReceiptNoteProvider>();
+builder.Services.AddTransient<ICRUD_Service<GoodsReceiptNote, string>, GoodsReceiptNoteProvider>();
 builder.Services.AddTransient<IGoodsReceiptNoteProvider, GoodsReceiptNoteProvider>();
 //Good Issue Note - Hai
 builder.Services.AddTransient<ICRUD_Service<GoodsIssueNote, int>, GoodsIssueNoteProvider>();

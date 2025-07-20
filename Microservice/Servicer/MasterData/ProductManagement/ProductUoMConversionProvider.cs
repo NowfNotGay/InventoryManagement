@@ -189,6 +189,40 @@ public class ProductUoMConversionProvider : ICRUD_Service<ProductUoMConversion, 
         }
     }
 
+    public async Task<ResultService<IEnumerable<ProductUoMConversion>>> GetAll()
+    {
+        ResultService<IEnumerable<ProductUoMConversion>> result = new();
+        using (var sqlconnect = new SqlConnection(_dapperConnectionString))
+        {
+            try
+            {
+                await sqlconnect.OpenAsync();
+                result.Data = await sqlconnect.QueryAsync<ProductUoMConversion>(
+                    "ProductUoMConversion_GetAll",
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: TimeoutInSeconds);
+
+                if (result.Data == null)
+                {
+                    result.Message = "Failed to get data";
+                    result.Code = "1";
+                }
+                else
+                {
+                    result.Message = "Success";
+                    result.Code = "0";
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
+            }
+        }
+    }
+
     #endregion
 
     #region Dapper CRUD
@@ -228,15 +262,15 @@ public class ProductUoMConversionProvider : ICRUD_Service<ProductUoMConversion, 
         }
     }
 
-    public async Task<ResultService<IEnumerable<ProductUoMConversion>>> GetAll()
+    public async Task<ResultService<IEnumerable<ProductUoMConversionParam>>> GetAllDapper()
     {
-        ResultService<IEnumerable<ProductUoMConversion>> result = new();
+        ResultService<IEnumerable<ProductUoMConversionParam>> result = new();
         using (var sqlconnect = new SqlConnection(_dapperConnectionString))
         {
             try
             {
                 await sqlconnect.OpenAsync();
-                result.Data = await sqlconnect.QueryAsync<ProductUoMConversion>(
+                result.Data = await sqlconnect.QueryAsync<ProductUoMConversionParam>(
                     "ProductUoMConversion_GetAll",
                     commandType: CommandType.StoredProcedure,
                     commandTimeout: TimeoutInSeconds);
@@ -297,13 +331,13 @@ public class ProductUoMConversionProvider : ICRUD_Service<ProductUoMConversion, 
         }
     }
 
-    public async Task<ResultService<ProductUoMConversion>> SaveByDapper(ProductUoMConversion entity)
+    public async Task<ResultService<ProductUoMConversionParam>> SaveByDapper(ProductUoMConversion entity)
     {
-        var response = new ResultService<ProductUoMConversion>();
+        var response = new ResultService<ProductUoMConversionParam>();
 
         if (entity == null)
         {
-            return new ResultService<ProductUoMConversion>()
+            return new ResultService<ProductUoMConversionParam>()
             {
                 Code = "1",
                 Message = "Entity is not valid(BE)"
@@ -328,17 +362,18 @@ public class ProductUoMConversionProvider : ICRUD_Service<ProductUoMConversion, 
                 param.Add("@udtt_ProductUoMConversion", dtHeader.AsTableValuedParameter("UDTT_ProductUoMConversion"));
                 param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
 
-                await connection.QueryAsync<ProductUoMConversion>(
+                var result = (await connection.QueryAsync<ProductUoMConversionParam>(
                     "ProductUoMConversion_Save",
                     param,
                     commandType: CommandType.StoredProcedure,
-                    commandTimeout: TimeoutInSeconds);
+                    commandTimeout: TimeoutInSeconds)).FirstOrDefault();
 
                 var resultMessage = param.Get<string>("@Message");
 
                 if (resultMessage.Contains("successfully"))
                 {
                     response.Code = "0"; // Success
+                    response.Data = (ProductUoMConversionParam) result;
                     response.Message = "Save Successfully(BE)";
                 }
                 else

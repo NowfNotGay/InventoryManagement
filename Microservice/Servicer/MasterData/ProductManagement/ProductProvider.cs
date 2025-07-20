@@ -209,10 +209,6 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
         if (entity == null)
             return FailResult(result, "Please fill in all Product's information");
 
-        if (entity.ImageFiles.IsNullOrEmpty())
-            return FailResult(result, "Please choose Pictures");
-        if (entity.VariantImgs.IsNullOrEmpty())
-            return FailResult(result, "Please choose Picture for Variant");
 
         // Upload ảnh cho variant
         var uploadVariantImgSuccess = await UploadVariantImages(entity, result);
@@ -292,7 +288,7 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
             using (var conn = new SqlConnection(_dapperConnectionString))
             {
                 await conn.OpenAsync();
-                result.Data = (await conn.QueryAsync<ProductParam, VehicleModel, ProductCategory, ProductType, Brand, UnitOfMeasure, Dimension, ProductParam>( 
+                result.Data = (await conn.QueryAsync<ProductParam, VehicleModel, ProductCategory, ProductType, Brand, UnitOfMeasure, Dimension, ProductParam>(
                     "Product_GetAll",
                     (product, model, category, type, brand, uom, dimension) =>
                     {
@@ -349,7 +345,7 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
                         .ToList();
                 }
 
-               
+
 
                 result.Code = "0";
                 result.Message = "Successfull";
@@ -381,15 +377,16 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
                          product.Brand = brand;
                          product.UnitOfMeasure = uom;
                          product.Dimension = dimension;
+                         
                          return product;
                      },
-                     splitOn: "VehicleModelID,ProductCategoryID,ProductTypeID,BrandID,UnitOfMeasureID,DimensionID",
+                     splitOn: "ID, ID, ID, ID, ID, ID",
                      param: new { ProductCode = code },
                      commandType: CommandType.StoredProcedure
                  );
 
                 result.Data = list.FirstOrDefault()!;
-               
+
 
                 if (result.Data == null)
                 {
@@ -405,13 +402,13 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
                     commandType: CommandType.StoredProcedure
                 )).ToList();
 
-                result.Data.ProductImages= (await conn.QueryAsync<ProductImages>(
+                result.Data.ProductImages = (await conn.QueryAsync<ProductImages>(
                     "ProductImage_GetByProductCode",
                     new { ProductCodes = result.Data.ProductCode },
                     commandType: CommandType.StoredProcedure
                 )).ToList();
 
-               
+
 
                 result.Code = "0";
                 result.Message = "Successfull";
@@ -451,10 +448,14 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
 
     private async Task<bool> UploadVariantImages(ProductSave entity, ResultService<ProductParam> result)
     {
+        if (entity.VariantImgs == null)
+        {
+            return true;
+        }
         for (int i = 0; i < entity.VariantImgs.Count; i++)
         {
             var file = entity.VariantImgs[i].ImageFile;
-            var variant = entity.VariantParams[i];
+            var variant = entity.VariantParams[entity.VariantImgs[i].Position];
 
             if (file != null && file.Length > 0)
             {
@@ -478,31 +479,35 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
 
     private async Task<bool> UploadSubImages(ProductSave entity, ResultService<ProductParam> result)
     {
+        if (entity.ImageFiles == null)
+        {
+            return true;
+        }
         int primaryCount = entity.VariantImgs?.Count ?? 0;
         int currentSubImageCount = entity.VariantParams.Count(v => v.IsPrimary == false);
         int newSubImageCount = entity.ImageFiles?.Count ?? 0;
 
-        // 1. Xóa các ảnh phụ dư
-        if (currentSubImageCount > newSubImageCount)
-        {
-            var subVariants = entity.VariantParams.Where(v => v.IsPrimary == false).ToList();
+        //// 1. Xóa các ảnh phụ dư
+        //if (currentSubImageCount > newSubImageCount)
+        //{
+        //    var subVariants = entity.VariantParams.Where(v => v.IsPrimary == false).ToList();
 
-            for (int i = newSubImageCount +1; i <= currentSubImageCount; i++)
-            {
-                var toDelete = subVariants[i];
-                if (!string.IsNullOrEmpty(toDelete.ImageCode))
-                    await _cloudDinaryHelper.DeleteImageAsync(toDelete.ImageCode);
+        //    for (int i = newSubImageCount +1; i <= currentSubImageCount; i++)
+        //    {
+        //        var toDelete = subVariants[i];
+        //        if (!string.IsNullOrEmpty(toDelete.ImageCode))
+        //            await _cloudDinaryHelper.DeleteImageAsync(toDelete.ImageCode);
 
-                entity.VariantParams.Remove(toDelete);
-            }
-        }
+        //        entity.VariantParams.Remove(toDelete);
+        //    }
+        //}
 
         for (int i = 0; i < newSubImageCount; i++)
         {
             var file = entity.ImageFiles[i].ImageFile;
             if (file == null || file.Length == 0) continue;
 
-            VariantParam variant= new();
+            VariantParam variant = new();
             bool isOverwrite = i < currentSubImageCount;
 
             if (isOverwrite)
@@ -529,20 +534,20 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
             variant.Position = primaryCount + i;
         }
 
-    
 
-    
+
+
 
         return true;
     }
 
     private async Task<bool> UploadMainProductImage(ProductSave entity, ResultService<ProductParam> result)
     {
-        if (entity.ProductImg?.ImageFile == null || entity.ProductImg.ImageFile.Length == 0)
+        if (entity.ProductImg == null || entity.ProductImg.Length == 0)
             return true;
 
         var (url, publicId) = await _cloudDinaryHelper.UploadImageAsync(
-            entity.ProductImg.ImageFile, entity.Product.PublicImgID, "Product");
+            entity.ProductImg, entity.Product.PublicImgID, "Product");
 
         if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(publicId))
         {
