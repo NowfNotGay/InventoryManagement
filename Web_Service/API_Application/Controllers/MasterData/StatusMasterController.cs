@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API_Application.Controllers.MasterData;
 
-[ApiController]
 [Route("api/[controller]")]
+[ApiController]
 public class StatusMasterController : ControllerBase
 {
     private readonly ICRUD_Service<StatusMaster, int> _ICRUD_Service;
@@ -64,23 +64,23 @@ public class StatusMasterController : ControllerBase
         return rs.Code == "0" ? Ok(rs) : NotFound($"Brand with Code {statusCode} not found");
     }
 
-    [HttpPost("SaveByDapper")]
+    [HttpPost]
     [Consumes("application/json")]
     [Produces("application/json")]
-
-    public async Task<IActionResult> SaveByDapper([FromBody] StatusMaster statusMaster)
+    [Route("Save")]
+    public async Task<IActionResult> Save([FromBody] StatusMaster statusMaster)
     {
-        var rs = await _statusMasterProvider.SaveByDapper(statusMaster);
-        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+        var rs = await _ICRUD_Service.Save(statusMaster);
+        return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
     }
-    [HttpDelete("DeleteByDapper")]
+    [HttpDelete("DeleteByDapper/{statusCode}")]
     [Consumes("application/json")]
     [Produces("application/json")]
 
     public async Task<IActionResult> DeleteByDapper(string statusCode)
     {
         var rs = await _statusMasterProvider.DeleteByDapper(statusCode);
-        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+        return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
     }
     #endregion
 

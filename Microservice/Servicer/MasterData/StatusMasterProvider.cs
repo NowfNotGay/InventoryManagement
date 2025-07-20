@@ -336,7 +336,8 @@ public class StatusMasterProvider : ICRUD_Service<StatusMaster, int>, IStatusMas
             }
         }
     }
-    public async Task<ResultService<StatusMaster>> SaveByDapper(StatusMaster entity)
+    
+    public async Task<ResultService<StatusMaster>> Save(StatusMaster entity)
     {
         var response = new ResultService<StatusMaster>();
 
@@ -366,7 +367,8 @@ public class StatusMasterProvider : ICRUD_Service<StatusMaster, int>, IStatusMas
                 param.Add("@udtt_StatusMaster", dtHeader.AsTableValuedParameter("UDTT_StatusMaster"));
 
                 param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
-                await connection.QueryAsync<StatusMaster>("StatusMaster_Save",
+
+                var result = await connection.QueryAsync<StatusMaster>("StatusMaster_Save",
                    param,
                    commandType: CommandType.StoredProcedure,
                       commandTimeout: TimeoutInSeconds);
@@ -375,12 +377,18 @@ public class StatusMasterProvider : ICRUD_Service<StatusMaster, int>, IStatusMas
                 if (resultMessage.Contains("successfully"))
                 {
                     response.Code = "0"; // Success
-                    response.Message = "Save Successfully(BE)";
+                    response.Message = "Save Successfully(BE) - " + resultMessage;
+                    response.Data = result.FirstOrDefault();
+
+                    if (response.Data == null)
+                    {
+                        response.Message += " (Warning: Could not retrieve saved data(BE))";
+                    }
                 }
                 else
                 {
                     response.Code = "-999"; // Fail
-                    response.Message = "Failed(BE)";
+                    response.Message = "Failed(BE) - " + resultMessage;
                 }
 
                 return response;

@@ -19,18 +19,16 @@ public class DB_ProductProperties_Context : DbContext
 
     public DbSet<Dimension> Dimensions { get; set; }
     public DbSet<UnitOfMeasure> UnitOfMeasures { get; set; }
-
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        //Color - Hai
         modelBuilder.Entity<Color>()
             .ToTable("Color")
             .HasKey(c => c.RowPointer);
-
         modelBuilder.Entity<Color>()
             .Property(c => c.RowPointer)
             .HasDefaultValueSql("NEWSEQUENTIALID()");
-
+        //Material - Bao
         modelBuilder.Entity<Material>()
            .ToTable("Material")
            .HasKey(c => c.RowPointer);

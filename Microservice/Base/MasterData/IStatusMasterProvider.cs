@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Base.MasterData;
 public interface IStatusMasterProvider
 {
-    Task<ResultService<StatusMaster>> SaveByDapper(StatusMaster entity);
+    //Task<ResultService<StatusMaster>> SaveByDapper(StatusMaster entity);
     Task<ResultService<StatusMaster>> GetByCode(string statusCode);
     Task<ResultService<string>> DeleteByDapper(string statusCode);
 }
