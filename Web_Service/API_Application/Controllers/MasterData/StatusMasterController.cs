@@ -1,4 +1,5 @@
-﻿using Base.BaseService;
+﻿using API_Application.Utilities;
+using Base.BaseService;
 using Base.MasterData;
 using Core.MasterData;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +26,7 @@ public class StatusMasterController : ControllerBase
     public async Task<IActionResult> Create([FromBody] StatusMaster statusMaster)
     {
         var rs = await _ICRUD_Service.Create(statusMaster);
-        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+        return ApiResponseHelper.HandleResult(rs, this);
     }
     [HttpPut]
     [Consumes("application/json")]
@@ -33,7 +34,7 @@ public class StatusMasterController : ControllerBase
     public async Task<IActionResult> Update([FromBody] StatusMaster statusMaster)
     {
         var rs = await _ICRUD_Service.Update(statusMaster);
-        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+        return ApiResponseHelper.HandleResult(rs, this);
     }
     [HttpDelete]
     [Consumes("application/json")]
@@ -41,7 +42,7 @@ public class StatusMasterController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var rs = await _ICRUD_Service.Delete(id);
-        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+        return ApiResponseHelper.HandleResult(rs, this);
     }
     #endregion
 
@@ -52,8 +53,8 @@ public class StatusMasterController : ControllerBase
 
     public async Task<IActionResult> GetAll()
     {
-        var rs = await _ICRUD_Service.GetAll();
-        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+        //var rs = await _ICRUD_Service.GetAll();
+        return ApiResponseHelper.HandleResult(await _ICRUD_Service.GetAll(), this);
     }
     [HttpGet("statusCode/{statusCode}")]
     [Consumes("application/json")]
@@ -61,7 +62,7 @@ public class StatusMasterController : ControllerBase
     public async Task<IActionResult> GetByCode(string statusCode)
     {
         var rs = await _statusMasterProvider.GetByCode(statusCode);
-        return rs.Code == "0" ? Ok(rs) : NotFound($"Brand with Code {statusCode} not found");
+        return ApiResponseHelper.HandleResult(rs, this);
     }
 
     [HttpPost]
@@ -71,7 +72,7 @@ public class StatusMasterController : ControllerBase
     public async Task<IActionResult> Save([FromBody] StatusMaster statusMaster)
     {
         var rs = await _ICRUD_Service.Save(statusMaster);
-        return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
+        return ApiResponseHelper.HandleResult(rs, this);
     }
     [HttpDelete("DeleteByDapper/{statusCode}")]
     [Consumes("application/json")]
@@ -80,7 +81,7 @@ public class StatusMasterController : ControllerBase
     public async Task<IActionResult> DeleteByDapper(string statusCode)
     {
         var rs = await _statusMasterProvider.DeleteByDapper(statusCode);
-        return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
+        return ApiResponseHelper.HandleResult(rs, this);
     }
     #endregion
 
