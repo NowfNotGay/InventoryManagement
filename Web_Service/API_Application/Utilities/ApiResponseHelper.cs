@@ -10,8 +10,8 @@ public static class ApiResponseHelper
         return result.Code switch
         {
             "0" => controller.Ok(result),
-            "1" => controller.NotFound(result),
-            _ => controller.BadRequest(result)
+            "1" => controller.BadRequest(result),
+            _ => controller.NotFound(result)
         };
     }
 }
