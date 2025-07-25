@@ -387,7 +387,7 @@ public class StatusMasterProvider : ICRUD_Service<StatusMaster, int>, IStatusMas
                 }
                 else
                 {
-                    response.Code = "-999"; // Fail
+                    response.Code = "1"; // Fail
                     response.Message = "Failed(BE) - " + resultMessage;
                 }
 
