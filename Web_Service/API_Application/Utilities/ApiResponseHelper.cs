@@ -5,7 +5,7 @@ namespace API_Application.Utilities;
 
 public static class ApiResponseHelper
 {
-    public static IActionResult HandleResult<T>(ControllerBase controller,ResultService<T> result)
+    public static IActionResult HandleResult<T>(ControllerBase controller, ResultService<T> result)
     {
         return result.Code switch
         {
