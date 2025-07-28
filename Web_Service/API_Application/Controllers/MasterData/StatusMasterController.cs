@@ -25,54 +25,49 @@ public class StatusMasterController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> Create([FromBody] StatusMaster statusMaster)
     {
-        var rs = await _ICRUD_Service.Create(statusMaster);
-        return ApiResponseHelper.HandleResult(rs, this);
+
+        return ApiResponseHelper.HandleResult(this, await _ICRUD_Service.Create(statusMaster));
     }
     [HttpPut]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> Update([FromBody] StatusMaster statusMaster)
     {
-        var rs = await _ICRUD_Service.Update(statusMaster);
-        return ApiResponseHelper.HandleResult(rs, this);
+        return ApiResponseHelper.HandleResult( this, await _ICRUD_Service.Update(statusMaster));
     }
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> Delete(int id)
     {
-        var rs = await _ICRUD_Service.Delete(id);
-        return ApiResponseHelper.HandleResult(rs, this);
+        
+        return ApiResponseHelper.HandleResult( this, await _ICRUD_Service.Delete(id));
     }
     #endregion
 
     #region Dapper CRUD
     [HttpGet]
-    [Consumes("application/json")]
     [Produces("application/json")]
 
     public async Task<IActionResult> GetAll()
     {
-        //var rs = await _ICRUD_Service.GetAll();
-        return ApiResponseHelper.HandleResult(await _ICRUD_Service.GetAll(), this);
+        return ApiResponseHelper.HandleResult(this, await _ICRUD_Service.GetAll());
     }
     [HttpGet("statusCode/{statusCode}")]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> GetByCode(string statusCode)
     {
-        var rs = await _statusMasterProvider.GetByCode(statusCode);
-        return ApiResponseHelper.HandleResult(rs, this);
+        return ApiResponseHelper.HandleResult(this, await _statusMasterProvider.GetByCode(statusCode));
     }
 
     [HttpPost]
     [Consumes("application/json")]
     [Produces("application/json")]
-    [Route("Save")]
     public async Task<IActionResult> Save([FromBody] StatusMaster statusMaster)
     {
-        var rs = await _ICRUD_Service.Save(statusMaster);
-        return ApiResponseHelper.HandleResult(rs, this);
+        
+        return ApiResponseHelper.HandleResult( this, await _ICRUD_Service.Save(statusMaster));
     }
     [HttpDelete("DeleteByDapper/{statusCode}")]
     [Consumes("application/json")]
@@ -80,8 +75,8 @@ public class StatusMasterController : ControllerBase
 
     public async Task<IActionResult> DeleteByDapper(string statusCode)
     {
-        var rs = await _statusMasterProvider.DeleteByDapper(statusCode);
-        return ApiResponseHelper.HandleResult(rs, this);
+        
+        return ApiResponseHelper.HandleResult(this, await _statusMasterProvider.DeleteByDapper(statusCode));
     }
     #endregion
 
