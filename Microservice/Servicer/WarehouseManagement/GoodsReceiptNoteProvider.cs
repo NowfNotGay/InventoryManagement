@@ -1,4 +1,5 @@
-﻿using Base.BaseService;
+﻿using Azure;
+using Base.BaseService;
 using Base.WarehouseManagement;
 using Context.WarehouseManagement;
 using Core.BaseClass;
@@ -11,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Text.RegularExpressions;
 using static Dapper.SqlMapper;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 namespace Servicer.WarehouseManagement
 {
@@ -449,6 +452,61 @@ namespace Servicer.WarehouseManagement
         #endregion
 
         #region GoodsReceiptNoteLine
+
+        public async Task<ResultService<string>> GoodReceiptNoteLine_Save(GoodsReceiptNoteLine entity)
+        {
+            var response = new ResultService<string>();
+            string Message = string.Empty;
+            string connectionString = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+                {
+                    await sqlConnection.OpenAsync();
+                    var parameter = new DynamicParameters();
+                    parameter.Add("@CreatedBy", "admin");
+                    parameter.Add("@udtt_Detail", General.ConvertToDataTable(new List<GoodsReceiptNoteLine>() { entity }).AsTableValuedParameter("UDTT_GoodsReceiptNoteDetail"));
+                    parameter.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                    var result = await sqlConnection.QueryAsync<GoodsReceiptNoteLine>("GoodReceiptNoteLine_Save",
+                        parameter,
+                        commandType: CommandType.StoredProcedure,
+                           commandTimeout: TimeoutInSeconds);
+                   
+                    var resultMessage = parameter.Get<string>("@Message");
+
+                    if (resultMessage.Contains("OK"))
+                    {
+                        response.Code = ResponseCode.Success.ToString(); // Success
+                        response.Message = "Save Successfully";
+                    }
+                    else
+                    {
+                        response.Code = ResponseCode.UnhandledError.ToString();
+                        response.Message = "Failed";
+                    }
+                    return response;
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                response.Code = ResponseCode.FailWhileExecutingStoredProcedure.ToString();
+                response.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
+                return response;
+            }
+            catch (ArgumentException ex)
+            {
+                response.Code = ResponseCode.FailToConnectDB.ToString();
+                response.Message = $"An error occurred while trying to connect to your database Server \n {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Code = ResponseCode.FailWhileExecutingStoredProcedure.ToString();
+                response.Message = $"An error occurred while executing store Procedure. Details: {ex.GetType()} - {ex.Message}";
+                return response;
+            }
+        }
+
         public async Task<ResultService<IEnumerable<GoodsReceiptNoteLine>>> GetLineByRefCode(string GRNcode)
         {
             var response = new ResultService<IEnumerable<GoodsReceiptNoteLine>>();
@@ -490,7 +548,7 @@ namespace Servicer.WarehouseManagement
                 return response;
             }
         }
-        public async Task<ResultService<string>> DeleteLine(List<GoodsReceiptNoteLine> entity)
+        public async Task<ResultService<string>> GoodsReceiptNoteLine_Delete_Multi_Line(List<GoodsReceiptNoteLine> entity)
         {
             ResultService<string> resultService = new ResultService<string>();
             try
@@ -660,6 +718,50 @@ namespace Servicer.WarehouseManagement
                 return response;
             }
         }
+
+        public async Task<ResultService<string>> GoodsReceiptNoteLine_Delete_SingleLine(Guid RowPointer)
+        {
+            ResultService<string> response = new ResultService<string>();
+            if (RowPointer == null || RowPointer == Guid.Empty)
+            {
+                return new ResultService<string>()
+                {
+                    Code = ResponseCode.InvalidInput.ToString(),
+                    Message = "Entity is not valid",
+                    Data = null
+                };
+            }
+            string Message = string.Empty;
+
+            string conn = General.DecryptString(_configuration.GetConnectionString(_moduleDapper));
+            using (var connection = new SqlConnection(conn))
+            {
+                await connection.OpenAsync();
+                var param = new DynamicParameters();
+                param.Add("@RowPointer", RowPointer);
+                param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                await connection.QueryAsync<GoodsReceiptNoteLine>("GoodsReceiptNoteLine_Delete_Single",
+                   param,
+                   commandType: CommandType.StoredProcedure,
+                      commandTimeout: TimeoutInSeconds);
+                var resultMessage = param.Get<string>("@Message");
+
+                if (resultMessage.Contains("OK"))
+                {
+                    response.Code = ResponseCode.Success.ToString(); // Success
+                    response.Message = "OK";
+                }
+                else
+                {
+                    response.Code = ResponseCode.UnhandledError.ToString(); // Success
+                    response.Message = "Failed";
+                }
+
+                return response;
+            }
+        }
+
+        
         #endregion
 
     }
