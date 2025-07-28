@@ -1,8 +1,8 @@
-﻿using Base.BaseService;
+﻿using API_Application.Utilities;
+using Base.BaseService;
 using Base.WarehouseManagement;
 using Core.WarehouseManagement;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace API_Application.Controllers.WarehouseManagement;
 
@@ -26,16 +26,15 @@ public class WarehouseController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> GetAll()
     {
-        var rs = await _ICRUD_Service.GetAll();
-        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+        return ApiResponseHelper.HandleResult(this, await _ICRUD_Service.GetAll());
     }
 
     [HttpGet("{id}")]
     [Produces("application/json")]
     public async Task<IActionResult> GetById(int id)
     {
-        var rs = await _ICRUD_Service.Get(id);
-        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
+        return ApiResponseHelper.HandleResult(this, await _ICRUD_Service.Get(id));
     }
 
     [HttpPost]
@@ -43,8 +42,8 @@ public class WarehouseController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> Create([FromBody] Warehouse warehouse)
     {
-        var rs = await _ICRUD_Service.Create(warehouse);
-        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
+        return ApiResponseHelper.HandleResult(this, await _ICRUD_Service.Create(warehouse));
     }
 
     [HttpPut]
@@ -52,47 +51,46 @@ public class WarehouseController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> Update([FromBody] Warehouse warehouse)
     {
-        var rs = await _ICRUD_Service.Update(warehouse);
-        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
+
+        return ApiResponseHelper.HandleResult(this, await _ICRUD_Service.Update(warehouse));
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> Delete(int id)
     {
-        var rs = await _ICRUD_Service.Delete(id);
-        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+
+        return ApiResponseHelper.HandleResult(this, await _ICRUD_Service.Delete(id));
     }
     #endregion
     #region Dapper CRUD
 
     [HttpGet("warehouseCode/{warehouseCode}")]
-    [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> GetByCode(string warehouseCode)
     {
-        var rs = await _warehouseProvider.GetByCode(warehouseCode);
-        return rs.Code == "0" ? Ok(rs) : NotFound($"Brand with Code {warehouseCode} not found");
+        return ApiResponseHelper.HandleResult(this, await _warehouseProvider.GetByCode(warehouseCode)); 
     }
 
-    [HttpPost("SaveByDapper")]
+    [HttpPost("Save")]
     [Consumes("application/json")]
     [Produces("application/json")]
 
-    public async Task<IActionResult> SaveByDapper([FromBody] Warehouse warehouse)
+    public async Task<IActionResult> Save([FromBody] Warehouse warehouse)
     {
-        var rs = await _warehouseProvider.SaveByDapper(warehouse);
-        return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
+   
+        return ApiResponseHelper.HandleResult(this, await _warehouseProvider.SaveByDapper(warehouse));
     }
     [HttpDelete("DeleteByDapper/{warehouseCode}")]
     [Consumes("application/json")]
     [Produces("application/json")]
-
     public async Task<IActionResult> DeleteByDapper(string warehouseCode)
     {
-        var rs = await _warehouseProvider.DeleteByDapper(warehouseCode);
-        return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
+
+        return ApiResponseHelper.HandleResult( this, await _warehouseProvider.DeleteByDapper(warehouseCode));
+
     }
 
     #endregion
