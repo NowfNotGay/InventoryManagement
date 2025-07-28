@@ -10,14 +10,14 @@ namespace API_Application.Controllers.WarehouseManagement;
 [Route("api/[controller]")]
 public class WarehouseController : ControllerBase
 {
-    private readonly ICRUD_Service<Warehouse, int> _ICRUD_Service;
+    private readonly ICRUD_Service<Warehouse, int> _crudService;
     private readonly IWarehouseProvider _warehouseProvider;
 
 
     public WarehouseController(ICRUD_Service<Warehouse, int> iCRUD_Service, IWarehouseProvider warehouseProvider)
     {
         _warehouseProvider = warehouseProvider;
-        _ICRUD_Service = iCRUD_Service;
+        _crudService = iCRUD_Service;
 
     }
     #region Normal CRUD
@@ -26,15 +26,15 @@ public class WarehouseController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> GetAll()
     {
-        return ApiResponseHelper.HandleResult(this, await _ICRUD_Service.GetAll());
+        return ApiResponseHelper.HandleResult(this, await _crudService.GetAll());
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     [Produces("application/json")]
     public async Task<IActionResult> GetById(int id)
     {
 
-        return ApiResponseHelper.HandleResult(this, await _ICRUD_Service.Get(id));
+        return ApiResponseHelper.HandleResult(this, await _crudService.Get(id));
     }
 
     [HttpPost]
@@ -43,7 +43,7 @@ public class WarehouseController : ControllerBase
     public async Task<IActionResult> Create([FromBody] Warehouse warehouse)
     {
 
-        return ApiResponseHelper.HandleResult(this, await _ICRUD_Service.Create(warehouse));
+        return ApiResponseHelper.HandleResult(this, await _crudService.Create(warehouse));
     }
 
     [HttpPut]
@@ -53,21 +53,21 @@ public class WarehouseController : ControllerBase
     {
 
 
-        return ApiResponseHelper.HandleResult(this, await _ICRUD_Service.Update(warehouse));
+        return ApiResponseHelper.HandleResult(this, await _crudService.Update(warehouse));
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> Delete(int id)
     {
 
-        return ApiResponseHelper.HandleResult(this, await _ICRUD_Service.Delete(id));
+        return ApiResponseHelper.HandleResult(this, await _crudService.Delete(id));
     }
     #endregion
     #region Dapper CRUD
 
-    [HttpGet("warehouseCode/{warehouseCode}")]
+    [HttpGet("code/{warehouseCode}")]
     [Produces("application/json")]
     public async Task<IActionResult> GetByCode(string warehouseCode)
     {
@@ -83,8 +83,7 @@ public class WarehouseController : ControllerBase
    
         return ApiResponseHelper.HandleResult(this, await _warehouseProvider.SaveByDapper(warehouse));
     }
-    [HttpDelete("DeleteByDapper/{warehouseCode}")]
-    [Consumes("application/json")]
+    [HttpDelete("code/{warehouseCode}")]
     [Produces("application/json")]
     public async Task<IActionResult> DeleteByDapper(string warehouseCode)
     {
