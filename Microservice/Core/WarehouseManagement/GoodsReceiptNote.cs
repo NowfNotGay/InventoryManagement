@@ -25,7 +25,7 @@
     public class GoodsReceiptNote_Param
     {
         public string CreatedBy { get; set; }
-        public List<GoodsReceiptNote> GRNs { get; set; }
+        public GoodsReceiptNote GRNs { get; set; }
         public List<GoodsReceiptNoteLine> GRNLines { get; set; }
     }
 }
