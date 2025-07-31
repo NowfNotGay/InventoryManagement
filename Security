@@ -1,42 +1,75 @@
-# Security Policy Inventory Management System Project
-
-## Reporting a Vulnerability
-
-**Please do not open public GitHub issues or pull requests** on this repository for security-related matters. Instead, follow the responsible disclosure process outlined below to ensure the security of this project.
-
-## Scope
-
-This security policy covers the security of this repository and its code, which includes the Inventory Management System developed by Nguyễn Ngọc Hải. If you discover a security vulnerability related to this repository, please report it responsibly using the processes described below.
-
-## Responsible Disclosure Process
-
-### Option 1: Reporting via Email
-
-- **Contact Us**: Submit your report to **hnguyenngoc.h@gmail.com** with details of the vulnerability. Provide a clear and concise description of the issue, any potential impact, and a step-by-step demonstration if possible. Avoid including sensitive information in your initial email.
-- **Confirmation**: I will acknowledge receipt of your report within **3 business days** and provide an estimated timeline for a response.
-- **Investigation**: I will investigate the issue, which may involve reproducing the vulnerability or requesting further information from you.
-- **Resolution**: Once the vulnerability is confirmed, I will work to address it promptly and develop a fix.
-- **Disclosure**: I will coordinate with you regarding the public disclosure of the vulnerability. A security advisory will be released with information about the issue and the fix.
-- **Credit**: If your reported vulnerability is successfully fixed, I will credit you for your responsible disclosure in the security advisory unless you prefer to remain anonymous.
-
-### Option 2: Reporting via Huntr.dev
-
-- **Submit Report**: Create a report for this repository on Huntr.dev, providing details of the vulnerability. Include a link to this repository in your report.
-- **Confirmation**: I will be notified of your report on Huntr.dev and will acknowledge it within **3 business days**.
-- **Investigation**: I will investigate the issue, which may involve reproducing the vulnerability or requesting further information from you.
-- **Resolution**: Once the vulnerability is confirmed, I will work to address it promptly and develop a fix.
-- **Disclosure**: I will coordinate with you regarding the public disclosure of the vulnerability. A security advisory will be released with information about the issue and the fix.
-- **Credit**: If your reported vulnerability is successfully fixed, I will credit you for your responsible disclosure in the security advisory unless you prefer to remain anonymous.
-
-## Safe Harbor
-
-I consider security research conducted under this policy to be:
-
-- **Authorized**: In compliance with any applicable anti-hacking laws, and I will not initiate legal action against researchers for their findings.
-- **Subject to Responsible Disclosure**: I will collaborate with researchers to understand and address reported vulnerabilities before public disclosure.
-
-I appreciate your contributions to the security of this project and the community.
-
-## Thank You!
-
-**Thank you for helping to keep Nguyễn Ngọc Hải's Inventory Management System Project secure!**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Inventory Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f1f1f1;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        h1 {
+            font-size: 24px;
+            color: #202124;
+            margin-bottom: 20px;
+        }
+        .captcha {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #5f6368;
+        }
+        .not-your-computer {
+            font-size: 12px;
+            color: #5f6368;
+            margin-bottom: 20px;
+        }
+        .languages {
+            column-count: 3;
+            text-align: left;
+            font-size: 12px;
+            color: #5f6368;
+        }
+        .languages a {
+            color: #1a73e8;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+        .languages a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sign in</h1>
+        <p>to continue to Inventory Management System</p>
+        <div class="captcha">
+            CAPTCHA image of text used to distinguish humans from robots
+        </div>
+        <div class="not-your-computer">
+            Not your computer? Use Private Browsing windows to sign in. <a href="#">Learn more about using Guest mode</a>
+        </div>
+        <div class="languages">
+            <a href="#">Afrikaans</a> <a href="#">azərbaycan</a> <a href="#">bosanski</a> <a href="#">català</a> <a href="#">Čeština</a> <a href="#">Cymraeg</a> <a href="#">Dansk</a> <a href="#">Deutsch</a> <a href="#">eesti</a> <a href="#">English (United Kingdom)</a> <a href="#">English (United States)</a> <a href="#">Español (España)</a> <a href="#">Español (Latinoamérica)</a> <a href="#">euskara</a> <a href="#">Filipino</a> <a href="#">Français (Canada)</a> <a href="#">Français (France)</a> <a href="#">Gaeilge</a> <a href="#">galego</a> <a href="#">Hrvatski</a> <a href="#">Indonesia</a> <a href="#">isiZulu</a> <a href="#">íslenska</a> <a href="#">Italiano</a> <a href="#">Kiswahili</a> <a href="#">latviešu</a> <a href="#">lietuvių</a> <a href="#">magyar</a> <a href="#">Melayu</a> <a href="#">Nederlands</a> <a href="#">norsk</a> <a href="#">o‘zbek</a> <a href="#">polski</a> <a href="#">Português (Brasil)</a> <a href="#">Português (Portugal)</a> <a href="#">română</a> <a href="#">shqip</a> <a href="#">Slovenčina</a> <a href="#">slovenščina</a> <a href="#">srpski (latinica)</a> <a href="#">Suomi</a> <a href="#">Svenska</a> <a href="#">Tiếng Việt</a> <a href="#">Türkçe</a> <a href="#">Ελληνικά</a> <a href="#">беларуская</a> <a href="#">български</a> <a href="#">кыргызча</a> <a href="#">қазақ тілі</a> <a href="#">македонски</a> <a href="#">монгол</a> <a href="#">Русский</a> <a href="#">српски (ћирилица)</a> <a href="#">Українська</a> <a href="#">ქართული</a> <a href="#">հայերեն</a> <a href="#">‫עברית‬‎</a> <a href="#">‫اردو‬‎</a> <a href="#">‫العربية‬‎</a> <a href="#">‫فارسی‬‎</a> <a href="#">አማርኛ</a> <a href="#">नेपाली</a> <a href="#">मराठी</a> <a href="#">हिन्दी</a> <a href="#">অসমীয়া</a> <a href="#">বাংলা</a> <a href="#">ਪੰਜਾਬੀ</a> <a href="#">ગુજરાતી</a> <a href="#">ଓଡ଼ିଆ</a> <a href="#">தமிழ்</a> <a href="#">తెలుగు</a> <a href="#">ಕನ್ನಡ</a> <a href="#">മലയാളം</a> <a href="#">සිංහල</a> <a href="#">ไทย</a> <a href="#">ລາວ</a> <a href="#">မြန်မာ</a> <a href="#">ខ្មែរ</a> <a href="#">한국어</a> <a href="#">中文（香港）</a> <a href="#">日本語</a> <a href="#">简体中文</a> <a href="#">繁體中文</a>
+        </div>
+    </div>
+</body>
+</html>
