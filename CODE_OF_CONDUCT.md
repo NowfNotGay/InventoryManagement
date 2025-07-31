@@ -99,6 +99,4 @@ Project leaders will follow these Community Impact Guidelines:
 
 ## Attribution
 
-This Code is adapted from the Contributor Covenant, version 2.0, available at [https://www.contributor-covenant.org/version/2/0/code_of_conduct.html](https://www.contributor-covenant.org/version/2/0/code_of_conduct.html). Community Impact Guidelines are inspired by Mozilla’s enforcement ladder.
-
-For FAQs, visit [https://www.contributor-covenant.org/faq](https://www.contributor-covenant.org/faq). Translations are at [https://www.contributor-covenant.org/translations](https://www.contributor-covenant.org/translations).
+Not Yet
