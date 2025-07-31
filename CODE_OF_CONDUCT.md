@@ -61,7 +61,7 @@ This Code applies to:
 
 ## Reporting and Enforcement
 
-- **Reporting**: Instances of unacceptable behavior can be reported to project leaders at [hnguyenngoc.h@company.com]. All complaints will be reviewed and investigated promptly, fairly, and confidentially.
+- **Reporting**: Instances of unacceptable behavior can be reported to project leaders at [inventorymanagement@company.com]. All complaints will be reviewed and investigated promptly, fairly, and confidentially.
 - **Privacy**: Project leaders must respect the reporter’s privacy and security.
 
 ## Enforcement Guidelines
@@ -90,6 +90,12 @@ Project leaders will follow these Community Impact Guidelines:
 - **Access Control**: Manage permissions via `Permission` and `UserRoleAssignment` to restrict sensitive actions.
 - **User Interface**: Use React TypeScript (TanStack Form/Table, Ant Design) to display warnings for improper actions (e.g., transactions without `CurrentStock` updates).
 - **Automated Code Generation**: Leverage `GenerateCodeByConfig` for consistent transaction codes (e.g., `GRN`, `GIN`, `STF`).
+- **Phase 1: Warehouse Management**:
+  - Ensure all warehouse-related operations (e.g., `Warehouse`, `StorageBin`, `CurrentStock`) are accurately implemented and logged, with proper UI feedback using TanStack Table for inventory tracking.
+- **Phase 2: User Account Creation and Permission Management**:
+  - Implement secure user registration and login via `UserAccount`, with role-based access control managed through `UserRoleAssignment` and `Permission`, ensuring Dapper queries are optimized for performance.
+- **Phase 3: Ecommerce Shop Functionality**:
+  - Integrate ecommerce features (e.g., product listings from `Product` and `ProductVariant`, order processing linked to `GoodsIssueNote`) with a responsive React TS frontend, ensuring real-time inventory updates in `CurrentStock`.
 
 ## Attribution
 
