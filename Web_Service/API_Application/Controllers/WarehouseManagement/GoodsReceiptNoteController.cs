@@ -117,9 +117,9 @@ namespace API_Application.Controllers.WarehouseManagement
         [Consumes("application/json")]
         [Produces("application/json")]
 
-        public async Task<IActionResult> GoodsReceiptNoteLine_Delete_SingleLine([FromQuery] Guid GRNCode)
+        public async Task<IActionResult> GoodsReceiptNoteLine_Delete_SingleLine([FromQuery] string rowpointer)
         {
-            var rs = await _GoodsReceiptNoteProvider.GoodsReceiptNoteLine_Delete_SingleLine(GRNCode);
+            var rs = await _GoodsReceiptNoteProvider.GoodsReceiptNoteLine_Delete_SingleLine(rowpointer);
             return rs.Code == ResponseCode.Success.ToString() ? Ok(rs) : BadRequest(rs);
         }
 
@@ -143,7 +143,7 @@ namespace API_Application.Controllers.WarehouseManagement
         public async Task<IActionResult> GoodsReceiptNote_Create_HeaderAndLine([FromBody] GoodsReceiptNote_Param param)
         {
             var rs = await _GoodsReceiptNoteProvider.Save(param);
-            return rs.Code == ResponseCode.Success.ToString() ? Ok(rs.Data) : BadRequest(rs.Message);
+            return rs.Code == ResponseCode.Success.ToString() ? Ok(rs) : BadRequest(rs);
         }
 
         [HttpDelete("HeaderLine/DeleteHeaderAndLine/ID")]
