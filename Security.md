@@ -1,4 +1,4 @@
-# Security Policy for Nguyễn Ngọc Hải's Inventory Management System Project
+# Security Policy for Inventory Management System Project
 
 ## Reporting a Vulnerability
 
@@ -23,8 +23,8 @@ If you discover a security vulnerability related to this repository, please repo
 6. **Credit**: If your reported vulnerability is successfully fixed, I will credit you for your responsible disclosure in the security advisory unless you prefer to remain anonymous.
 
 ### Option 2: Reporting via Huntr.dev
-1. **Submit Report**: Create a report for this repository on Huntr.dev, providing details of the vulnerability. Include a link to this repository in your report.
-2. **Confirmation**: I will be notified of your report on Huntr.dev and will acknowledge it within **3 business days**.
+1. **Submit Report**: You can alternatively report the vulnerability by sending details to **hotrungnghia2704@gmail.com**. Include a link to this repository and provide a clear description of the vulnerability.
+2. **Confirmation**: I will acknowledge receipt of your report within **3 business days**.
 3. **Investigation**: I will investigate the issue, which may involve reproducing the vulnerability or requesting further information from you.
 4. **Resolution**: Once the vulnerability is confirmed, I will work to address it promptly and develop a fix.
 5. **Disclosure**: I will coordinate with you regarding the public disclosure of the vulnerability. A security advisory will be released with information about the issue and the fix.
@@ -41,4 +41,4 @@ I consider security research conducted under this policy to be:
 
 ## Thank You!
 
-**Thank you for helping to keep Nguyễn Ngọc Hải's Inventory Management System Project secure!**
+**Thank you for helping to keep  Inventory Management System Project secure!**
