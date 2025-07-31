@@ -16,14 +16,34 @@ Built with:
 
 ---
 
+## 📌 Project Roadmap
+
+### ✅ **Phase 1: Warehouse Management**
+- Core modules for managing warehouses and storage bins.
+- CRUD for products, stock, and business partners.
+- Inventory transactions: Goods Receipt, Goods Issue, and Stock Transfer.
+- Real-time **Current Stock** updates with audit logging.
+
+### 🔒 **Phase 2: Authentication & Role-Based Access**
+- Secure login system with user management.
+- Role-based permission control (Admin, Warehouse Manager, Staff).
+- Integration with `UserAccount`, `Role`, `Permission` tables.
+- Enforce access control on critical inventory actions.
+
+### 🛒 **Phase 3: E-Commerce & Sales**
+- Product catalog for online sales.
+- Order management and integration with inventory stock levels.
+- Synchronization between warehouse transactions and e-commerce orders.
+- Frontend shopping interface and checkout flow.
+
+---
+
 ## ⚠️ SECURITY WARNING for Developers & Users
 
 We value the security of this project. Please follow these guidelines:
 
 ✅ Only use official versions of this repository from **GitHub**:  
-👉 [Inventory Management Backend Repo](https://github.com/NowNotGay/InventoryManagement)
-👉 [Inventory Management Frontend Repo](https://github.com/Er2g0n/InventoryManagementFE))
-
+👉 [Inventory Management Repo](https://github.com/NowNotGay/InventoryManagement)
 
 ✅ All official updates and patches will be provided here.  
 
@@ -42,6 +62,7 @@ They may be **fake, malicious**, or intended to compromise data integrity.
 - 🔄 **Inventory Transactions**
 - 🏢 **Business Partner Management**
 - 👥 **User & Role Management**
+- 🛒 **E-Commerce & Sales Integration**
 - 📊 **Audit & Reporting**
 
 ---
