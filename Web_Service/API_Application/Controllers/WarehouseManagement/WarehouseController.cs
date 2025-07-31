@@ -13,7 +13,6 @@ public class WarehouseController : ControllerBase
     private readonly ICRUD_Service<Warehouse, int> _crudService;
     private readonly IWarehouseProvider _warehouseProvider;
 
-
     public WarehouseController(ICRUD_Service<Warehouse, int> iCRUD_Service, IWarehouseProvider warehouseProvider)
     {
         _warehouseProvider = warehouseProvider;
@@ -80,7 +79,7 @@ public class WarehouseController : ControllerBase
 
     public async Task<IActionResult> Save([FromBody] Warehouse warehouse)
     {
-   
+        
         return ApiResponseHelper.HandleResult(this, await _warehouseProvider.SaveByDapper(warehouse));
     }
     [HttpDelete("code/{warehouseCode}")]

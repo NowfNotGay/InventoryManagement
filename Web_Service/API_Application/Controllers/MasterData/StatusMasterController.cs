@@ -54,14 +54,13 @@ public class StatusMasterController : ControllerBase
         return ApiResponseHelper.HandleResult(this, await _ICRUD_Service.GetAll());
     }
     [HttpGet("code/{statusCode}")]
-    [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> GetByCode(string statusCode)
     {
         return ApiResponseHelper.HandleResult(this, await _statusMasterProvider.GetByCode(statusCode));
     }
 
-    [HttpPost]
+    [HttpPost("Save")]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> Save([FromBody] StatusMaster statusMaster)
@@ -69,7 +68,7 @@ public class StatusMasterController : ControllerBase
         
         return ApiResponseHelper.HandleResult( this, await _ICRUD_Service.Save(statusMaster));
     }
-    [HttpDelete("DeleteByDapper/{statusCode}")]
+    [HttpDelete("code/{statusCode}")]
     [Produces("application/json")]
 
     public async Task<IActionResult> DeleteByDapper(string statusCode)
