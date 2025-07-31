@@ -61,7 +61,7 @@ This Code applies to:
 
 ## Reporting and Enforcement
 
-- **Reporting**: Instances of unacceptable behavior can be reported to project leaders at [inventorymanagement@company.com]. All complaints will be reviewed and investigated promptly, fairly, and confidentially.
+- **Reporting**: Instances of unacceptable behavior can be reported to project leaders at [hnguyenngoc.h@gmail.com]. All complaints will be reviewed and investigated promptly, fairly, and confidentially.
 - **Privacy**: Project leaders must respect the reporter’s privacy and security.
 
 ## Enforcement Guidelines
