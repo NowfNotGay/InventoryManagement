@@ -20,8 +20,12 @@ warehouse operations, stock movements, and product management efficiently.
   - **Real-time:** SignalR
   - **Code Generation:** Stored Procedures (Generated Code in SQL)
     
+
 - **Frontend:**
-  - React TypeScript
+  - React + **TypeScript**
+  - **Vite** (Fast build tool)
+  - **Redux** for state management
+  - **Redux-Thunk** for async actions
   - TanStack Form/Table
   - Ant Design (AntD)
     
