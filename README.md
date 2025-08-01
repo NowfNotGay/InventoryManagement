@@ -2,8 +2,9 @@
 
 ## Simple & Effective Stock Control
 
-![Inventory Logo](./InventoryLogo.png)
-
+<p align="center">
+  <img src="./InventoryLogo.png" alt="Inventory Logo" width="250">
+</p>
 > ⭐ **Give a Star & Fork this project** ... Happy coding!
 
 The **Inventory Management System** by Nguyễn Ngọc Hải is designed to handle
