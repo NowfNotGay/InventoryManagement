@@ -13,6 +13,6 @@ public class CurrentStock : BaseClass.BaseClass
     public string UoMCode { get; set; }
     public decimal Quantity { get; set; }
     public int WarehouseCode { get; set; }
-    public int? StorageBinCode { get; set; }
+    public int StorageBinCode { get; set; }
 }
 
