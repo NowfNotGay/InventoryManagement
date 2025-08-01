@@ -2,7 +2,7 @@
 
 ## Simple & Effective Stock Control
 
-![Inventory Logo](./assets/logo.png)
+![Inventory Logo](./InventoryLogo.png)
 
 > ⭐ **Give a Star & Fork this project** ... Happy coding!
 
