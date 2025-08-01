@@ -75,6 +75,7 @@ They may be **fake, malicious**, or intended to compromise data integrity.
 
 ✅ Always verify sources and contact the maintainer via email if in doubt:  
 📧 **hnguyenngoc.h@gmail.com**
+📧 **hotrungnghia2704@gmail.com**
 
 ---
 
