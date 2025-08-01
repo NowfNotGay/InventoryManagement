@@ -395,6 +395,46 @@ public class StorageBinProvider : ICRUD_Service<StorageBin, int>, IStorageBinPro
 
     }
 
+    public async Task<ResultService<IEnumerable<StorageBin>>> GetAllByWarehouseCode(string code)
+    {
+        ResultService<IEnumerable<StorageBin>> result = new();
+        using (var sqlConnection = new SqlConnection(General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER"))))
+        {
+            try
+            {
+                await sqlConnection.OpenAsync();
+                var rs = await sqlConnection.QueryAsync<StorageBin>("StorageBins_GetByWarehouse",
+                    new
+                    {
+                        WarehouseCode = code
+                    },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 240);
+                if (rs == null)
+                {
+                    result.Message = "Failed to get data";
+                    result.Code = "1";
+
+                }
+                else
+                {
+                    result.Message = "Success";
+                    result.Code = "0";
+                    result.Data = rs;
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                result.Code = "999";
+                return result;
+            }
+
+        }
+    }
+
 
     #endregion
 }

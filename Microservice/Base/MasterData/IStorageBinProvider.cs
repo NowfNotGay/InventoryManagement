@@ -7,4 +7,6 @@ public interface IStorageBinProvider
 {
     Task<ResultService<StorageBin>> SaveByDapper(StorageBin entity);
     Task<ResultService<string>> DeleteByDapper(string code);
+
+    Task<ResultService<IEnumerable<StorageBin>>> GetAllByWarehouseCode (string code);
 }

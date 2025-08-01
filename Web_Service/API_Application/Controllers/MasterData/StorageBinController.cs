@@ -38,6 +38,18 @@ namespace API_Application.Controllers.MasterData
 
         }
 
+        [HttpGet("getAllByWarehouse/{warehouseCode}")]
+        [Consumes("application/json")]
+
+
+        [Produces("application/json")]
+        public async Task<IActionResult> GetAllByWảehouse(string warehouseCode)
+        {
+            var rs = await _storageBinProvider.GetAllByWarehouseCode(warehouseCode);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
+
+        }
+
 
         [HttpPost("Save")]
         [Consumes("application/json")]
