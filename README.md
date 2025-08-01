@@ -18,7 +18,6 @@ warehouse operations, stock movements, and product management efficiently.
   - **API Gateway:** Ocelot
   - **Message Queue:** RabbitMQ + MassTransit
   - **Real-time:** SignalR
-  - **Code Generation:** Stored Procedures (Generated Code in SQL)
     
 
 - **Frontend:**
