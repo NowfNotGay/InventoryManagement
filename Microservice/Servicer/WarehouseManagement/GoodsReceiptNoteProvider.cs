@@ -679,7 +679,7 @@ namespace Servicer.WarehouseManagement
                     await connection.OpenAsync();
                     var param = new DynamicParameters();
                     param.Add("@CreatedBy", entity.CreatedBy);
-                    param.Add("@udtt_Header", General.ConvertToDataTable(entity.GRNs).AsTableValuedParameter("UDTT_GoodsReceiptNoteHeader"));
+                    param.Add("@udtt_Header", General.ConvertToDataTable(new List<GoodsReceiptNote>(){entity.GRNs}).AsTableValuedParameter("UDTT_GoodsReceiptNoteHeader"));
                     param.Add("@udtt_Detail", General.ConvertToDataTable(entity.GRNLines).AsTableValuedParameter("UDTT_GoodsReceiptNoteDetail"));
                     param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
                     await connection.QueryAsync<GoodsReceiptNote>("GoodsReceiptNote_Create",
@@ -692,6 +692,7 @@ namespace Servicer.WarehouseManagement
                     {
                         response.Code = ResponseCode.Success.ToString(); // Success
                         response.Message = "Save Successfully";
+                        response.Data = entity;
                     }
                     else
                     {
@@ -719,10 +720,21 @@ namespace Servicer.WarehouseManagement
             }
         }
 
-        public async Task<ResultService<string>> GoodsReceiptNoteLine_Delete_SingleLine(Guid RowPointer)
+        public async Task<ResultService<string>> GoodsReceiptNoteLine_Delete_SingleLine(string RowPointer)
         {
             ResultService<string> response = new ResultService<string>();
-            if (RowPointer == null || RowPointer == Guid.Empty)
+            if (string.IsNullOrEmpty(RowPointer))
+            {
+                return new ResultService<string>()
+                {
+                    Code = ResponseCode.InvalidInput.ToString(),
+                    Message = "Entity is not valid",
+                    Data = null
+                };
+            }
+            Guid rowPointerGuid = Guid.TryParse(RowPointer, out Guid result) ? result : Guid.Empty; 
+
+            if(rowPointerGuid == Guid.Empty)
             {
                 return new ResultService<string>()
                 {
