@@ -7,7 +7,7 @@
 </p>
 > ⭐ **Give a Star & Fork this project** ... Happy coding!
 
-The **Inventory Management System** by Nguyễn Ngọc Hải is designed to handle
+The **Inventory Management System** by TeAM is designed to handle
 warehouse operations, stock movements, and product management efficiently.
 
 Built with:
