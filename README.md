@@ -66,7 +66,8 @@ warehouse operations, stock movements, and product management efficiently.
 We value the security of this project. Please follow these guidelines:
 
 ✅ Only use official versions of this repository from **GitHub**:  
-👉 [Inventory Management Repo](https://github.com/NowNotGay/InventoryManagement)
+👉 [Inventory Management Backend Repo](https://github.com/NowNotGay/InventoryManagement)
+👉 [Inventory Management Frontend Repo](https://github.com/Er2g0n/InventoryManagementFE)
 
 ✅ All official updates and patches will be provided here.  
 
