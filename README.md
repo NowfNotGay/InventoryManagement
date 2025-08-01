@@ -11,10 +11,26 @@ The **Inventory Management System** by TeAM is designed to handle
 warehouse operations, stock movements, and product management efficiently.
 
 Built with:
-- **Backend:** .NET + Dapper
-- **Frontend:** React TypeScript + TanStack Form/Table + Ant Design (AntD)
-- **Database:** SQL Server
-
+- **Backend:**
+  - .NET Core API
+  - **ORM:** Dapper & Entity Framework (EF)
+  - **API Gateway:** Ocelot
+  - **Message Queue:** RabbitMQ + MassTransit
+  - **Real-time:** SignalR
+  - **Code Generation:** Stored Procedures (Generated Code in SQL)
+  - 
+- **Frontend:**
+  - React TypeScript
+  - TanStack Form/Table
+  - Ant Design (AntD)
+  - 
+- **Database:**
+  - SQL Server
+  - Azure SQL Database
+ 
+  - **Deployment & Infrastructure:**
+  - Docker (Containerization)
+  - Kubernetes (Orchestration)
 ---
 
 ## 📌 Project Roadmap
