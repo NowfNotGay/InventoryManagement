@@ -64,7 +64,7 @@ namespace API_Application.Controllers.ProductManagement
         {
             var rs = await _productProvider.Save(product);
             return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
-        }
+        }   
 
         [HttpDelete("DeleteByDapper/{code}")]
         [Consumes("application/json")]
