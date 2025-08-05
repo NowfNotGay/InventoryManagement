@@ -1,11 +1,11 @@
-﻿namespace Core.WarehouseManagement
+﻿namespace Core.TransactionManagement
 {
     public class GoodsReceiptNote : BaseClass.BaseClass
     {
         public string GRNCode { get; set; }
-        public int WarehouseID { get; set; }
-        public int SupplierID { get; set; }
-        public int TransactionTypeID { get; set; }
+        public string WarehouseCode { get; set; }
+        public string SupplierCode { get; set; }
+        public string TransactionTypeCode { get; set; }
         public DateTime ReceiptDate { get; set; } = DateTime.Now;
         public string Notes { get; set; }
     }
@@ -13,13 +13,13 @@
     public class GoodsReceiptNoteLine : BaseClass.BaseClass
     {
         public string RefGRNCode { get; set; }
-        public int ProductID { get; set; }
-        public int ProductVariantID { get; set; }
-        public int UoMID { get; set; }
+        public string ProductCode { get; set; }
+        public string ProductVariantCode { get; set; }
+        public string UoMCode { get; set; }
         public decimal Quantity { get; set; }
-        public int UoMConversionID { get; set; }
+        public string UoMConversionCode { get; set; }
         public decimal ConvertedQuantity { get; set; }
-        public int StorageBinID { get; set; }
+        public string StorageBinCode { get; set; }
     }
 
     public class GoodsReceiptNote_Param

@@ -4,22 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.WarehouseManagement;
+namespace Core.TransactionManagement;
 public class InventoryTransaction : BaseClass.BaseClass
 {
 
-        public string InventoryTransactionCode { get; set; }
-        public int ProductID { get; set; }
-        public int? ProductVariantID { get; set; }
-        public int UoMID { get; set; }
-        public decimal Quantity { get; set; }
-        public int WarehouseID { get; set; }
-        public int? StorageBinID { get; set; }
-        public int TransactionTypeID { get; set; }
-        public DateTime TransactionDate { get; set; }
-        public int? ReferenceID { get; set; }
-        public string? ReferenceType { get; set; }
-        public string? Notes { get; set; }
+    public string InventoryTransactionCode { get; set; }
+    public string ProductCode { get; set; }
+    public string ProductVariantCode { get; set; }
+    public string UoMCode { get; set; }
+    public decimal Quantity { get; set; }
+    public string WarehouseCode { get; set; }
+    public string StorageBinCode { get; set; }
+    public string TransactionTypeCode { get; set; }
+    public DateTime TransactionDate { get; set; }
+    public int? ReferenceID { get; set; }
+    public string? ReferenceType { get; set; }
+    public string? Notes { get; set; }
 
 }
 public class InventoryTransactionParam : BaseClass.BaseClass
@@ -39,8 +39,8 @@ public class InventoryTransactionParam : BaseClass.BaseClass
 
     //UoM
     public string UoMCode { get; set; } = string.Empty;
-    public string UoMName { get; set; } = string.Empty;        
-    
+    public string UoMName { get; set; } = string.Empty;
+
 
     public decimal Quantity { get; set; }
 

@@ -1,12 +1,12 @@
 ﻿using Base.BaseService;
-using Base.WarehouseManagement;
+using Base.TransactionManagement;
 using Core.BaseClass;
-using Core.WarehouseManagement;
+using Core.TransactionManagement;
 using Microsoft.AspNetCore.Mvc;
 using Servicer.WarehouseManagement;
 using System.Threading.Tasks;
 
-namespace API_Application.Controllers.WarehouseManagement;
+namespace API_Application.Controllers.TransactionManagement;
 
 [ApiController]
 [Route("api/[controller]")]

@@ -3,7 +3,7 @@ using Base.MasterData;
 using Context.MasterData;
 using Core.BaseClass;
 using Core.MasterData;
-using Core.WarehouseManagement;
+using Core.TransactionManagement;
 using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;

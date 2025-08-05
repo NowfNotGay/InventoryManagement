@@ -1,10 +1,10 @@
 ﻿using Base.BaseService;
-using Base.WarehouseManagement;
-using Core.WarehouseManagement;
+using Base.TransactionManagement;
+using Core.TransactionManagement;
 using Microsoft.AspNetCore.Mvc;
 using Servicer.WarehouseManagement;
 
-namespace API_Application.Controllers.WarehouseManagement;
+namespace API_Application.Controllers.TransactionManagement;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -50,7 +50,7 @@ public class GoodsIssueNoteController : ControllerBase
         var rs = await _ICRUD_Service.Update(GoodsIssueNote);
         return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
     }
-    
+
     [HttpDelete]
     [Consumes("application/json")]
     [Produces("application/json")]

@@ -5,7 +5,7 @@ using Core.ProductManagement;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API_Application.Controllers.WarehouseManagement;
+namespace API_Application.Controllers.TransactionManagement;
 
 [Route("api/[controller]")]
 [ApiController]

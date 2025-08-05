@@ -1,9 +1,9 @@
 ﻿using Azure;
 using Base.BaseService;
-using Base.WarehouseManagement;
+using Base.TransactionManagement;
 using Context.WarehouseManagement;
 using Core.BaseClass;
-using Core.WarehouseManagement;
+using Core.TransactionManagement;
 using Dapper;
 using Helper.Method;
 using Microsoft.Data.SqlClient;

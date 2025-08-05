@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Core.BaseClass;
-using Core.WarehouseManagement;
+using Core.TransactionManagement;
 
-
-namespace Base.WarehouseManagement;
+namespace Base.TransactionManagement;
 public interface IGoodsIssueNoteProvider
 {
     Task<ResultService<GoodsIssueNote>> SaveByDapper(GoodsIssueNote entity);

@@ -1,7 +1,7 @@
 ﻿using Core.BaseClass;
-using Core.WarehouseManagement;
+using Core.TransactionManagement;
 
-namespace Base.WarehouseManagement
+namespace Base.TransactionManagement
 {
     public interface IStockTransferProvider
     {

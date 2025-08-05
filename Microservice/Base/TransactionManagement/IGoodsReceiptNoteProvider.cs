@@ -1,7 +1,7 @@
 ﻿using Core.BaseClass;
-using Core.WarehouseManagement;
+using Core.TransactionManagement;
 
-namespace Base.WarehouseManagement
+namespace Base.TransactionManagement
 {
     public interface IGoodsReceiptNoteProvider
     {
@@ -9,7 +9,7 @@ namespace Base.WarehouseManagement
         Task<ResultService<string>> DeleteByDapper(string grnCode);
         //Task<ResultService<GoodsReceiptNote_Param>> CreateHeaderAndLine(GoodsReceiptNote_Param entity);
         Task<ResultService<GoodsReceiptNote_Param>> Save(GoodsReceiptNote_Param entity);
-        Task<ResultService<string>> GoodReceiptNoteLine_Save(GoodsReceiptNoteLine entity); 
+        Task<ResultService<string>> GoodReceiptNoteLine_Save(GoodsReceiptNoteLine entity);
         Task<ResultService<string>> GoodsReceiptNoteLine_Delete_Multi_Line(List<GoodsReceiptNoteLine> entity);
         Task<ResultService<string>> GoodsReceiptNoteLine_Delete_SingleLine(string RowPointer);
         Task<ResultService<IEnumerable<GoodsReceiptNoteLine>>> GetLineByRefCode(string GRNcode);
