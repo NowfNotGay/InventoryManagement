@@ -483,7 +483,7 @@ public class ProductProvider : ICRUD_Service<Product, int>, IProductProvider
         {
             return true;
         }
-        int primaryCount = entity.VariantImgs?.Count ?? 0;
+        int primaryCount = entity.VariantParams.Count(v => v.IsPrimary == true);
         int currentSubImageCount = entity.VariantParams.Count(v => v.IsPrimary == false);
         int newSubImageCount = entity.ImageFiles?.Count ?? 0;
 

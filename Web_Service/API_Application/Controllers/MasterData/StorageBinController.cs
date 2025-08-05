@@ -38,14 +38,26 @@ namespace API_Application.Controllers.MasterData
 
         }
 
+        [HttpGet("getAllByWarehouse/{warehouseCode}")]
+        [Consumes("application/json")]
 
-        [HttpPost]
+
+        [Produces("application/json")]
+        public async Task<IActionResult> GetAllByWảehouse(string warehouseCode)
+        {
+            var rs = await _storageBinProvider.GetAllByWarehouseCode(warehouseCode);
+            return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
+
+        }
+
+
+        [HttpPost("Save")]
         [Consumes("application/json")]
         [Produces("application/json")]
 
         public async Task<IActionResult> Save([FromBody] StorageBin storageBin)
         {
-            var rs = await _ICRUD_Service.Create(storageBin);
+            var rs = await _storageBinProvider.SaveByDapper(storageBin);
             return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
         }
 
@@ -59,13 +71,13 @@ namespace API_Application.Controllers.MasterData
             return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
 
         }
-        [HttpDelete]
+        [HttpDelete("/{code}")]
         [Consumes("application/json")]
         [Produces("application/json")]
-
-        public async Task<IActionResult> Delete(int id)
+       
+        public async Task<IActionResult> Delete(string code)
         {
-            var rs = await _ICRUD_Service.Delete(id);
+            var rs = await _storageBinProvider.DeleteByDapper(code);
             return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
 
         }
