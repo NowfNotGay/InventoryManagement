@@ -15,7 +15,7 @@ using static Dapper.SqlMapper;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
 
-namespace Servicer.WarehouseManagement
+namespace Servicer.TransactionManagement
 {
     public class GoodsReceiptNoteProvider : ICRUD_Service<GoodsReceiptNote, string>, IGoodsReceiptNoteProvider
     {
@@ -191,7 +191,7 @@ namespace Servicer.WarehouseManagement
         {
             var response = new ResultService<GoodsReceiptNote>();
 
-            var newEntity = await this.Get(entity.GRNCode);
+            var newEntity = await Get(entity.GRNCode);
             if (newEntity.Code == "-1")
             {
                 return new ResultService<GoodsReceiptNote>()
@@ -201,7 +201,7 @@ namespace Servicer.WarehouseManagement
                 };
 
             }
-           
+
             using (var connection = await _Context.Database.BeginTransactionAsync())
             {
                 try
@@ -264,7 +264,7 @@ namespace Servicer.WarehouseManagement
             ResultService<string> resultService = new ResultService<string>();
             try
             {
-                var entity = await this.Get(grnCode);
+                var entity = await Get(grnCode);
                 if (entity.Code == "-1")
                 {
                     return new ResultService<string>()
@@ -370,7 +370,7 @@ namespace Servicer.WarehouseManagement
                     if (resultMessage.Contains("OK", StringComparison.OrdinalIgnoreCase))
                     {
                         string code = resultMessage.Split("OK_")[1];
-                        response.Data = this.Get(code).Result.Data;
+                        response.Data = Get(code).Result.Data;
                         response.Code = ResponseCode.Success.ToString();
                         response.Message = "Save Successfully";
                     }
@@ -471,7 +471,7 @@ namespace Servicer.WarehouseManagement
                         parameter,
                         commandType: CommandType.StoredProcedure,
                            commandTimeout: TimeoutInSeconds);
-                   
+
                     var resultMessage = parameter.Get<string>("@Message");
 
                     if (resultMessage.Contains("OK"))
@@ -679,7 +679,7 @@ namespace Servicer.WarehouseManagement
                     await connection.OpenAsync();
                     var param = new DynamicParameters();
                     param.Add("@CreatedBy", entity.CreatedBy);
-                    param.Add("@udtt_Header", General.ConvertToDataTable(new List<GoodsReceiptNote>(){entity.GRNs}).AsTableValuedParameter("UDTT_GoodsReceiptNoteHeader"));
+                    param.Add("@udtt_Header", General.ConvertToDataTable(new List<GoodsReceiptNote>() { entity.GRNs }).AsTableValuedParameter("UDTT_GoodsReceiptNoteHeader"));
                     param.Add("@udtt_Detail", General.ConvertToDataTable(entity.GRNLines).AsTableValuedParameter("UDTT_GoodsReceiptNoteDetail"));
                     param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
                     await connection.QueryAsync<GoodsReceiptNote>("GoodsReceiptNote_Create",
@@ -732,9 +732,9 @@ namespace Servicer.WarehouseManagement
                     Data = null
                 };
             }
-            Guid rowPointerGuid = Guid.TryParse(RowPointer, out Guid result) ? result : Guid.Empty; 
+            Guid rowPointerGuid = Guid.TryParse(RowPointer, out Guid result) ? result : Guid.Empty;
 
-            if(rowPointerGuid == Guid.Empty)
+            if (rowPointerGuid == Guid.Empty)
             {
                 return new ResultService<string>()
                 {
@@ -773,7 +773,7 @@ namespace Servicer.WarehouseManagement
             }
         }
 
-        
+
         #endregion
 
     }

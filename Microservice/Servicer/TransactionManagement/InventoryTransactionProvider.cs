@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 
-namespace Servicer.WarehouseManagement;
+namespace Servicer.TransactionManagement;
 
 public class InventoryTransactionProvider : ICRUD_Service<InventoryTransaction, int>, IInventoryTransactionProvider
 {

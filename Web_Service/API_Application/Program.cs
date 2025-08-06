@@ -28,6 +28,7 @@ using Servicer.MasterData;
 using Servicer.MasterData.ProductClassification;
 using Servicer.MasterData.ProductManagement;
 using Servicer.MasterData.ProductProperties;
+using Servicer.TransactionManagement;
 using Servicer.WarehouseManagement;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -8,7 +8,6 @@ using Helper.Method;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -17,7 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
 
-namespace Servicer.WarehouseManagement;
+namespace Servicer.TransactionManagement;
 public class GoodsIssueNoteProvider : ICRUD_Service<GoodsIssueNote, int>, IGoodsIssueNoteProvider
 {
     private readonly DB_WarehouseManagement_Context _dB;
@@ -106,7 +105,7 @@ public class GoodsIssueNoteProvider : ICRUD_Service<GoodsIssueNote, int>, IGoods
     {
         var response = new ResultService<GoodsIssueNote>();
 
-        var getEntityID = await this.Get(entity.ID);
+        var getEntityID = await Get(entity.ID);
         if (getEntityID.Code == "-1")
         {
             return new ResultService<GoodsIssueNote>()
@@ -242,7 +241,7 @@ public class GoodsIssueNoteProvider : ICRUD_Service<GoodsIssueNote, int>, IGoods
     public async Task<ResultService<GoodsIssueNote>> Get(int id) //done
     {
         var response = new ResultService<GoodsIssueNote>();
-   
+
         try
         {
             using (SqlConnection sqlConnection = new SqlConnection(_dapperConnectionString))
@@ -292,7 +291,7 @@ public class GoodsIssueNoteProvider : ICRUD_Service<GoodsIssueNote, int>, IGoods
     public async Task<ResultService<IEnumerable<GoodsIssueNote>>> GetAll() //done
     {
         var response = new ResultService<IEnumerable<GoodsIssueNote>>();
- 
+
         try
         {
             using (SqlConnection sqlConnection = new SqlConnection(_dapperConnectionString))
@@ -328,7 +327,7 @@ public class GoodsIssueNoteProvider : ICRUD_Service<GoodsIssueNote, int>, IGoods
         }
     }
 
-   
+
     public async Task<ResultService<GoodsIssueNote>> SaveByDapper(GoodsIssueNote entity)
     {
         var response = new ResultService<GoodsIssueNote>();
@@ -552,33 +551,33 @@ public class GoodsIssueNoteProvider : ICRUD_Service<GoodsIssueNote, int>, IGoods
         try
         {
             string Message = string.Empty;
-           
-              using (var connection = new SqlConnection(_dapperConnectionString))
-              {
 
-                    await connection.OpenAsync();
-                    var param = new DynamicParameters();
-                    param.Add("@udtt_Detail", General.ConvertToDataTable(entity).AsTableValuedParameter("UDTT_GoodsIssueNoteDetail"));
-                    param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
-                    await connection.QueryAsync<GoodsIssueNote>("GoodsIssueNoteDetail_Delete_Multi",
-                       param,
-                       commandType: CommandType.StoredProcedure,
-                          commandTimeout: TimeoutInSeconds);
-                    var resultMessage = param.Get<string>("@Message");
+            using (var connection = new SqlConnection(_dapperConnectionString))
+            {
 
-                    if (resultMessage.Contains("OK"))
-                    {
-                        resultService.Code = "0"; // Success
-                        resultService.Message = "Deleted Successfully";
-                    }
-                    else
-                    {
-                        resultService.Code = "-999";
-                        resultService.Message = "Failed";
-                    }
+                await connection.OpenAsync();
+                var param = new DynamicParameters();
+                param.Add("@udtt_Detail", General.ConvertToDataTable(entity).AsTableValuedParameter("UDTT_GoodsIssueNoteDetail"));
+                param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
+                await connection.QueryAsync<GoodsIssueNote>("GoodsIssueNoteDetail_Delete_Multi",
+                   param,
+                   commandType: CommandType.StoredProcedure,
+                      commandTimeout: TimeoutInSeconds);
+                var resultMessage = param.Get<string>("@Message");
 
-                    return resultService;
-              }
+                if (resultMessage.Contains("OK"))
+                {
+                    resultService.Code = "0"; // Success
+                    resultService.Message = "Deleted Successfully";
+                }
+                else
+                {
+                    resultService.Code = "-999";
+                    resultService.Message = "Failed";
+                }
+
+                return resultService;
+            }
         }
         catch (DbUpdateConcurrencyException ex)
         {
@@ -631,7 +630,7 @@ public class GoodsIssueNoteProvider : ICRUD_Service<GoodsIssueNote, int>, IGoods
     public async Task<ResultService<IEnumerable<GoodsIssueNoteLine>>> GetLineByRefCode(string ginCode)
     {
         var response = new ResultService<IEnumerable<GoodsIssueNoteLine>>();
-      
+
         try
         {
             using (SqlConnection sqlConnection = new SqlConnection(_dapperConnectionString))

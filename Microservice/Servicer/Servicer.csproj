@@ -21,7 +21,6 @@
   <ItemGroup>
     <Folder Include="MasterData\ProductClassification\" />
     <Folder Include="MasterData\ProductProperties\" />
-    <Folder Include="TransactionManagement\" />
   </ItemGroup>
 
 </Project>

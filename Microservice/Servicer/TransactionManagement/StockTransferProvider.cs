@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 
-namespace Servicer.WarehouseManagement
+namespace Servicer.TransactionManagement
 {
     public class StockTransferProvider : ICRUD_Service<StockTransfer, int>, IStockTransferProvider
     {
@@ -335,7 +335,7 @@ namespace Servicer.WarehouseManagement
             ResultService<string> resultService = new ResultService<string>();
             try
             {
-                var entity = await this.Get(id);
+                var entity = await Get(id);
                 if (entity.Code == "-1")
                 {
                     return new ResultService<string>()
