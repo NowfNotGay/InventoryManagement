@@ -129,11 +129,11 @@ public class GoodsIssueNoteProvider : ICRUD_Service<GoodsIssueNote, int>, IGoods
         {
             try
             {
-                newEntity.WarehouseID = entity.WarehouseID;
+                newEntity.WarehouseCode = entity.WarehouseCode;
                 newEntity.UpdatedDate = DateTime.UtcNow;
                 newEntity.UpdatedBy = entity.UpdatedBy;
-                newEntity.CustomerID = entity.CustomerID;
-                newEntity.TransactionTypeID = entity.TransactionTypeID;
+                newEntity.CustomerCode = entity.CustomerCode;
+                newEntity.TransactionTypeCode = entity.TransactionTypeCode;
                 newEntity.IssueDate = entity.IssueDate;
                 newEntity.Notes = entity.Notes;
 

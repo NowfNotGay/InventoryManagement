@@ -587,9 +587,9 @@ namespace Servicer.TransactionManagement
                 try
                 {
                     newEntity.TransferCode = entity.TransferCode;
-                    newEntity.FromWarehouseID = entity.FromWarehouseID;
-                    newEntity.ToWarehouseID = entity.ToWarehouseID;
-                    newEntity.TransactionTypeID = entity.TransactionTypeID;
+                    newEntity.FromWarehouseCode = entity.FromWarehouseCode;
+                    newEntity.ToWarehouseCode = entity.ToWarehouseCode;
+                    newEntity.TransactionTypeCode = entity.TransactionTypeCode;
                     newEntity.Notes = entity.Notes;
                     newEntity.UpdatedDate = DateTime.UtcNow;
                     newEntity.UpdatedBy = entity.UpdatedBy;

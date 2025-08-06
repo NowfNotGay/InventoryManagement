@@ -206,11 +206,11 @@ namespace Servicer.TransactionManagement
             {
                 try
                 {
-                    newEntity.Data.WarehouseID = entity.WarehouseID;
+                    newEntity.Data.WarehouseCode = entity.WarehouseCode;
                     newEntity.Data.UpdatedDate = DateTime.UtcNow;
                     newEntity.Data.UpdatedBy = entity.UpdatedBy;
-                    newEntity.Data.SupplierID = entity.SupplierID;
-                    newEntity.Data.TransactionTypeID = entity.TransactionTypeID;
+                    newEntity.Data.SupplierCode = entity.SupplierCode;
+                    newEntity.Data.TransactionTypeCode = entity.TransactionTypeCode;
                     newEntity.Data.ReceiptDate = entity.ReceiptDate;
                     newEntity.Data.Notes = entity.Notes;
 

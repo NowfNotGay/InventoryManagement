@@ -145,15 +145,15 @@ public class InventoryTransactionProvider : ICRUD_Service<InventoryTransaction, 
                 }
 
                 obj.InventoryTransactionCode = entity.InventoryTransactionCode;
-                obj.ProductID = entity.ProductID;
-                obj.ProductVariantID = entity.ProductVariantID;
-                obj.UoMID = entity.UoMID;
+                obj.ProductCode = entity.ProductCode;
+                obj.ProductVariantCode = entity.ProductVariantCode;
+                obj.UoMCode = entity.UoMCode;
                 obj.Quantity = entity.Quantity;
-                obj.WarehouseID = entity.WarehouseID;
-                obj.StorageBinID = entity.StorageBinID;
-                obj.TransactionTypeID = entity.TransactionTypeID;
+                obj.WarehouseCode = entity.WarehouseCode;
+                obj.StorageBinCode = entity.StorageBinCode;
+                obj.TransactionTypeCode = entity.TransactionTypeCode;
                 obj.TransactionDate = entity.TransactionDate;
-                obj.ReferenceID = entity.ReferenceID;
+                obj.ReferenceCode = entity.ReferenceCode;
                 obj.ReferenceType = entity.ReferenceType;
                 obj.Notes = entity.Notes;
                 obj.UpdatedDate = DateTime.Now;

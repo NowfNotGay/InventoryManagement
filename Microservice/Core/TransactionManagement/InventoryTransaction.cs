@@ -17,7 +17,7 @@ public class InventoryTransaction : BaseClass.BaseClass
     public string StorageBinCode { get; set; }
     public string TransactionTypeCode { get; set; }
     public DateTime TransactionDate { get; set; }
-    public int? ReferenceID { get; set; }
+    public string? ReferenceCode { get; set; }
     public string? ReferenceType { get; set; }
     public string? Notes { get; set; }
 
@@ -61,7 +61,7 @@ public class InventoryTransactionParam : BaseClass.BaseClass
 
 
     public DateTime TransactionDate { get; set; }
-    public int? ReferenceID { get; set; }
+    public string? ReferenceCode { get; set; }
     public string? ReferenceType { get; set; }
     public string? Notes { get; set; }
 }
