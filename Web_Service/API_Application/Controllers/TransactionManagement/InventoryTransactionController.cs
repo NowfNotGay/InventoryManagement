@@ -1,13 +1,8 @@
 ﻿using API_Application.Utilities;
 using Base.BaseService;
 using Base.TransactionManagement;
-using Base.WarehouseManagement;
-using Core.BaseClass;
 using Core.TransactionManagement;
-using Core.WarehouseManagement;
 using Microsoft.AspNetCore.Mvc;
-using Servicer.WarehouseManagement;
-using System.Threading.Tasks;
 
 namespace API_Application.Controllers.TransactionManagement;
 
@@ -34,7 +29,7 @@ public class InventoryTransactionController : ControllerBase
     }
     [HttpGet("{id}")]
     [Produces("application/json")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetByID(int id)
     {
 
         return ApiResponseHelper.HandleResult(this, await _crudService.Get(id));
@@ -60,11 +55,11 @@ public class InventoryTransactionController : ControllerBase
 
         return ApiResponseHelper.HandleResult(this, await _crudService.Save(inventoryTransaction));
     }
-    [HttpDelete("DeleteByDapper")]
+    [HttpDelete("code/{invTranCode}")]
     [Produces("application/json")]
-    public async Task<IActionResult> DeleteByDapper(string inventoryTransactionCode)
+    public async Task<IActionResult> DeleteByDapper(string invTranCode)
     {
 
-        return ApiResponseHelper.HandleResult(this, await _inventoryTransactionProvider.DeleteByDapper(inventoryTransactionCode));
+        return ApiResponseHelper.HandleResult(this, await _inventoryTransactionProvider.DeleteByDapper(invTranCode));
     }
 }
