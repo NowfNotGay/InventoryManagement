@@ -45,7 +45,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-
+// Cloudinary Configuration
 #region CloudDinary
 builder.Services.AddSingleton<CloudDinaryHelper>();
 #endregion
@@ -54,7 +54,11 @@ builder.Services.AddSingleton<CloudDinaryHelper>();
 // Add services to the container.
 
 string chuỗi = General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!);
+Console.WriteLine("Chuỗi: " + chuỗi);
 string xâu = General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory_DAPPER")!);
+Console.WriteLine("Xâu: " + xâu);
+
+
 builder.Services.AddDbContext<DB_Testing_Context>(options =>
           options.UseLazyLoadingProxies().UseSqlServer(
                       "Server = 104.197.108.88; Database = Testing; User Id = sqlserver; Password = codingforever@3003; Encrypt = False; TrustServerCertificate = False; MultipleActiveResultSets = true; MultiSubnetFailover = True;",
