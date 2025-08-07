@@ -109,62 +109,6 @@ namespace Servicer.TransactionManagement
             }
         }
 
-        public async Task<ResultService<StockTransfer>> Create(StockTransfer entity)
-        {
-            var response = new ResultService<StockTransfer>();
-            if (entity == null)
-            {
-                return new ResultService<StockTransfer>()
-                {
-                    Code = "-1",
-                    Message = "Entity is null"
-                };
-            }
-
-            using (var connection = _context.Database.BeginTransaction())
-            {
-                try
-                {
-                    entity.RowPointer = Guid.Empty;
-                    entity.ID = 0;
-                    await _context.StockTransfers.AddAsync(entity);
-                    await _context.SaveChangesAsync();
-                    await connection.CommitAsync();
-
-                    response.Code = "0";
-                    response.Message = "Create new instance successfully";
-                    response.Data = entity;
-                    return response;
-
-                }
-                catch (SqlException ex)
-                {
-                    response.Code = "2";
-                    response.Message = $"Something error or conflict happend : {ex.GetType()} - {ex.Message}";
-                    return response;
-                }
-                catch (DbUpdateException ex)
-                {
-                    response.Code = "3";
-                    response.Message = $"Concurrency error conflict happend : {ex.GetType()} - {ex.Message}";
-                    return response;
-                }
-                catch (OperationCanceledException ex)
-                {
-                    await connection.RollbackAsync();
-                    response.Code = "5";
-                    response.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
-                    return response;
-                }
-                catch (Exception ex)
-                {
-                    await connection.RollbackAsync();
-                    response.Code = "6";
-                    response.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
-                    return response;
-                }
-            }
-        }
 
         public async Task<ResultService<StockTransfer>> CreateByDapper(StockTransfer entity)
         {
@@ -561,85 +505,6 @@ namespace Servicer.TransactionManagement
             }
         }
 
-        public async Task<ResultService<StockTransfer>> Update(StockTransfer entity)
-        {
-            var response = new ResultService<StockTransfer>();
-            var getID = await Get(entity.ID);
-            if (getID.Code == "-1")
-            {
-                return new ResultService<StockTransfer>()
-                {
-                    Code = getID.Code,
-                    Message = "Entity not found"
-                };
-            }
-            var newEntity = await _context.StockTransfers.FindAsync(getID.Data.RowPointer);
-            if (newEntity != null)
-            {
-                return new ResultService<StockTransfer>()
-                {
-                    Code = "-1",
-                    Message = "Entity not found"
-                };
-            }
-            using (var connection = await _context.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    newEntity.TransferCode = entity.TransferCode;
-                    newEntity.FromWarehouseCode = entity.FromWarehouseCode;
-                    newEntity.ToWarehouseCode = entity.ToWarehouseCode;
-                    newEntity.TransactionTypeCode = entity.TransactionTypeCode;
-                    newEntity.Notes = entity.Notes;
-                    newEntity.UpdatedDate = DateTime.UtcNow;
-                    newEntity.UpdatedBy = entity.UpdatedBy;
-
-                    await _context.SaveChangesAsync();
-                    await connection.CommitAsync();
-                    response.Code = "0";
-                    response.Data = newEntity;
-                    response.Message = "Update entity Successfully";
-                    return response;
-                }
-                catch (SqlException sqlex)
-                {
-                    await connection.RollbackAsync();
-                    response.Code = "2";
-                    response.Message = $"Something wrong happened with Database, please Check the configuration: {sqlex.GetType()} - {sqlex.Message}";
-                    return response;
-                }
-                catch (DbUpdateConcurrencyException ex)
-                {
-                    await connection.RollbackAsync();
-                    response.Code = "3";
-                    response.Message = $"Concurrency error or Conflict happened : {ex.GetType()} - {ex.Message}";
-                    return response;
-                }
-                catch (DbUpdateException ex)
-                {
-                    await connection.RollbackAsync();
-                    response.Code = "4";
-                    response.Message = $"Database update error: {ex.GetType()} - {ex.Message}";
-                    return response;
-                }
-                catch (OperationCanceledException ex)
-                {
-                    await connection.RollbackAsync();
-                    response.Code = "5";
-                    response.Message = $"Operation canceled: {ex.GetType()} - {ex.Message}";
-                    return response;
-                }
-                catch (Exception ex)
-                {
-                    await connection.RollbackAsync();
-                    response.Code = "6";
-                    response.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
-                    return response;
-                }
-
-            }
-
-        }
 
         public async Task<ResultService<string>> Delete_HeaderAndDetail(int stID)
         {
@@ -848,6 +713,16 @@ namespace Servicer.TransactionManagement
                 response.Message = $"An unexpected error occurred: {ex.GetType()} - {ex.Message}";
                 return response;
             }
+        }
+
+        public Task<ResultService<StockTransfer>> Create(StockTransfer entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResultService<StockTransfer>> Update(StockTransfer entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

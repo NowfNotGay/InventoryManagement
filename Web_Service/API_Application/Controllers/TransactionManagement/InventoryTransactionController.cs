@@ -1,7 +1,10 @@
-﻿using Base.BaseService;
+﻿using API_Application.Utilities;
+using Base.BaseService;
 using Base.TransactionManagement;
+using Base.WarehouseManagement;
 using Core.BaseClass;
 using Core.TransactionManagement;
+using Core.WarehouseManagement;
 using Microsoft.AspNetCore.Mvc;
 using Servicer.WarehouseManagement;
 using System.Threading.Tasks;
@@ -12,92 +15,56 @@ namespace API_Application.Controllers.TransactionManagement;
 [Route("api/[controller]")]
 public class InventoryTransactionController : ControllerBase
 {
-    private readonly ICRUD_Service<InventoryTransaction, int> _ICRUD_Service;
+    private readonly ICRUD_Service<InventoryTransaction, int> _crudService;
     private readonly IInventoryTransactionProvider _inventoryTransactionProvider;
 
     public InventoryTransactionController(
         ICRUD_Service<InventoryTransaction, int> iCRUD_Service,
         IInventoryTransactionProvider inventoryTransactionProvider)
     {
-        _ICRUD_Service = iCRUD_Service;
         _inventoryTransactionProvider = inventoryTransactionProvider;
+        _crudService = iCRUD_Service;
     }
-
-    #region Normal CRUD
-
     [HttpGet]
     [Produces("application/json")]
     public async Task<IActionResult> GetAll()
     {
-        var rs = await _ICRUD_Service.GetAll();
-        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
-    }
 
+        return ApiResponseHelper.HandleResult(this, await _crudService.GetAll());
+    }
     [HttpGet("{id}")]
     [Produces("application/json")]
     public async Task<IActionResult> GetById(int id)
     {
-        var rs = await _ICRUD_Service.Get(id);
-        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
-    }
 
-    [HttpPost]
-    [Consumes("application/json")]
-    [Produces("application/json")]
-    public async Task<IActionResult> Create([FromBody] InventoryTransaction inventoryTransaction)
-    {
-        var rs = await _ICRUD_Service.Create(inventoryTransaction);
-        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+        return ApiResponseHelper.HandleResult(this, await _crudService.Get(id));
     }
-
-    [HttpPut]
-    [Consumes("application/json")]
-    [Produces("application/json")]
-    public async Task<IActionResult> Update([FromBody] InventoryTransaction inventoryTransaction)
-    {
-        var rs = await _ICRUD_Service.Update(inventoryTransaction);
-        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
-    }
-
-    [HttpDelete]
-    [Consumes("application/json")]
+    [HttpDelete("{id:int}")]
     [Produces("application/json")]
     public async Task<IActionResult> Delete(int id)
     {
-        var rs = await _ICRUD_Service.Delete(id);
-        return !rs.Code.Equals("0") ? BadRequest(rs) : Ok(rs);
+        return ApiResponseHelper.HandleResult(this, await _crudService.Delete(id));
     }
+    [HttpGet("inventoryTransactionCode/{code}")]
+    [Produces("application/json")]
+    public async Task<IActionResult> GetByCode(string code)
+    {
 
-    #endregion
-
-    #region Dapper CRUD
-
-    [HttpGet("inventoryTransactionCode/{inventoryTransactionCode}")]
+        return ApiResponseHelper.HandleResult(this, await _inventoryTransactionProvider.GetByCode(code));
+    }
+    [HttpPost("Save")]
     [Consumes("application/json")]
     [Produces("application/json")]
-    public async Task<IActionResult> GetByCode(string inventoryTransactionCode)
+    public async Task<IActionResult> Save([FromBody] InventoryTransaction inventoryTransaction)
     {
-        var rs = await _inventoryTransactionProvider.GetByCode(inventoryTransactionCode);
-        return rs.Code == "0" ? Ok(rs) : NotFound($"InventoryTransaction with Code {inventoryTransactionCode} not found");
-    }
 
-    [HttpPost("SaveByDapper")]
-    [Consumes("application/json")]
-    [Produces("application/json")]
-    public async Task<IActionResult> SaveByDapper([FromBody] InventoryTransaction inventoryTransaction)
-    {
-        var rs = await _inventoryTransactionProvider.SaveByDapper(inventoryTransaction);
-        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
+        return ApiResponseHelper.HandleResult(this, await _crudService.Save(inventoryTransaction));
     }
-
     [HttpDelete("DeleteByDapper")]
-    [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> DeleteByDapper(string inventoryTransactionCode)
     {
-        var rs = await _inventoryTransactionProvider.DeleteByDapper(inventoryTransactionCode);
-        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
-    }
 
-    #endregion
+        return ApiResponseHelper.HandleResult(this, await _inventoryTransactionProvider.DeleteByDapper(inventoryTransactionCode));
+    }
 }

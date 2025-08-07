@@ -8,10 +8,7 @@ using Helper.Method;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Threading.Tasks;
 
 namespace Servicer.TransactionManagement;
 
@@ -29,51 +26,6 @@ public class InventoryTransactionProvider : ICRUD_Service<InventoryTransaction, 
         _dapperConnectionString = General.DecryptString(_configuration.GetConnectionString("DB_Inventory_DAPPER")!);
     }
 
-    #region Normal CRUD
-
-    public async Task<ResultService<InventoryTransaction>> Create(InventoryTransaction entity)
-    {
-        using (var transaction = _dB.Database.BeginTransaction())
-        {
-            ResultService<InventoryTransaction> result = new();
-            try
-            {
-                await _dB.InventoryTransactions.AddAsync(entity);
-
-                if (_dB.SaveChanges() <= 0)
-                {
-                    result.Message = "Failed to create data";
-                    result.Code = "-1";
-                }
-                await transaction.CommitAsync();
-                result.Message = "Success";
-                result.Code = "0";
-                result.Data = entity;
-                return result;
-            }
-            catch (SqlException sqlEx)
-            {
-                await transaction.RollbackAsync();
-                result.Code = "1";
-                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
-                return result;
-            }
-            catch (ArgumentException ex)
-            {
-                await transaction.RollbackAsync();
-                result.Code = "2";
-                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration. Details: {ex.GetType()} - {ex.Message}";
-                return result;
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                result.Message = ex.Message;
-                result.Code = "999";
-                return result;
-            }
-        }
-    }
 
     public async Task<ResultService<string>> Delete(int id)
     {
@@ -128,75 +80,6 @@ public class InventoryTransactionProvider : ICRUD_Service<InventoryTransaction, 
         }
     }
 
-    public async Task<ResultService<InventoryTransaction>> Update(InventoryTransaction entity)
-    {
-        ResultService<InventoryTransaction> result = new();
-        using (var transaction = _dB.Database.BeginTransaction())
-        {
-            try
-            {
-                var obj = await _dB.InventoryTransactions.FindAsync(entity.RowPointer);
-                if (obj == null)
-                {
-                    result.Message = "Data not found!";
-                    result.Code = "-1";
-                    result.Data = null;
-                    return result;
-                }
-
-                obj.InventoryTransactionCode = entity.InventoryTransactionCode;
-                obj.ProductCode = entity.ProductCode;
-                obj.ProductVariantCode = entity.ProductVariantCode;
-                obj.UoMCode = entity.UoMCode;
-                obj.Quantity = entity.Quantity;
-                obj.WarehouseCode = entity.WarehouseCode;
-                obj.StorageBinCode = entity.StorageBinCode;
-                obj.TransactionTypeCode = entity.TransactionTypeCode;
-                obj.TransactionDate = entity.TransactionDate;
-                obj.ReferenceCode = entity.ReferenceCode;
-                obj.ReferenceType = entity.ReferenceType;
-                obj.Notes = entity.Notes;
-                obj.UpdatedDate = DateTime.Now;
-                obj.UpdatedBy = entity.UpdatedBy;
-
-                if (_dB.SaveChanges() <= 0)
-                {
-                    result.Message = "Failed to update data";
-                    result.Code = "1";
-                    result.Data = null;
-                    return result;
-                }
-                await transaction.CommitAsync();
-                result.Message = "Success";
-                result.Code = "0";
-                result.Data = entity;
-                return result;
-            }
-            catch (SqlException sqlEx)
-            {
-                await transaction.RollbackAsync();
-                result.Code = "1";
-                result.Message = $"{sqlEx.GetType()} - {sqlEx.Message}";
-                return result;
-            }
-            catch (ArgumentException ex)
-            {
-                await transaction.RollbackAsync();
-                result.Code = "2";
-                result.Message = $"An error occurred while trying to connect to your database Server, pls check your Configuration. Details: {ex.GetType()} - {ex.Message}";
-                return result;
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                result.Message = ex.Message;
-                result.Code = "999";
-                return result;
-            }
-        }
-    }
-
-    #endregion
 
     #region Dapper CRUD
 
@@ -304,7 +187,7 @@ public class InventoryTransactionProvider : ICRUD_Service<InventoryTransaction, 
         }
     }
 
-    public async Task<ResultService<InventoryTransaction>> SaveByDapper(InventoryTransaction entity)
+    public async Task<ResultService<InventoryTransaction>> Save(InventoryTransaction entity)
     {
         var response = new ResultService<InventoryTransaction>();
 
@@ -335,7 +218,7 @@ public class InventoryTransactionProvider : ICRUD_Service<InventoryTransaction, 
                 param.Add("@udtt_InventoryTransaction", dtHeader.AsTableValuedParameter("UDTT_InventoryTransaction"));
                 param.Add("@Message", Message, dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
 
-                await connection.QueryAsync<InventoryTransaction>(
+                var result = await connection.QueryAsync<InventoryTransaction>(
                     "InventoryTransaction_Save",
                     param,
                     commandType: CommandType.StoredProcedure,
@@ -346,12 +229,18 @@ public class InventoryTransactionProvider : ICRUD_Service<InventoryTransaction, 
                 if (resultMessage.Contains("successfully"))
                 {
                     response.Code = "0"; // Success
-                    response.Message = "Save Successfully(BE)";
+                    response.Message = "Save Successfully(BE) - " + resultMessage;
+                    response.Data = result.FirstOrDefault(); // Assuming the first item is the saved entity
+                    if (response.Data != null)
+                    {
+                        response.Data.RowPointer = Guid.NewGuid(); // Assign a new RowPointer if needed
+                    }
                 }
                 else
                 {
                     response.Code = "-999"; // Fail
-                    response.Message = resultMessage != null ? $"Failed: {resultMessage}" : "Failed(BE)";
+                    response.Message = "Failed(BE) - " + resultMessage;
+
                 }
 
                 return response;
@@ -469,6 +358,20 @@ public class InventoryTransactionProvider : ICRUD_Service<InventoryTransaction, 
                 Message = $"{ex.GetType()}, {ex.Message}"
             };
         }
+    }
+
+
+
+
+
+    public Task<ResultService<InventoryTransaction>> Create(InventoryTransaction entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ResultService<InventoryTransaction>> Update(InventoryTransaction entity)
+    {
+        throw new NotImplementedException();
     }
 
     #endregion
