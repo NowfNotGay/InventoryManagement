@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helper", "Microservice\Help
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API_GateWay", "Web_Service\API_GateWay\API_GateWay.csproj", "{F92B8D2F-66DE-46BB-86E2-E2D066522F34}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jobs", "Jobs\Jobs.csproj", "{10162FE2-E2A2-4282-9A8F-D70949A67233}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{F92B8D2F-66DE-46BB-86E2-E2D066522F34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F92B8D2F-66DE-46BB-86E2-E2D066522F34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F92B8D2F-66DE-46BB-86E2-E2D066522F34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10162FE2-E2A2-4282-9A8F-D70949A67233}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10162FE2-E2A2-4282-9A8F-D70949A67233}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10162FE2-E2A2-4282-9A8F-D70949A67233}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10162FE2-E2A2-4282-9A8F-D70949A67233}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,5 +73,9 @@ Global
 		{49E7559D-F5FC-4CF2-AA4A-FBAB914D1D1F} = {31470E46-6864-4AD7-BC5D-9E2D660BDFC1}
 		{12AB1549-ECBD-4FA0-9BF4-B46A69334B89} = {31470E46-6864-4AD7-BC5D-9E2D660BDFC1}
 		{F92B8D2F-66DE-46BB-86E2-E2D066522F34} = {1A490BB1-597B-4E39-9BBC-594EE33BEE24}
+		{10162FE2-E2A2-4282-9A8F-D70949A67233} = {1A490BB1-597B-4E39-9BBC-594EE33BEE24}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8AC39E61-6F20-4CBE-8A4F-42C7CF67AE39}
 	EndGlobalSection
 EndGlobal
