@@ -1,26 +1,26 @@
-﻿namespace Core.WarehouseManagement
+﻿namespace Core.TransactionManagement
 {
     public class StockTransfer : BaseClass.BaseClass
     {
         public string TransferCode { get; set; }
-        public int FromWarehouseID { get; set; }
-        public int ToWarehouseID { get; set; }
-        public int TransactionTypeID { get; set; }
+        public string FromWarehouseCode { get; set; }
+        public string ToWarehouseCode { get; set; }
+        public string TransactionTypeCode { get; set; }
         public DateTime TransferDate { get; set; } = DateTime.Now;
         public string? Notes { get; set; }
     }
 
     public class StockTransferDetail : BaseClass.BaseClass
     {
-        public int StockTransferID { get; set; }
-        public int ProductID { get; set; }
-        public int ProductVariantID { get; set; }
-        public int UoMID { get; set; }
+        public string StockTransferCode { get; set; }
+        public string ProductCode { get; set; }
+        public string ProductVariantCode { get; set; }
+        public string UoMCode { get; set; }
         public decimal Quantity { get; set; }
-        public int UoMConversionID { get; set; }
+        public string UoMConversionCode { get; set; }
         public decimal ConvertedQuantity { get; set; }
-        public int FromStorageBinID { get; set; }
-        public int ToStorageBinID { get; set; }
+        public string FromStorageBinCode { get; set; }
+        public string ToStorageBinCode { get; set; }
     }
 
     public class StockTransfer_Param

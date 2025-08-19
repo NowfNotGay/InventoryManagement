@@ -1,13 +1,13 @@
 ﻿using Base.BaseService;
 using Base.MasterData;
-using Base.WarehouseManagement;
+using Base.TransactionManagement;
 using Core.MasterData;
-using Core.WarehouseManagement;
+using Core.TransactionManagement;
 using Helper.Method;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API_Application.Controllers.WarehouseManagement
+namespace API_Application.Controllers.TransactionManagement
 {
     [Route("api/[controller]")]
     [ApiController]

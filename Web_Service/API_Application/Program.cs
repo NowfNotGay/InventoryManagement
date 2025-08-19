@@ -4,6 +4,7 @@ using Base.MasterData;
 using Base.MasterData.ProductClassification;
 using Base.MasterData.ProductProperties;
 using Base.ProductManagement;
+using Base.TransactionManagement;
 using Base.WarehouseManagement;
 using CloudinaryDotNet;
 using Context.Example;
@@ -18,6 +19,7 @@ using Core.MasterData;
 using Core.MasterData.ProductClassification;
 using Core.MasterData.ProductProperties;
 using Core.ProductManagement;
+using Core.TransactionManagement;
 using Core.WarehouseManagement;
 using Hangfire;
 using Helper.Method;
@@ -29,6 +31,7 @@ using Servicer.MasterData;
 using Servicer.MasterData.ProductClassification;
 using Servicer.MasterData.ProductManagement;
 using Servicer.MasterData.ProductProperties;
+using Servicer.TransactionManagement;
 using Servicer.WarehouseManagement;
 
 
@@ -46,7 +49,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-
+// Cloudinary Configuration
 #region CloudDinary
 builder.Services.AddSingleton<CloudDinaryHelper>();
 #endregion
@@ -67,6 +70,11 @@ string xâu = General.EncryptString("Data Source=113.172.183.62,14332;Initial Ca
 //builder.Services.AddScoped<UpdateConnectionStringJob>();
 
 //#endregion
+
+string chuỗi = General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!);
+string xâu = General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory_DAPPER")!);
+Console.WriteLine("Xâu: " + xâu);
+
 
 builder.Services.AddDbContext<DB_Testing_Context>(options =>
           options.UseLazyLoadingProxies().UseSqlServer(

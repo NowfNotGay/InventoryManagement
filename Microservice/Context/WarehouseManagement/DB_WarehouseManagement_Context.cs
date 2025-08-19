@@ -1,4 +1,5 @@
-﻿using Core.WarehouseManagement;
+﻿using Core.TransactionManagement;
+using Core.WarehouseManagement;
 using Microsoft.EntityFrameworkCore;
 
 namespace Context.WarehouseManagement

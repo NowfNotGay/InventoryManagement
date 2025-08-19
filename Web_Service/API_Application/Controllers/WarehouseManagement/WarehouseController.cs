@@ -4,7 +4,7 @@ using Base.WarehouseManagement;
 using Core.WarehouseManagement;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API_Application.Controllers.WarehouseManagement;
+namespace API_Application.Controllers.TransactionManagement;
 
 [ApiController]
 [Route("api/[controller]")]
