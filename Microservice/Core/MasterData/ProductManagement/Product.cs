@@ -99,9 +99,6 @@ public class ProductParam : BaseClass.BaseClass
     //UoM
     public UnitOfMeasure UnitOfMeasure { get; set; }
 
-
-   
-
     public List<VariantParam> VariantParams { get; set; }
     public List<ProductImages> ProductImages { get; set; }
 }
