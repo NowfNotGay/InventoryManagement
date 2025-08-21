@@ -9,6 +9,8 @@ namespace Context.WarehouseManagement
         public DB_WarehouseManagement_Context(DbContextOptions<DB_WarehouseManagement_Context> options) : base(options)
         {
         }
+
+        public DbSet<CurrentStock> CurrentStocks { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
 
         public DbSet<GoodsReceiptNote> GoodsReceiptNotes { get; set; }
@@ -21,6 +23,14 @@ namespace Context.WarehouseManagement
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //CurrentStock
+            modelBuilder.Entity<CurrentStock>()
+                .ToTable("CurrentStock")
+                .HasKey(c => c.RowPointer);
+            modelBuilder.Entity<CurrentStock>()
+                .Property(w => w.RowPointer)
+                .HasDefaultValueSql("NEWSEQUENTIALID()");
+
             //Hai - Warehouse
             modelBuilder.Entity<Warehouse>()
                 .ToTable("Warehouse")
@@ -92,7 +102,7 @@ namespace Context.WarehouseManagement
                 .Property(c => c.RowPointer)
                 .HasDefaultValueSql("NEWSEQUENTIALID()");
 
-         
+
 
             //modelBuilder.Entity<StockTransfer>()
             //    .ToTable("GoodsReceiptNoteLine")

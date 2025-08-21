@@ -21,8 +21,11 @@ using Core.MasterData.ProductProperties;
 using Core.ProductManagement;
 using Core.TransactionManagement;
 using Core.WarehouseManagement;
+using Hangfire;
 using Helper.Method;
+using Jobs;
 using Microsoft.EntityFrameworkCore;
+using Servicer;
 using Servicer.Example;
 using Servicer.MasterData;
 using Servicer.MasterData.ProductClassification;
@@ -30,6 +33,7 @@ using Servicer.MasterData.ProductManagement;
 using Servicer.MasterData.ProductProperties;
 using Servicer.TransactionManagement;
 using Servicer.WarehouseManagement;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,10 +55,23 @@ builder.Services.AddSingleton<CloudDinaryHelper>();
 #endregion
 
 
+string chuỗi = General.EncryptString("Server = 113.172.183.62,14332; Database =Inventory; User Id = sql; Password = 123; Encrypt = False; TrustServerCertificate = False; MultipleActiveResultSets = true; MultiSubnetFailover = True;");
+string xâu = General.EncryptString("Data Source=113.172.183.62,14332;Initial Catalog=Inventory;Persist Security Info=True;User ID=sql;Password=123;TrustServerCertificate=True;");
+
 // Add services to the container.
+//#region hangfire
+//builder.Services.AddHangfire(config => config
+//    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+//    .UseSimpleAssemblyNameTypeSerializer()
+//    .UseDefaultTypeSerializer()
+//    .UseSqlServerStorage(General.EncryptString(builder.Configuration.GetConnectionString("HangfireConnection"))));
+//builder.Services.AddHangfireServer();
+//builder.Services.AddSingleton<DynamicConnectionStringProvider>();
+//builder.Services.AddScoped<UpdateConnectionStringJob>();
+
+//#endregion
 
 string chuỗi = General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory")!);
-Console.WriteLine("Chuỗi: " + chuỗi);
 string xâu = General.DecryptString(builder.Configuration.GetConnectionString("DB_Inventory_DAPPER")!);
 Console.WriteLine("Xâu: " + xâu);
 
@@ -179,6 +196,9 @@ builder.Services.AddTransient<ICRUD_Service<ProductUoMConversion, int>, ProductU
 #endregion
 
 #region Warehouse_Management
+builder.Services.AddTransient<ICurrentStockProvider, CurrentStockProvider>();
+
+
 //
 builder.Services.AddTransient<ICRUD_Service<GoodsReceiptNote, string>, GoodsReceiptNoteProvider>();
 builder.Services.AddTransient<IGoodsReceiptNoteProvider, GoodsReceiptNoteProvider>();
@@ -218,6 +238,11 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+
+//app.UseHangfireDashboard();
+
+//// Lên lịch job chạy mỗi 2 phút
+//RecurringJob.AddOrUpdate<UpdateConnectionStringJob>("update-connection-string", job => job.Execute(), "*/2 * * * *");
 
 // Sử dụng CORS
 app.UseCors("AllowAll");

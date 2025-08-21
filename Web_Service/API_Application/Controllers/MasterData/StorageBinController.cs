@@ -71,7 +71,7 @@ namespace API_Application.Controllers.MasterData
             return rs.Code == "0" ? Ok(rs) : BadRequest(rs);
 
         }
-        [HttpDelete("/{code}")]
+        [HttpDelete("{code}")]
         [Consumes("application/json")]
         [Produces("application/json")]
        
