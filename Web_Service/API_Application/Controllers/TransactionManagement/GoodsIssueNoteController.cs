@@ -11,52 +11,33 @@ namespace API_Application.Controllers.TransactionManagement;
 public class GoodsIssueNoteController : ControllerBase
 {
     private readonly IGoodsIssueNoteProvider _goodsIssueNoteProvider;
-    private readonly ICRUD_Service<GoodsIssueNote, int> _ICRUD_Service;
+    private readonly ICRUD_Service<GoodsIssueNote, int> _crudService;
     public GoodsIssueNoteController(IGoodsIssueNoteProvider goodsIssueNoteProvider, ICRUD_Service<GoodsIssueNote, int> iCRUD_Service)
     {
         _goodsIssueNoteProvider = goodsIssueNoteProvider;
-        _ICRUD_Service = iCRUD_Service;
+        _crudService = iCRUD_Service;
     }
     #region GoodsIssueNote
     [HttpGet]
-    [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> GetAll() //done
     {
-        var rs = await _ICRUD_Service.GetAll();
+        var rs = await _crudService.GetAll();
         return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
     }
     [HttpGet("ID")]
-    [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> GetByID([FromQuery] int id) //done
     {
-        var rs = await _ICRUD_Service.Get(id);
+        var rs = await _crudService.Get(id);
         return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
-    }
-    [HttpPost]
-    [Consumes("application/json")]
-    [Produces("application/json")]
-    public async Task<IActionResult> Create([FromBody] GoodsIssueNote GoodsIssueNote) //done
-    {
-        var rs = await _ICRUD_Service.Create(GoodsIssueNote);
-        return rs.Code == "0" ? Ok(rs.Data) : BadRequest(rs.Message);
-    }
-    [HttpPut]
-    [Consumes("application/json")]
-    [Produces("application/json")]
-    public async Task<IActionResult> Update([FromBody] GoodsIssueNote GoodsIssueNote) //done
-    {
-        var rs = await _ICRUD_Service.Update(GoodsIssueNote);
-        return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
     }
 
     [HttpDelete]
-    [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> Delete([FromQuery] int id) //done
     {
-        var rs = await _ICRUD_Service.Delete(id);
+        var rs = await _crudService.Delete(id);
         return rs.Code == "0" ? Ok(rs.Message) : BadRequest(rs.Message);
     }
     #endregion

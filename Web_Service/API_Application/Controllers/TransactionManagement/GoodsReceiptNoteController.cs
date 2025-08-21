@@ -1,10 +1,7 @@
 ﻿using Base.BaseService;
-using Base.MasterData;
 using Base.TransactionManagement;
-using Core.MasterData;
 using Core.TransactionManagement;
 using Helper.Method;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Application.Controllers.TransactionManagement
